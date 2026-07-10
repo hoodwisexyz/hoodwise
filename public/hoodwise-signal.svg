@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 260" role="img" aria-labelledby="title desc">
+  <title id="title">Hoodwise live signal</title>
+  <desc id="desc">An animated emerald signal line moving across a dark grid.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06100b"/><stop offset="1" stop-color="#020604"/></linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#075d3d"/><stop offset=".45" stop-color="#00e98a"/><stop offset="1" stop-color="#a7ffd1"/></linearGradient>
+    <filter id="glow" x="-20%" y="-80%" width="140%" height="260%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="#1c5b3b" stroke-opacity=".24" stroke-width="1"/></pattern>
+    <linearGradient id="fade" x1="0" x2="1"><stop stop-color="#00e98a" stop-opacity="0"/><stop offset=".18" stop-color="#00e98a"/><stop offset=".82" stop-color="#00e98a"/><stop offset="1" stop-color="#00e98a" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1600" height="260" rx="18" fill="url(#bg)"/>
+  <rect width="1600" height="260" rx="18" fill="url(#grid)"/>
+  <path d="M0 213H1600" stroke="#20cf83" stroke-opacity=".25"/>
+  <text x="52" y="62" fill="#8ae4b5" font-family="monospace" font-size="17" letter-spacing="4">HOODWISE / LIVE SIGNAL</text>
+  <text x="52" y="98" fill="#4f9b72" font-family="monospace" font-size="13" letter-spacing="2">SOURCE-GROUNDED · PRIVATE CONTEXT · ALWAYS IN MOTION</text>
+  <path d="M35 203 L180 203 245 157 345 178 434 108 530 142 630 76 735 133 826 115 905 157 1010 72 1120 122 1210 94 1310 146 1395 68 1560 32" fill="none" stroke="url(#line)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M35 203 L180 203 245 157 345 178 434 108 530 142 630 76 735 133 826 115 905 157 1010 72 1120 122 1210 94 1310 146 1395 68 1560 32" fill="none" stroke="url(#fade)" stroke-width="9" stroke-dasharray="120 1480" stroke-linecap="round"><animate attributeName="stroke-dashoffset" values="1600;0" dur="4.8s" repeatCount="indefinite"/></path>
+  <g fill="#00e98a" filter="url(#glow)">
+    <circle cx="434" cy="108" r="5"><animate attributeName="r" values="4;8;4" dur="1.8s" repeatCount="indefinite"/></circle>
+    <circle cx="1010" cy="72" r="5"><animate attributeName="r" values="4;8;4" dur="2.2s" repeatCount="indefinite"/></circle>
+    <circle cx="1560" cy="32" r="6"><animate attributeName="r" values="5;10;5" dur="1.6s" repeatCount="indefinite"/></circle>
+  </g>
+  <g fill="#8ae4b5" font-family="monospace" font-size="13" letter-spacing="1.5"><text x="52" y="239">01 / PRODUCTS</text><text x="480" y="239">02 / INFRASTRUCTURE</text><text x="1050" y="239">03 / ECOSYSTEM</text></g>
+</svg>
