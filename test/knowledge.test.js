@@ -1,0 +1,82 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { sanitizeReply, findSources, createStreamingSanitizer } = require('../src/data/knowledge');
+
+test('sanitizeReply scrubs DeepSeek mentions', () => {
+  const input = 'I am powered by DeepSeek V4 Flash via OpenRouter.';
+  const output = sanitizeReply(input);
+  assert.doesNotMatch(output, /deepseek/i);
+  assert.doesNotMatch(output, /openrouter/i);
+});
+
+test('sanitizeReply leaves unrelated text untouched', () => {
+  const input = 'Robinhood Chain settles to Ethereum and uses Arbitrum Orbit.';
+  assert.equal(sanitizeReply(input), input);
+});
+
+test('sanitizeReply is case-insensitive', () => {
+  const input = 'DEEPSEEK and deepseek and DeepSeek should all be caught.';
+  const output = sanitizeReply(input);
+  assert.doesNotMatch(output, /deepseek/i);
+});
+
+test('findSources matches memecoin-related keywords', () => {
+  const sources = findSources('The memecoin scene includes CASHCAT and NOXA launchpad activity.');
+  assert.ok(sources.length > 0, 'expected at least one matched source');
+  assert.ok(sources.length <= 3, 'should never return more than 3 sources');
+});
+
+test('findSources returns nothing for unrelated text', () => {
+  const sources = findSources('This sentence has nothing to do with any known topic keyword.');
+  assert.deepEqual(sources, []);
+});
+
+test('findSources never returns duplicate URLs', () => {
+  const sources = findSources('stock token stock token rwa rwa tokenized tokenized');
+  const urls = sources.map(s => s.url);
+  assert.equal(new Set(urls).size, urls.length);
+});
+
+test('streaming sanitizer: reassembles output identical to non-streaming sanitizeReply', () => {
+  const fullText = 'Robinhood Chain settles to Ethereum. I am powered by DeepSeek V4 Flash via OpenRouter, by the way.';
+  const sanitizer = createStreamingSanitizer();
+  // Feed in small, arbitrary chunks (as a real token stream would arrive).
+  let streamedOutput = '';
+  for (let i = 0; i < fullText.length; i += 3) {
+    streamedOutput += sanitizer.push(fullText.slice(i, i + 3));
+  }
+  streamedOutput += sanitizer.flush();
+  assert.equal(streamedOutput, sanitizeReply(fullText));
+  assert.doesNotMatch(streamedOutput, /deepseek/i);
+});
+
+test('streaming sanitizer: catches "DeepSeek" even when split exactly across two chunks', () => {
+  const sanitizer = createStreamingSanitizer();
+  let out = '';
+  // Deliberately split the word itself across the chunk boundary.
+  out += sanitizer.push('padding text so the buffer has content before Deep');
+  out += sanitizer.push('Seek V4 Flash arrives right here.');
+  out += sanitizer.flush();
+  assert.doesNotMatch(out, /deepseek/i);
+});
+
+test('streaming sanitizer: catches a two-word phrase even when the chunk boundary lands exactly on the space between the words', () => {
+  const sanitizer = createStreamingSanitizer();
+  let out = '';
+  // "open" ends exactly at this chunk boundary, "router" starts the next.
+  out += sanitizer.push('This service runs on open');
+  out += sanitizer.push(' router infrastructure behind the scenes.');
+  out += sanitizer.flush();
+  assert.doesNotMatch(out, /open\s*router/i);
+});
+
+test('streaming sanitizer: never emits more than it was given (no data loss)', () => {
+  const fullText = 'This is a perfectly ordinary sentence about Robinhood Chain with no identity leaks in it at all.';
+  const sanitizer = createStreamingSanitizer();
+  let out = '';
+  for (let i = 0; i < fullText.length; i += 5) {
+    out += sanitizer.push(fullText.slice(i, i + 5));
+  }
+  out += sanitizer.flush();
+  assert.equal(out, fullText);
+});
