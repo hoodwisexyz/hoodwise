@@ -20,3 +20,10 @@ test('chat source merging retains NOXA Fun for a direct launchpad question', () 
   const sources = chatRouter._test.mergeSources('Tell me about noxa.fun', 'NOXA Fun is community-operated.', [], null);
   assert.ok(sources.some(source => source.url === 'https://www.noxa.fun/'));
 });
+
+test('NOXA candidate fallback supplies named discovery candidates when live search is empty', () => {
+  const fallback = chatRouter._test.buildNoxaDiscoveryFallback('Just tell me a good coin from noxa.fun asap', []);
+  assert.match(fallback.content, /Cash Cat \(CASHCAT\)/);
+  assert.match(fallback.content, /not live market data/);
+  assert.equal(chatRouter._test.buildNoxaDiscoveryFallback('Tell me about noxa.fun', []), null);
+});

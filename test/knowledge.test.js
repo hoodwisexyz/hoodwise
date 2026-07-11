@@ -121,6 +121,7 @@ test('getSystemPromptForQuestion gives a NOXA coin request a candidate-research 
   const prompt = getSystemPromptForQuestion('Just tell me a good coin from noxa.fun asap');
   assert.match(prompt, /NOXA candidate-research request/);
   assert.match(prompt, /Do not refuse/);
+  assert.match(prompt, /never start with/);
 });
 test('findSources prioritizes a direct NOXA source while retaining verification context', () => {
   const sources = findSources('noxa');

@@ -8,7 +8,7 @@ const { asyncHandler } = require('../middleware/errorHandler');
 const { BadRequestError } = require('../lib/errors');
 const conversations = require('../services/conversationService');
 const { callChatModel, streamChatModel } = require('../services/openrouterService');
-const { searchWeb, looksTimeSensitive } = require('../services/webSearchService');
+const { searchWeb, looksTimeSensitive, isNoxaCandidateRequest } = require('../services/webSearchService');
 const { scanContractInMessage, buildOnchainContextMessage, scanSource } = require('../services/onchainScanService');
 const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
@@ -44,6 +44,17 @@ function buildLiveContextMessage(results) {
   };
 }
 
+// Tavily is optional and may return no usable page for a fresh launchpad query.
+// That must not turn a known ecosystem surface into an "unknown" platform or a
+// generic refusal. This dated discovery baseline is explicitly not a live quote.
+function buildNoxaDiscoveryFallback(message, liveResults) {
+  if (liveResults.length || !isNoxaCandidateRequest(message)) return null;
+  return {
+    role: 'system',
+    content: `RECENT NOXA DISCOVERY BASELINE (not live market data): NOXA Fun's public launchpad listing has surfaced community tokens including Cash Cat (CASHCAT), Dog In Hood, GameStop, The Juggernaut, TENDIES, WISHBONE, and 4663. These names are a discovery shortlist only; their current ranking, price, liquidity, contract address, and availability must be rechecked on NOXA, a DEX, and Blockscout. For a request for a good NOXA coin, name one or more of these as a recent discovery starting point before caveats. Never say no candidate can be named merely because live search returned no page. Do not call this a current ranking, and do not give a buy instruction or return promise.`
+  };
+}
+
 /** Shared prep steps for both /chat and /chat/stream: validates the body,
  *  creates/loads the conversation, saves the user message, builds the
  *  capped history, and runs the optional live-search layer. Returns
@@ -75,8 +86,9 @@ async function prepareTurn(req) {
   ]);
   const liveResults = search.results;
   const liveContextMessage = buildLiveContextMessage(liveResults);
+  const noxaDiscoveryFallbackMessage = buildNoxaDiscoveryFallback(message, liveResults);
   const onchainContextMessage = buildOnchainContextMessage(onchainScan);
-  const messagesForModel = [...history, liveContextMessage, onchainContextMessage].filter(Boolean);
+  const messagesForModel = [...history, liveContextMessage, noxaDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
 
   return { conversationId, message, messagesForModel, liveResults, onchainScan };
 }
@@ -242,5 +254,5 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   }
 }));
 
-router._test = { mergeSources, buildBrief };
+router._test = { mergeSources, buildBrief, buildNoxaDiscoveryFallback };
 module.exports = router;

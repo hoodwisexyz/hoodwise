@@ -56,3 +56,8 @@ test('isMemecoinResearchQuery recognizes a direct NOXA coin request', () => {
 test('looksTimeSensitive detects thesis and lore research questions', () => {
   assert.equal(looksTimeSensitive('What is the lore and thesis behind this Robinhood Chain memecoin?'), true);
 });
+test('isNoxaCandidateRequest distinguishes a coin shortlist from a general NOXA question', () => {
+  const { isNoxaCandidateRequest } = require('../src/services/webSearchService');
+  assert.equal(isNoxaCandidateRequest('Just tell me a good coin from noxa.fun asap'), true);
+  assert.equal(isNoxaCandidateRequest('Tell me about noxa.fun'), false);
+});
