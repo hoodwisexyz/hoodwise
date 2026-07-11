@@ -44,7 +44,7 @@ critical streaming-sanitizer edge case fixed before shipping
 - [x] Original logo mark (SVG, trademark-safe) + favicon
 - [x] **Marketing landing page** (`index.html`) — hero with animated ambient network canvas, ticker strip, "How it works" 3-step process, "what it knows" card grid, "Why Hoodwise" comparison section, chat preview mockup, trust/transparency strip, public roadmap teaser, FAQ, final CTA banner, footer — all with scroll-reveal animation
 - [x] **Custom cursor** (`cursor.js` + rules in `shared.css`) — site-wide on both landing and app, auto-disabled on touch devices and when the OS "reduce motion" setting is on
-- [x] App interface (`app.html`) now lives at `/app.html`, linked from the landing page's "Launch Hoodwise" CTA and from the sidebar logo (click to go home)
+- [x] App interface now lives at `/app`, linked from the landing page's "Launch Hoodwise" CTA and from the sidebar logo (click to go home)
 - [x] **Premium interaction pass**: working mobile hamburger menu (previously nav links just vanished on small screens with no replacement), scroll-spy active nav state, staggered hero entrance animation, cursor-following "spotlight" hover on feature cards, scripted live-typing demo in the preview window (loops automatically), smooth fade page-transition between landing ↔ app, visible `:focus-visible` keyboard-navigation states site-wide, and a copy-to-clipboard button on bot chat bubbles
 
 **Docs**

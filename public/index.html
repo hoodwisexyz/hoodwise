@@ -12,6 +12,11 @@
 <link rel="stylesheet" href="/landing.css">
 </head>
 <body>
+  <div class="site-atmosphere" aria-hidden="true">
+    <i class="atmosphere-orb atmosphere-orb-a"></i>
+    <i class="atmosphere-orb atmosphere-orb-b"></i>
+    <i class="atmosphere-beam"></i>
+  </div>
   <div class="hw-boot" id="bootSequence" aria-hidden="true">
     <div class="boot-mark">↗</div>
     <div class="boot-copy"><span>HOODWISE / INITIALIZING</span><b>CHAIN INTELLIGENCE ONLINE</b></div>
@@ -26,21 +31,21 @@
       <span>Hoodwise</span>
     </a>
     <div class="nav-links" id="navLinks">
-      <a href="#knows" data-section="knows">What it knows</a>
-      <a href="#preview" data-section="preview">Preview</a>
-      <a href="#faq" data-section="faq">FAQ</a>
+      <button type="button" class="nav-section-link" data-section="knows" data-scroll-target="knows">What it knows</button>
+      <button type="button" class="nav-section-link" data-section="preview" data-scroll-target="preview">Preview</button>
+      <button type="button" class="nav-section-link" data-section="faq" data-scroll-target="faq">FAQ</button>
     </div>
-    <a href="/app.html" class="nav-cta" data-transition>Launch Hoodwise</a>
+    <a href="/app" class="nav-cta" data-transition>Launch Hoodwise</a>
     <button class="nav-burger" id="navBurger" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
   </nav>
 
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#knows">What it knows</a>
-    <a href="#preview">Preview</a>
-    <a href="#faq">FAQ</a>
-    <a href="/app.html" class="mobile-cta" data-transition>Launch Hoodwise</a>
+    <button type="button" class="mobile-section-link" data-scroll-target="knows">What it knows</button>
+    <button type="button" class="mobile-section-link" data-scroll-target="preview">Preview</button>
+    <button type="button" class="mobile-section-link" data-scroll-target="faq">FAQ</button>
+    <a href="/app" class="mobile-cta" data-transition>Launch Hoodwise</a>
   </div>
 
   <header class="hero">
@@ -54,8 +59,8 @@
         <div class="hero-command hw-hero-item" aria-label="Hoodwise signal status"><span class="command-prompt">//</span><span id="heroCommandText">DECODING CAPITAL MARKETS ONCHAIN</span><i></i></div>
         <p class="hero-sub hw-hero-item">Hoodwise turns Robinhood Chain’s moving parts into the answer that matters — sourced, legible, and never padded with noise.</p>
         <div class="hero-actions hw-hero-item">
-          <a href="/app.html" class="btn-primary" data-transition>Open the briefing <svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-          <a href="#knows" class="btn-secondary">Explore coverage</a>
+          <a href="/app" class="btn-primary" data-transition>Open the briefing <svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <button type="button" class="btn-secondary section-cta" data-scroll-target="knows">Explore coverage</button>
         </div>
         <div class="hero-proof hw-hero-item">
           <span><b>01</b> focused chain</span><span><b>24/7</b> explainers</span><span><b>0</b> wallet access</span>
@@ -274,14 +279,14 @@
   <section class="final-cta hw-reveal">
     <h2>Stop piecing it together yourself.</h2>
     <p>Ask Hoodwise — it's free, sourced, and actually current.</p>
-    <a href="/app.html" class="btn-primary" data-transition>Ask Hoodwise <svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a href="/app" class="btn-primary" data-transition>Ask Hoodwise <svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </section>
 
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">Hoodwise</div>
       <p>Independent explainer for Robinhood Chain. Not affiliated with Robinhood Markets Inc. Nothing here is financial advice.</p>
-      <a href="/app.html" class="footer-cta" data-transition>Launch Hoodwise →</a>
+      <a href="/app" class="footer-cta" data-transition>Launch Hoodwise →</a>
     </div>
   </footer>
 

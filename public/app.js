@@ -40,14 +40,13 @@
   }
 
   let currentConversationId = null;
-  const initialConversationId = new URLSearchParams(window.location.search).get('c');
+  const conversationPathMatch = window.location.pathname.match(/^\/app\/c\/([a-f0-9-]{36})$/i);
+  const initialConversationId = conversationPathMatch?.[1] || new URLSearchParams(window.location.search).get('c');
 
-  // Keep the current conversation addressable without making the app a fragile SPA.
-  // Reloading /app.html?c=<id> restores the same session-owned conversation.
+  // Keep conversations shareable with a clean, semantic route.
+  // A legacy ?c= link is still restored, then immediately normalized.
   function syncConversationRoute(conversationId) {
-    const url = new URL(window.location.href);
-    if (conversationId) url.searchParams.set('c', conversationId);
-    else url.searchParams.delete('c');
+    const url = conversationId ? '/app/c/' + encodeURIComponent(conversationId) : '/app';
     window.history.replaceState({}, '', url);
   }
 

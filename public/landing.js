@@ -114,14 +114,14 @@
       burger.classList.toggle('open');
       mobileMenu.classList.toggle('open');
     });
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileMenu.querySelectorAll('a, button').forEach(a => a.addEventListener('click', () => {
       burger.classList.remove('open');
       mobileMenu.classList.remove('open');
     }));
   }
 
   // ---------- Scroll-spy nav active state ----------
-  const navLinkEls = document.querySelectorAll('.nav-links a[data-section]');
+  const navLinkEls = document.querySelectorAll('.nav-links [data-section]');
   const sections = ['knows', 'preview', 'faq'].map(id => document.getElementById(id)).filter(Boolean);
   if (sections.length && navLinkEls.length && 'IntersectionObserver' in window) {
     const spy = new IntersectionObserver((entries) => {
@@ -134,19 +134,21 @@
     sections.forEach(s => spy.observe(s));
   }
 
-  // ---------- Clean section navigation (scroll without exposing #hash in the URL) ----------
-  const sectionLinks = document.querySelectorAll('a[href^="#"]');
+  // ---------- Clean section navigation (scroll without hash URLs) ----------
+  const sectionLinks = document.querySelectorAll('[data-scroll-target]');
   sectionLinks.forEach(link => {
-    link.addEventListener('click', (event) => {
-      const target = document.querySelector(link.getAttribute('href'));
+    link.addEventListener('click', () => {
+      const target = document.getElementById(link.dataset.scrollTarget);
       if (!target) return;
-      event.preventDefault();
       target.scrollIntoView({ behavior: motionAllowed ? 'smooth' : 'auto', block: 'start' });
-      window.history.replaceState({}, '', window.location.pathname + window.location.search);
     });
   });
+  // Old shared links with a hash still land correctly once, then resolve to
+  // the canonical clean URL.
   if (window.location.hash) {
+    const legacyTarget = document.getElementById(window.location.hash.slice(1));
     window.requestAnimationFrame(() => {
+      legacyTarget?.scrollIntoView({ behavior: 'auto', block: 'start' });
       window.history.replaceState({}, '', window.location.pathname + window.location.search);
     });
   }

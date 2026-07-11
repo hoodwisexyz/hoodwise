@@ -56,7 +56,17 @@ function createApp() {
     next();
   });
 
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  const publicDir = path.join(__dirname, '..', 'public');
+
+  // Canonical public routes keep the product URLs clean. The legacy .html
+  // URLs remain safe bookmarks, but redirect to their semantic counterparts.
+  app.get('/index.html', (req, res) => res.redirect(308, '/'));
+  app.get('/app.html', (req, res) => res.redirect(308, '/app'));
+  app.get(['/app', '/app/', '/app/c/:conversationId'], (req, res) => {
+    res.sendFile(path.join(publicDir, 'app.html'));
+  });
+
+  app.use(express.static(publicDir));
 
   app.use('/api', healthRoutes);
   app.use('/api', conversationRoutes);
