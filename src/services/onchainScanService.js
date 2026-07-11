@@ -1,5 +1,6 @@
 const { verifyContract } = require('./contractVerifierService');
 const logger = require('../lib/logger');
+const { findDexPools } = require('./dexPoolService');
 
 const ADDRESS_PATTERN = /\b0x[a-fA-F0-9]{40}\b/;
 
@@ -18,7 +19,7 @@ async function scanContractInMessage(message, { requestId } = {}) {
   const address = extractContractAddress(message);
   if (!address) return null;
   try {
-    const result = await verifyContract(address);
+    const [result, dexPools] = await Promise.all([verifyContract(address), findDexPools(address)]);
     return {
       address: result.address,
       chainId: result.chainId,
@@ -29,6 +30,7 @@ async function scanContractInMessage(message, { requestId } = {}) {
       sourceCodeVerificationAvailable: result.sourceCodeVerificationAvailable,
       proxyType: safeLabel(result.proxyType, 48),
       tokenActivity: result.tokenActivity,
+      dexPools,
       canonical: result.canonical ? { name: safeLabel(result.canonical.name, 80), symbol: safeLabel(result.canonical.symbol, 24) } : null,
       metadata: { name: safeLabel(result.metadata.name, 80), symbol: safeLabel(result.metadata.symbol, 24), decimals: result.metadata.decimals, owner: result.metadata.owner }
     };

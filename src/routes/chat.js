@@ -92,7 +92,7 @@ function mergeSources(reply, liveResults, onchainScan) {
 function buildBrief(reply, sources, liveResults, onchainScan) {
   const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
   if (!onchainScan) return brief;
-  return { ...brief, onchainScan: { address: onchainScan.address, classification: onchainScan.classification, canonical: onchainScan.canonical, sourceCodeVerified: onchainScan.sourceCodeVerified, sourceCodeVerificationAvailable: onchainScan.sourceCodeVerificationAvailable, proxyType: onchainScan.proxyType, tokenActivity: onchainScan.tokenActivity, explorerUrl: onchainScan.explorerUrl } };
+  return { ...brief, onchainScan: { address: onchainScan.address, classification: onchainScan.classification, canonical: onchainScan.canonical, sourceCodeVerified: onchainScan.sourceCodeVerified, sourceCodeVerificationAvailable: onchainScan.sourceCodeVerificationAvailable, proxyType: onchainScan.proxyType, tokenActivity: onchainScan.tokenActivity, dexPools: onchainScan.dexPools || [], explorerUrl: onchainScan.explorerUrl } };
 }
 // ---------- Non-streaming (used by simple clients / fallback) ----------
 router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {

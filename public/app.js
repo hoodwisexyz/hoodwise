@@ -251,6 +251,10 @@
       ];
       facts.forEach(([label, value]) => { const item = document.createElement('div'); const key = document.createElement('span'); key.textContent = label; const val = document.createElement('b'); val.textContent = value; item.append(key, val); grid.appendChild(item); });
       card.appendChild(grid);
+      const poolTitle = document.createElement('div'); poolTitle.className = 'token-pool-title'; poolTitle.textContent = 'DEX POOLS'; card.appendChild(poolTitle);
+      const pools = scan.dexPools || [];
+      if (!pools.length) { const empty = document.createElement('p'); empty.className = 'token-pool-empty'; empty.textContent = 'No indexed Robinhood Chain pool found on DexScreener.'; card.appendChild(empty); }
+      else { const poolList = document.createElement('div'); poolList.className = 'token-pool-list'; pools.forEach(pool => { const row = document.createElement('a'); row.href = pool.url; row.target = '_blank'; row.rel = 'noopener noreferrer'; row.textContent = `${pool.dex} · ${pool.baseSymbol || '?'} / ${pool.quoteSymbol || '?'} · Liquidity $${pool.liquidityUsd ?? '—'} · 24h vol $${pool.volume24h ?? '—'} ↗`; poolList.appendChild(row); }); card.appendChild(poolList); }
       const link = document.createElement('a'); link.href = scan.explorerUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Open live explorer record ↗'; card.appendChild(link);
       panel.appendChild(card);
     }    if (brief.contracts && brief.contracts.length) {

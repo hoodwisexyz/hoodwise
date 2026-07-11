@@ -1,0 +1,7 @@
+const fetch = require('node-fetch');
+const DEXSCREENER_URL = 'https://api.dexscreener.com/latest/dex/tokens/';
+function numeric(value) { const n = Number(value); return Number.isFinite(n) ? n : null; }
+function isRobinhoodPair(pair) { return ['robinhood', '4663'].includes(String(pair?.chainId || '').toLowerCase()); }
+function mapPair(pair) { return { dex: pair.dexId || 'unknown', pairAddress: pair.pairAddress, url: pair.url, baseSymbol: pair.baseToken?.symbol || null, quoteSymbol: pair.quoteToken?.symbol || null, liquidityUsd: numeric(pair.liquidity?.usd), volume24h: numeric(pair.volume?.h24), transactions24h: (pair.txns?.h24?.buys ?? 0) + (pair.txns?.h24?.sells ?? 0), createdAt: pair.pairCreatedAt || null }; }
+async function findDexPools(address) { const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),7000); try { const response=await fetch(DEXSCREENER_URL+address,{signal:controller.signal}); if(!response.ok)return []; const body=await response.json(); return (body.pairs||[]).filter(isRobinhoodPair).map(mapPair).sort((a,b)=>(b.liquidityUsd||0)-(a.liquidityUsd||0)).slice(0,3); } catch { return []; } finally { clearTimeout(timeout); } }
+module.exports={findDexPools,isRobinhoodPair,mapPair};
