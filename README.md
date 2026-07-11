@@ -12,7 +12,8 @@
 <p align="center">
   <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> ·
   <a href="./CONTEXT.md"><strong>Product context</strong></a> ·
-  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> Â·`r`n  <a href="./CONTENT.md"><strong>Content kit</strong></a>
+  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> Â·
+  <a href="./CONTENT.md"><strong>Content kit</strong></a>
 </p>
 
 ## What Hoodwise does
@@ -44,8 +45,9 @@ Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 - Health check: `/api/health`.
 - Persistent SQLite volume mounted at `/data` in production.
 - Streaming chat with a completion fallback if an upstream stream closes early.
+- Landing starter prompts hand off into the composer, and chat briefing lanes launch real questions directly.
 - Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, and indexed DEX pools when available.
-- Automated test suite: `npm test` (47 tests at the latest stabilization review).
+- Automated test suite: `npm test` (56 tests at the latest stabilization review).
 
 For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 

@@ -6,6 +6,8 @@ This roadmap reflects the live product as of July 11, 2026. It is ordered by pro
 
 - **Interactive Chain Intelligence Map:** a landing-page exploration surface for network, products, ecosystem, and risk context.
 - **Structured briefing cards:** completed chat replies now retain evidence state, canonical contract references when present, material risk tags, and a next verification step.
+- **Interaction polish:** landing starter prompts hand off cleanly into the chat composer, while chat briefing lanes are directly actionable with motion-safe tactile states.
+- **Privacy-safe quality observation:** aggregate answer-quality reviews and flags are available in the protected ops view without storing prompt or reply content.
 - **Lightweight knowledge routing:** developer, Stock Token, memecoin, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
 ## Now: protect quality in production
 
@@ -19,7 +21,7 @@ This roadmap reflects the live product as of July 11, 2026. It is ordered by pro
    - Keep the existing rule: live web context supplements sources; it never becomes an unverified replacement for the baseline.
 
 3. **Production observation**
-   - Review Railway logs and error rate after releases. Basic privacy-safe aggregate counters are now available behind the protected ops API; the next step is an owner-facing UI.
+   - Review Railway logs and error rate after releases. The owner-facing protected `/ops` view now exposes aggregate request, latency, search, verifier, and answer-quality signals.
    - Define a simple incident checklist: health endpoint, provider error rate, stream fallback frequency, database volume status, and domain/SSL status.
 
 ## Next: make the product easier to use

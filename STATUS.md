@@ -8,15 +8,15 @@
 - **Hosting:** Railway production service, sourced from `hoodwisexyz/hoodwise`.
 - **Health check:** `GET /api/health` configured through `railway.toml`.
 - **Persistence:** Railway volume mounted at `/data`; production database path is `/data/hoodwise.db`.
-- **Automated verification:** `npm test` - 47 passing tests at the last review.
+- **Automated verification:** `npm test` - 56 passing tests at the last review.
 
 ## Shipped
 
 ### Product and frontend
 
-- Premium marketing landing page with animated network/aurora surfaces, signal console, coverage deck, observatory, interactive Chain Intelligence Map, source-led product narrative, responsive navigation, and accessible motion fallbacks.
+- Premium marketing landing page with animated network/aurora surfaces, signal console, coverage deck, observatory, interactive Chain Intelligence Map, action-ready starter prompts, source-led product narrative, responsive navigation, and accessible motion fallbacks.
 - Clean URLs: `/`, `/app`, and `/app/c/<conversation-id>`; legacy `.html` URLs redirect to canonical routes.
-- Chat briefing interface with streaming replies, source chips, persistent evidence/contract/risk briefing cards, suggested prompts, message copy, anonymous conversation history, mobile sidebar behavior, light/dark theme, character counter, keyboard support, and clear loading/interaction state.
+- Chat briefing interface with streaming replies, source chips, persistent evidence/contract/risk briefing cards, action-ready welcome lanes, suggested prompts, message copy, anonymous conversation history, mobile sidebar behavior, light/dark theme, character counter, keyboard support, and clear loading/interaction state.
 - Original Hoodwise logo mark, favicon, social preview banner, and brand assets.
 
 ### Backend and reliability
@@ -40,7 +40,7 @@
 
 - Node built-in test suite covering conversations, errors, identity sanitization, source matching, streaming safety, and search-trigger behavior.
 - GitHub Actions CI runs the test suite on supported Node versions.
-- Privacy-safe in-memory observability counters for chat/verifier requests, errors, average chat latency, and live-search usage; protected ops summary API is disabled unless `OPS_DASHBOARD_TOKEN` is configured.
+- Privacy-safe in-memory observability counters for chat/verifier requests, errors, average chat latency, live-search usage, answer-quality reviews, and quality flags; the protected `/ops` dashboard is disabled unless `OPS_DASHBOARD_TOKEN` is configured.
 
 ## Current limitations
 

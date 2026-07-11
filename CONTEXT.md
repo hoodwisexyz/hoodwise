@@ -41,7 +41,7 @@ Hoodwise uses a deep green/near-black intelligence-console aesthetic:
 
 - `#00e676` is the primary signal color.
 - Space Grotesk is used for display, Inter for reading, and JetBrains Mono for data labels.
-- Motion is ambient and purposeful: pulse ledgers, source/signal surfaces, and low-contrast aurora fields.
+- Motion is ambient and purposeful: pulse ledgers, source/signal surfaces, low-contrast aurora fields, and tactile response on interactive prompts.
 - The mark is an original rising-line shape. Do not use Robinhood's feather, wordmark, or other official brand assets.
 
 The product must remain visibly independent: never imply a Robinhood partnership, endorsement, or custody relationship.
@@ -55,4 +55,4 @@ The product must remain visibly independent: never imply a Robinhood partnership
 
 ## Operational baseline
 
-Production runs on Railway at `https://hoodwise.xyz` with a persistent `/data` volume and `/api/health` health check. See [STATUS.md](./STATUS.md) for the current implementation state and [ROADMAP.md](./ROADMAP.md) for intentional next steps.
+Production runs on Railway at `https://hoodwise.xyz` with a persistent `/data` volume, `/api/health` health check, and a token-protected aggregate-only `/ops` view when configured. See [STATUS.md](./STATUS.md) for the current implementation state and [ROADMAP.md](./ROADMAP.md) for intentional next steps.

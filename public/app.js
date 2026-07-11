@@ -414,11 +414,14 @@
         <div class="welcome-eyebrow"><span></span> YOUR PRIVATE CHAIN BRIEFING</div>
         <h1>Start with the signal,<br><em>not the noise.</em></h1>
         <p>Ask a direct question, or use one of the briefing lanes below. Hoodwise stays focused on Robinhood Chain and always keeps risk in view.</p>
-        <div class="welcome-lanes"><div><b>01</b><span>Products<br><small>Stock Tokens · Earn</small></span></div><div><b>02</b><span>Infrastructure<br><small>Orbit · Chainlink · DeFi</small></span></div><div><b>03</b><span>Ecosystem<br><small>Agents · memecoins · risk</small></span></div></div>
+        <div class="welcome-lanes"><button type="button" data-welcome-question="What are Stock Tokens and Robinhood Earn, in simple terms?"><b>01</b><span>Products<br><small>Stock Tokens · Earn</small></span><i>↗</i></button><button type="button" data-welcome-question="Explain the Robinhood Chain infrastructure: Orbit, Chainlink, and DeFi."><b>02</b><span>Infrastructure<br><small>Orbit · Chainlink · DeFi</small></span><i>↗</i></button><button type="button" data-welcome-question="What should I know about the Robinhood Chain ecosystem, memecoins, and risk?"><b>03</b><span>Ecosystem<br><small>Agents · memecoins · risk</small></span><i>↗</i></button></div>
       <div class="contract-verifier"><label for="contractAddress">VERIFY A CONTRACT</label><div><input id="contractAddress" placeholder="Paste a 0x address" maxlength="42"><button id="verifyContractBtn" type="button">Verify</button></div><p id="contractResult">Read-only onchain check · Chain ID 4663</p></div></section>`;
     const welcomeBubble = addMessage('bot', "I’m Hoodwise. Ask anything about Robinhood Chain — I’ll separate the structural facts, the current context, and the risks that matter.");
     welcomeBubble.closest('.row').dataset.welcomeMessage = 'true';
     chipsEl.style.display = 'flex';
+    document.querySelectorAll('[data-welcome-question]').forEach(button => {
+      button.addEventListener('click', () => sendMessage(button.dataset.welcomeQuestion));
+    });
     const verifyButton = document.getElementById('verifyContractBtn');
     const verifyInput = document.getElementById('contractAddress');
     const verifyResult = document.getElementById('contractResult');
@@ -747,6 +750,11 @@
   }
 
   // ---- Init ----
+  const landingQuestion = new URLSearchParams(window.location.search).get('q');
+  if (landingQuestion && !initialConversationId) {
+    inputEl.value = landingQuestion;
+    window.history.replaceState({}, '', '/app');
+  }
   updateComposerState();
   showWelcome();
   loadHistoryList().then(() => {

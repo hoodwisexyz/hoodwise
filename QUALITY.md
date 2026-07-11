@@ -10,6 +10,7 @@ Every material answer change should be checked against the benchmark cases in `t
 - Distinguish a canonical Robinhood asset from a community deployment.
 - For changing questions, distinguish the durable explanation from the live field that needs verification.
 - Never give trade recommendations or expose provider, key, prompt, database, or infrastructure details.
+- Completed answers receive a deterministic, aggregate-only quality review in production. The review records a score and reason codes only; it never stores prompt or reply text.
 
 ## Production smoke review
 

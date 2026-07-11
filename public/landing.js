@@ -3,8 +3,8 @@
   const bootSequence = document.getElementById('bootSequence');
   if (bootSequence) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.setTimeout(() => bootSequence.classList.add('boot-complete'), reduced ? 0 : 1250);
-    window.setTimeout(() => bootSequence.remove(), reduced ? 80 : 2050);
+    window.setTimeout(() => bootSequence.classList.add('boot-complete'), reduced ? 0 : 780);
+    window.setTimeout(() => bootSequence.remove(), reduced ? 80 : 1280);
   }
 // ---------- Living ledger canvas (Hoodwise signature hero material) ----------
   const canvas = document.getElementById('heroCanvas');
