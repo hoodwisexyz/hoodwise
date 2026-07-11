@@ -80,3 +80,8 @@ test('streaming sanitizer: never emits more than it was given (no data loss)', (
   out += sanitizer.flush();
   assert.equal(out, fullText);
 });
+
+test('findSources returns official documentation for developer network answers', () => {
+  const sources = findSources('Use chain ID 4663 and a production RPC when deploying with Hardhat.');
+  assert.ok(sources.some(source => source.url.includes('docs.robinhood.com/chain/connecting')));
+});

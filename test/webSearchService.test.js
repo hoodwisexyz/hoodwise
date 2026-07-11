@@ -21,3 +21,8 @@ test('searchWeb is a graceful no-op when no API key is configured', async () => 
   const result = await searchWeb('latest robinhood chain news');
   assert.deepEqual(result, { results: [], attempted: false });
 });
+
+test('looksTimeSensitive detects current availability questions', () => {
+  assert.equal(looksTimeSensitive('Is Robinhood Earn currently available?'), true);
+  assert.equal(looksTimeSensitive('Is the bridge live now?'), true);
+});

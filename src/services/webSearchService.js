@@ -9,7 +9,7 @@ const logger = require('../lib/logger');
  * Robinhood Chain is a fast-moving, days-old ecosystem, so this leans
  * toward triggering on anything that smells time-sensitive.
  */
-const FRESHNESS_PATTERN = /\b(today|now|currently|latest|newest|recent|recently|this week|this month|update|updates|updated|price|trending|new (launchpad|token|memecoin|partner)|just (launched|announced)|breaking|news)\b/i;
+const FRESHNESS_PATTERN = /\b(today|now|currently|latest|newest|recent|recently|this week|this month|update|updates|updated|price|trending|status|available|availability|supported|is .* live|new (launchpad|token|memecoin|partner)|just (launched|announced)|breaking|news)\b/i;
 
 function looksTimeSensitive(message) {
   return FRESHNESS_PATTERN.test(message);
