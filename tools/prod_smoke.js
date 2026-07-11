@@ -14,6 +14,7 @@ const CASES = [
   { id: 'cashcat-lore', prompt: 'What is the CASHCAT lore and thesis on Robinhood Chain?', needsDyor: true, needsSource: true, require: [/Cash Cat|CASHCAT|lore|thesis/i] },
   { id: 'official-check', prompt: 'Is a token called Robinhood official just because it is on Robinhood Chain?', needsSource: true, require: [/not official|not a Robinhood/i] },
   { id: 'contract-verify', prompt: 'How do I verify this contract before touching it: 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC', needsSource: true, require: [/NVDA|canonical|Blockscout|verified/i] },
+  { id: 'hoodwise-token-profile', prompt: 'Tell me about the Hoodwise contract 0x6bdb637a9e988835dc368ef72cb5d143540f037c', needsSource: true, needsDyor: true, require: [/Hoodwise|Virtuals\.io|0x6bdb637a9e988835dc368ef72cb5d143540f037c|What to verify next/i], forbid: [/^.*community-deployed/i, /^.*unverified/i, /^.*red flag/i, /\bis an official Robinhood asset\b/i, /DeepSeek/i, /OpenRouter/i] },
   { id: 'stock-rights', prompt: 'Do Robinhood Stock Tokens give shareholder rights?', needsSource: true, require: [/not.*shareholder|not shares|economic exposure|issuer/i] },
   { id: 'latest-official', prompt: 'What is the latest official update on Robinhood Chain?', needsSource: true, require: [/official|Robinhood/i] },
   { id: 'bridge', prompt: 'How long does a canonical bridge withdrawal take?', needsSource: true, require: [/7 days|challenge/i] },
