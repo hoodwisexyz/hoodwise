@@ -13,6 +13,8 @@ const { scanContractInMessage, buildOnchainContextMessage, scanSource } = requir
 const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
 const logger = require('../lib/logger');
+const metrics = require('../services/metricsService');
+const { reviewAnswer } = require('../services/answerQualityService');
 
 function validateChatBody(body) {
   const { message, conversationId } = body || {};
@@ -91,6 +93,13 @@ function mergeSources(message, reply, liveResults, onchainScan) {
     .slice(0, 4);
 }
 
+function recordQuality(question, reply, sources, usedLiveSearch, requestId) {
+  const review = reviewAnswer({ question, answer: reply, sources, usedLiveSearch });
+  metrics.record('qualityReviews');
+  if (review.score < 80) metrics.record('lowQualityReviews');
+  logger.info('chat quality review', { requestId, score: review.score, reasons: review.reasons, needsResearch: review.needsResearch });
+  return review;
+}
 function buildBrief(reply, sources, liveResults, onchainScan) {
   const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
   if (!onchainScan) return brief;
@@ -109,6 +118,7 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
   const sources = mergeSources(message, reply, liveResults, onchainScan);
   const brief = buildBrief(reply, sources, liveResults, onchainScan);
 
+  recordQuality(message, reply, sources, liveResults.length > 0, req.requestId);
   conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
   conversations.touchConversation(conversationId);
 
@@ -166,6 +176,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
 
     const sources = mergeSources(message, fullReply, liveResults, onchainScan);
     const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
+    recordQuality(message, fullReply, sources, liveResults.length > 0, req.requestId);
     conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
@@ -201,6 +212,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
 
       const sources = mergeSources(message, fullReply, liveResults, onchainScan);
       const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
+      recordQuality(message, fullReply, sources, liveResults.length > 0, req.requestId);
       conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {
@@ -217,6 +229,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       if (fullReply.trim().length >= 160) {
         const sources = mergeSources(message, fullReply, liveResults, onchainScan);
         const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
+        recordQuality(message, fullReply, sources, liveResults.length > 0, req.requestId);
         conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
         conversations.touchConversation(conversationId);
         send('done', { conversationId, sources, brief, partial: true });

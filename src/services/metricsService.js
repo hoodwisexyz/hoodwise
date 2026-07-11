@@ -1,5 +1,5 @@
 const startedAt = Date.now();
-const counters = { chatRequests: 0, chatErrors: 0, streamFallbacks: 0, liveSearches: 0, verifierRequests: 0, verifierErrors: 0, landingViews: 0, appViews: 0 };
+const counters = { chatRequests: 0, chatErrors: 0, streamFallbacks: 0, liveSearches: 0, verifierRequests: 0, verifierErrors: 0, landingViews: 0, appViews: 0, qualityReviews: 0, lowQualityReviews: 0 };
 const timings = { chat: [] };
 function record(name, durationMs) { if (Object.hasOwn(counters, name)) counters[name] += 1; if (durationMs != null && timings[name]) { timings[name].push(durationMs); if (timings[name].length > 200) timings[name].shift(); } }
 function recordRequest(path, status, durationMs) { if (path === '/') record('landingViews'); if (path === '/app') record('appViews'); if (path === '/chat' || path === '/chat/stream') { record('chatRequests'); record('chat', durationMs); if (status >= 400) record('chatErrors'); } if (path === '/contracts/verify') { record('verifierRequests'); if (status >= 400) record('verifierErrors'); } }
