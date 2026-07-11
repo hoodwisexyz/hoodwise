@@ -197,14 +197,15 @@ Write as a trusted specialist: useful, exact, and candid about what the evidence
 const KNOWLEDGE_FOCUS = [
   { pattern: /\b(contract|address|deploy|solidity|hardhat|foundry|rpc|chain id|wallet|gas)\b/i, instruction: 'FOCUS: Give exact network/developer facts first. Include chain ID or official contract/RPC details when relevant. Keep production caveats practical.' },
   { pattern: /\b(stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i, instruction: 'FOCUS: State whether the asset is canonical, explain the legal/economic structure directly, and include an exact contract only when it is in the curated baseline.' },
-  { pattern: /\b(memecoin|meme coin|cashcat|noxa|liquidity|holder|rug|honeypot)\b/i, instruction: 'FOCUS: Answer the memecoin question directly. Separate a community deployment from an official Robinhood asset, and give the concrete contract/pool checks that matter.' },
+  { pattern: /\b(memecoin|meme coin|cashcat|noxa|liquidity|holder|rug|honeypot)\b/i, instruction: 'FOCUS: Answer the memecoin question directly. Separate a community deployment from an official Robinhood asset, distinguish evidence from narrative, and give the concrete contract/pool checks that matter.' },
   { pattern: /\b(bridge|bridging|withdraw|deposit|layerzero|ccip|stargate)\b/i, instruction: 'FOCUS: Explain route, timing, trust model, fees, and the next onchain step. Do not imply a bridge is risk-free.' },
-  { pattern: /\b(earn|lending|yield|morpho|perp|lighter)\b/i, instruction: 'FOCUS: Explain product mechanics and eligibility before discussing yield, leverage, or availability. Distinguish a product announcement from user access.' }
-  { pattern: /(what.?s (hot|trending)|good memecoin|active memecoin|rame)/i, instruction: 'FOCUS: Treat this as a live research request. Share only evidence-supported candidates or platforms, make the evidence gap explicit, and finish with DYOR rather than refusing.' },
-  { pattern: /(official|real|legit|community|endorsed)/i, instruction: 'FOCUS: State official versus community status plainly. A launchpad, familiar name, ticker, or listing is not proof of Robinhood endorsement.' },
-  { pattern: /(can i buy|how (do|can) i buy|available to me|eligible)/i, instruction: 'FOCUS: Separate permissionless onchain access from product eligibility, jurisdiction, wallet support, and current venue availability. Do not invent a purchase route.' },
-  { pattern: /(safe|scam|red flag|risk)/i, instruction: 'FOCUS: Give concrete contract, ownership, liquidity, holder, and source checks. Explain what each signal does and does not establish; never promise safety.' },
-  { pattern: /(virtuals|agent token|ai agent)/i, instruction: 'FOCUS: Explain the verified relationship to Robinhood Chain only. Do not infer an integration, launch, or token relationship from community claims.' }];
+  { pattern: /\b(earn|lending|yield|morpho|perp|lighter)\b/i, instruction: 'FOCUS: Explain product mechanics and eligibility before discussing yield, leverage, or availability. Distinguish a product announcement from user access.' },
+  { pattern: /\b(what.?s (hot|trending)|good memecoin|active memecoin|rame)\b/i, instruction: 'FOCUS: Treat this as a live research request. Share only evidence-supported candidates or platforms, make the evidence gap explicit, and finish with DYOR rather than refusing.' },
+  { pattern: /\b(official|real|legit|community|endorsed)\b/i, instruction: 'FOCUS: State official versus community status plainly. A launchpad, familiar name, ticker, or listing is not proof of Robinhood endorsement.' },
+  { pattern: /\b(can i buy|how (do|can) i buy|available to me|eligible)\b/i, instruction: 'FOCUS: Separate permissionless onchain access from product eligibility, jurisdiction, wallet support, and current venue availability. Do not invent a purchase route.' },
+  { pattern: /\b(safe|scam|red flag|risk)\b/i, instruction: 'FOCUS: Give concrete contract, ownership, liquidity, holder, and source checks. Explain what each signal does and does not establish; never promise safety.' },
+  { pattern: /\b(virtuals|agent token|ai agent)\b/i, instruction: 'FOCUS: Explain the verified relationship to Robinhood Chain only. Do not infer an integration, launch, or token relationship from community claims.' }
+];
 function getSystemPromptForQuestion(message) {
   const focus = KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
   return focus ? SYSTEM_PROMPT + '\n\n' + focus.instruction : SYSTEM_PROMPT;
