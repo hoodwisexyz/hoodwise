@@ -29,3 +29,7 @@ test('reasoning policy requires direct evidence-led answers without generic padd
   assert.match(SYSTEM_PROMPT, /use this reasoning order/);
   assert.match(SYSTEM_PROMPT, /Do not turn DYOR into a refusal/);
 });
+test('audit policy blocks invented bridge UI and universal memecoin thresholds', () => {
+  assert.match(SYSTEM_PROMPT, /do not invent a provider UI flow/);
+  assert.match(SYSTEM_PROMPT, /never state a universal holder, liquidity/);
+});
