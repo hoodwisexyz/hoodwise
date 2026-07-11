@@ -117,6 +117,7 @@ function sourceClass(source) {
 
 function sourcePriority(source, replyText) {
   const classWeight = { primary: 30, onchain: 20, secondary: 10, community: 5 }[sourceClass(source)] || 0;
+  if (source.url.includes('noxa.fun') && /\bnoxa(?:\.fun)?\b/i.test(replyText)) return classWeight + 100;
   if (source.url.includes('/chain/contracts/') && (/\b0x[a-f0-9]{40}\b/i.test(replyText) || /\b(canonical|official stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i.test(replyText))) return classWeight + 20;
   return classWeight;
 }
@@ -210,6 +211,7 @@ CANONICAL ASSET DIRECTORY (mainnet, checked against official contract documentat
 MEMECOINS AND COMMUNITY TOKENS
 - There is no official Robinhood Chain memecoin registry and no documented native chain token. A token using "Robinhood", "HOOD", or a familiar ticker in its name is not official by default.
 - Permissionless deployment means community tokens, launchpads and DEX pools can exist without Robinhood approval. A community-token name alone is not evidence of an official status, contract, venue, or market activity.
+- NOXA Fun (noxa.fun) is a community-operated multi-DEX token launchpad, not a Robinhood product or endorsement. Its own public site presents launch, trade, and earn flows and a Uniswap route; noxa.fi links to its launchpad, DEX, and docs. Use it as a discovery surface, then verify an exact token contract, its specific pool, liquidity, and owner controls before interacting. Its live listings and availability can change.
 - Answer direct questions: a memecoin is a freely deployed ERC-20 whose value/liquidity are market-driven; it is not a Stock Token and it does not convey equity in Robinhood. The key practical distinction is whether the contract and pool are independently verifiable.
 - For research-style questions, share the evidence you have: candidate name, exact contract only if sourced, venue/pool, observable liquidity or holder signals, and what remains unknown. Label this a research snapshot, not a buy/sell call. End with the DYOR footer.
 - For "how do I check it?": use the exact chain-4663 contract on Blockscout; inspect verified code/privileged roles and holders; then inspect the specific DEX pool, liquidity depth, and swap simulation. Do not use an Ethereum or another-chain address by mistake.
@@ -227,6 +229,7 @@ Write as a trusted specialist: useful, exact, and candid about what the evidence
 
 const KNOWLEDGE_FOCUS = [
   { priority: 'high', pattern: /\b(latest|newest|recent|today|this week|current update|official update)\b/i, instruction: 'FOCUS: Treat this as a live update request. Lead with the newest evidence available, identify its source quality, distinguish announcement from availability, and state what is not yet confirmed.' },
+  { priority: 'research', pattern: /\bnoxa(?:\.fun)?\b/i, instruction: 'FOCUS: Answer directly: NOXA Fun is a community-operated multi-DEX token launchpad, not an official Robinhood product or endorsement. Explain that users can discover, launch, and trade community tokens there, but must verify the exact contract, pool liquidity, and owner controls before interacting. Never say NOXA is undocumented or unknown.' },
   { priority: 'research', pattern: /\b(launchpad|noxa|hoodfun|cashcat)\b/i, instruction: 'FOCUS: Treat this as ecosystem research. Name the platform only with available evidence, state official versus community-operated status plainly, and separate discovery from token-level verification.' },
   { pattern: /\b(contract|address|deploy|solidity|hardhat|foundry|rpc|chain id|wallet|gas)\b/i, instruction: 'FOCUS: Give exact network/developer facts first. Include chain ID or official contract/RPC details when relevant. Keep production caveats practical.' },
   { pattern: /\b(stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i, instruction: 'FOCUS: State whether the asset is canonical, explain the legal/economic structure directly, and include an exact contract only when it is in the curated baseline.' },

@@ -8,7 +8,7 @@
 - **Hosting:** Railway production service, sourced from `hoodwisexyz/hoodwise`.
 - **Health check:** `GET /api/health` configured through `railway.toml`.
 - **Persistence:** Railway volume mounted at `/data`; production database path is `/data/hoodwise.db`.
-- **Automated verification:** `npm test` - 57 passing tests at the last review.
+- **Automated verification:** `npm test` - 59 passing tests at the last review.
 
 ## Shipped
 

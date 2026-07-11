@@ -18,7 +18,7 @@ test('critical benchmark prompts receive topic-specific instructions and sources
   assert.match(getSystemPromptForQuestion(QUALITY_CASES[3].prompt), /FOCUS: Treat this as a live research request/);
   assert.match(getSystemPromptForQuestion(QUALITY_CASES[4].prompt), /FOCUS: Explain route, timing, trust model/);
   assert.match(getSystemPromptForQuestion(QUALITY_CASES[6].prompt), /FOCUS: Treat this as a live update request/);
-  assert.match(getSystemPromptForQuestion(QUALITY_CASES[10].prompt), /FOCUS: Treat this as ecosystem research/);
+  assert.match(getSystemPromptForQuestion(QUALITY_CASES[10].prompt), /FOCUS: Answer directly: NOXA Fun is a community-operated/);
   assert.ok(findSources('NVDA canonical contract 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC').length > 0);
 });
 test('memecoin research policy permits evidence-led research with a DYOR footer', () => {

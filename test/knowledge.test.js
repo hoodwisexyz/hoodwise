@@ -33,6 +33,11 @@ test('findSources matches memecoin-related keywords', () => {
   assert.ok(sources.length <= 3, 'should never return more than 3 sources');
 });
 
+test('findSources prioritizes NOXA Fun for a direct NOXA question', () => {
+  const [source] = findSources('Tell me about noxa.fun');
+  assert.equal(source.url, 'https://www.noxa.fun/');
+});
+
 test('findSources returns nothing for unrelated text', () => {
   const sources = findSources('This sentence has nothing to do with any known topic keyword.');
   assert.deepEqual(sources, []);
@@ -111,10 +116,10 @@ test('getSystemPromptForQuestion gives live memecoin research a direct evidence-
   assert.match(prompt, /Treat this as a live research request/);
   assert.match(prompt, /confirmed \(primary\/onchain evidence\), observed \(current market or listing evidence\), and unverified/);
 });
-test('findSources ranks primary and onchain evidence ahead of community discovery', () => {
+test('findSources prioritizes a direct NOXA source while retaining verification context', () => {
   const sources = findSources('noxa');
-  assert.ok(['primary', 'onchain'].includes(sources[0].sourceClass));
-  assert.ok(sources.some(source => source.sourceClass === 'community'));
+  assert.equal(sources[0].url, 'https://www.noxa.fun/');
+  assert.ok(sources.some(source => ['primary', 'onchain'].includes(source.sourceClass)));
 });
 
 test('summarizeSources never labels community discovery as primary documentation', () => {

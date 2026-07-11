@@ -16,3 +16,7 @@ test('chat briefing helper builds metadata without recursion', () => {
   const brief = chatRouter._test.buildBrief('Robinhood Chain uses ETH for gas.', [], [], null);
   assert.equal(brief.evidence, 'Curated source baseline');
 });
+test('chat source merging retains NOXA Fun for a direct launchpad question', () => {
+  const sources = chatRouter._test.mergeSources('Tell me about noxa.fun', 'NOXA Fun is community-operated.', [], null);
+  assert.ok(sources.some(source => source.url === 'https://www.noxa.fun/'));
+});
