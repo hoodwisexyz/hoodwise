@@ -41,6 +41,8 @@ test('isTrustedSearchUrl admits DEX research sources for memecoin snapshots', ()
   const { isTrustedSearchUrl } = require('../src/services/webSearchService');
   assert.equal(isTrustedSearchUrl('https://dexscreener.com/robinhood-chain/example'), true);
   assert.equal(isTrustedSearchUrl('https://www.geckoterminal.com/robinhood-chain/pools/example'), true);
+  assert.equal(isTrustedSearchUrl('https://www.noxa.fun/'), true);
+  assert.equal(isTrustedSearchUrl('https://app.virtuals.io/virtuals/68'), true);
 });
 test('isMemecoinResearchQuery targets DEX-backed research for memecoin questions', () => {
   const { isMemecoinResearchQuery } = require('../src/services/webSearchService');

@@ -3,8 +3,8 @@ const { config } = require('../config');
 const logger = require('../lib/logger');
 const metrics = require('./metricsService');
 
-const TRUSTED_SEARCH_HOSTS = new Set(['robinhood.com', 'docs.robinhood.com', 'investors.robinhood.com', 'arbitrum.io', 'chain.link', 'blockscout.com', 'dexscreener.com', 'geckoterminal.com', 'dextools.io', 'coingecko.com', 'coinmarketcap.com', 'coindesk.com', 'thedefiant.io']);
-const MEMECOIN_RESEARCH_DOMAINS = ['blockscout.com', 'dexscreener.com', 'geckoterminal.com', 'dextools.io', 'coingecko.com', 'coinmarketcap.com'];
+const TRUSTED_SEARCH_HOSTS = new Set(['robinhood.com', 'docs.robinhood.com', 'investors.robinhood.com', 'arbitrum.io', 'chain.link', 'blockscout.com', 'dexscreener.com', 'geckoterminal.com', 'dextools.io', 'coingecko.com', 'coinmarketcap.com', 'noxa.fun', 'noxa.fi', 'hoodchain.fun', 'virtuals.io', 'coindesk.com', 'thedefiant.io']);
+const MEMECOIN_RESEARCH_DOMAINS = ['blockscout.com', 'dexscreener.com', 'geckoterminal.com', 'dextools.io', 'coingecko.com', 'coinmarketcap.com', 'noxa.fun', 'noxa.fi', 'hoodchain.fun', 'virtuals.io'];
 function isTrustedSearchUrl(value) {
   try {
     const host = new URL(value).hostname.replace(/^www\./, '');
@@ -53,7 +53,7 @@ async function searchWeb(query, { requestId } = {}) {
       body: JSON.stringify({
         api_key: config.search.tavilyApiKey,
         query: memecoinResearch
-          ? 'Robinhood Chain memecoin token liquidity volume contract address'
+          ? 'Robinhood Chain memecoin launchpad token liquidity volume contract address NOXA Fun HoodFun Virtuals'
           : `Robinhood Chain ${query}`,
         search_depth: 'basic',
         max_results: config.search.maxResults,

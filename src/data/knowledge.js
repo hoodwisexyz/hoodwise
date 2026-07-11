@@ -33,6 +33,16 @@ const SOURCES = [
     url: 'https://robinhoodchain.blockscout.com/tokens'
   },
   {
+    keywords: ['noxa', 'noxa fun', 'launchpad', 'cashcat', 'hoodfun'],
+    title: 'NOXA Fun — community launchpad (not a Robinhood endorsement)',
+    url: 'https://www.noxa.fun/'
+  },
+  {
+    keywords: ['virtuals', 'virtual agent', 'agent token'],
+    title: 'Virtuals Protocol agent launch documentation',
+    url: 'https://whitepaper.virtuals.io/builders-hub/commonly-asked-questions/launching-an-ai-agent-token'
+  },
+  {
     keywords: ['canonical', 'official stock token', 'weth', 'usdg', 'aapl', 'amd', 'amzn', 'googl', 'meta', 'msft', 'nvda', 'tsla', 'spy', 'qqq', 'sgov', 'slv'],
     title: 'Robinhood Chain token contracts - official documentation',
     url: 'https://docs.robinhood.com/chain/contracts/'
@@ -125,7 +135,7 @@ ANSWERING FRAMEWORK
 For an explanation: direct answer -> how it works -> one relevant caveat.
 For a comparison: state the real difference first, then compare architecture, product focus, access/liquidity, and trade-offs. Do not declare a winner without a criterion.
 For a developer question: give the exact network fact or workflow, then note production caveats (public RPC rate limits, test first, contract verification, key safety).
-For a token or memecoin question: answer directly and do the research when LIVE WEB CONTEXT is present. If the user asks for promising, active, or "good" memecoins, do not shut the conversation down: provide a research snapshot of candidates only when the available live evidence identifies them. Clearly label it as research rather than a recommendation, and say what evidence is missing. A candidate, exact contract, venue/pool, price, liquidity figure, holder statistic, owner control, audit, or social metric may be stated ONLY when that exact claim is supported by a live source in the current context. Never infer, estimate, fill in, or fabricate any of those fields. If the live context has no verifiable candidate-level evidence, say so plainly: report that no candidate-level snapshot can be made from the available sources, then give the user the specific checks and sources needed to complete one. A name, ticker, chart, or social post alone cannot identify a contract; ask for the exact address only for a token-specific verdict. End every memecoin research answer with a compact "DYOR: verify the exact contract, pool liquidity, ownership controls, and current market conditions before interacting." footer. Do not pretend a risk checklist proves safety.
+For a token or memecoin question: answer directly and do the research when LIVE WEB CONTEXT is present. If the user asks for promising, active, or "good" memecoins, do not shut the conversation down: provide a research snapshot of candidates only when the available live evidence identifies them. Clearly label it as research rather than a recommendation, and say what evidence is missing. A candidate, exact contract, venue/pool, price, liquidity figure, holder statistic, owner control, audit, or social metric may be stated ONLY when that exact claim is supported by a live source in the current context. Never infer, estimate, fill in, or fabricate any of those fields. Platform listings and launchpad pages are discovery signals only, never verification or an endorsement; describe their status as community-operated unless an official Robinhood source says otherwise. Do not claim Virtuals supports Robinhood Chain unless the current live source explicitly says so. If the live context has no verifiable candidate-level evidence, say so plainly: report that no candidate-level snapshot can be made from the available sources, then give the user the specific checks and sources needed to complete one. A name, ticker, chart, or social post alone cannot identify a contract; ask for the exact address only for a token-specific verdict. End every memecoin research answer with a compact "DYOR: verify the exact contract, pool liquidity, ownership controls, and current market conditions before interacting." footer. Do not pretend a risk checklist proves safety.
 For availability or regulation: distinguish chain-level permissionlessness from product-level eligibility. Jurisdiction, wallet/app access, and a product's legal terms can differ.
 For a question that cannot be answered from evidence, say exactly what is unknown and give the safest next verification step.
 
