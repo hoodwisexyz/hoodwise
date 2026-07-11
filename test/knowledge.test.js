@@ -153,3 +153,13 @@ test('findSources prioritizes named launchpad sources for ecosystem questions', 
   assert.equal(findSources('Bankr launches tokens on Robinhood Chain through Doppler.')[0].url, 'https://docs.bankr.bot/faq/token-launching/');
   assert.equal(findSources('Virtuals agent token research on Robinhood Chain.')[0].url, 'https://whitepaper.virtuals.io/builders-hub/commonly-asked-questions/launching-an-ai-agent-token');
 });
+test('Hoodwise contract address is available in sources and prompt focus', () => {
+  const { getSystemPromptForQuestion } = require('../src/data/knowledge');
+  const address = '0x6bdb637a9e988835dc368ef72cb5d143540f037c';
+  const sources = findSources(`Tell me about the Hoodwise contract ${address}`);
+  assert.equal(sources[0].url, `https://robinhoodchain.blockscout.com/address/${address}`);
+  const prompt = getSystemPromptForQuestion('What is the Hoodwise token contract address?');
+  assert.match(prompt, /0x6bdb637a9e988835dc368ef72cb5d143540f037c/);
+  assert.match(prompt, /Virtuals\.io/);
+  assert.match(prompt, /not an official Robinhood asset/);
+});

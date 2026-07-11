@@ -53,6 +53,16 @@ const SOURCES = [
     url: 'https://whitepaper.virtuals.io/builders-hub/commonly-asked-questions/launching-an-ai-agent-token'
   },
   {
+    keywords: ['hoodwise token', 'hood wise token', 'hoodwise contract', 'hoodwise address', 'hwi', '0x6bdb637a9e988835dc368ef72cb5d143540f037c'],
+    title: 'Hoodwise token contract on Robinhood Chain explorer',
+    url: 'https://robinhoodchain.blockscout.com/address/0x6bdb637a9e988835dc368ef72cb5d143540f037c'
+  },
+  {
+    keywords: ['hoodwise virtuals', 'hood wise virtuals', 'hoodwise launchpad', 'virtuals launchpad'],
+    title: 'Virtuals Protocol launch app',
+    url: 'https://app.virtuals.io/'
+  },
+  {
     keywords: ['canonical', 'official stock token', 'weth', 'usdg', 'aapl', 'amd', 'amzn', 'googl', 'meta', 'msft', 'nvda', 'tsla', 'spy', 'qqq', 'sgov', 'slv'],
     title: 'Robinhood Chain token contracts - official documentation',
     url: 'https://docs.robinhood.com/chain/contracts/'
@@ -130,6 +140,7 @@ function sourcePriority(source, replyText) {
   const classWeight = { primary: 30, onchain: 20, secondary: 10, community: 5 }[sourceClass(source)] || 0;
   if (source.url.includes('noxa.fun') && /\bnoxa(?:\.fun)?\b/i.test(replyText)) return classWeight + 100;
   if (source.url.includes('bankr.bot') && /\bbankr\b/i.test(replyText)) return classWeight + 100;
+  if (source.url.includes('0x6bdb637a9e988835dc368ef72cb5d143540f037c') && /\b(hoodwise|hood wise|hwi|0x6bdb637a9e988835dc368ef72cb5d143540f037c)\b/i.test(replyText)) return classWeight + 150;
   if ((source.url.includes('virtuals.io') || source.url.includes('robain.org')) && /\bvirtuals\b/i.test(replyText)) return classWeight + 100;
   if ((source.url.includes('hood.fun') || source.url.includes('hoodchain.fun')) && /\bhood(?:\.fun|fun)\b/i.test(replyText)) return classWeight + 100;
   if (source.url.includes('/chain/contracts/') && (/\b0x[a-f0-9]{40}\b/i.test(replyText) || /\b(canonical|official stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i.test(replyText))) return classWeight + 20;
@@ -230,6 +241,7 @@ MEMECOINS AND COMMUNITY TOKENS
 - Bankr is an AI/agent terminal whose token-launching docs say launches are supported on Base and Robinhood Chain through Doppler. Treat Bankr as a Robinhood Chain-compatible community launch surface. A Bankr launch can still fail, display late, or be spoofed; verify the exact successful launch contract from Bankr/Doppler and Blockscout before relying on it.
 - hood.fun / HoodFun and similar community launchpads can be discovery surfaces for Robinhood Chain tokens when current evidence shows a listing or contract. Treat their listings as observed market/navigation data, not as official Robinhood endorsement.
 - Virtuals Protocol is an agent-token ecosystem. Do not claim a generic Virtuals token is on Robinhood Chain unless current evidence or onchain data connects the exact token/agent to Robinhood Chain. If a user asks about Virtuals in this context, answer the thesis and verification path directly rather than calling the topic unknown.
+- Hoodwise's project contract address is 0x6bdb637a9e988835dc368ef72cb5d143540f037c. It was supplied by the Hoodwise project owner as the Hoodwise launch contract on the Virtuals.io launchpad. Treat it as Hoodwise project context, not as an official Robinhood asset or endorsement. For any token-specific verdict, verify the exact address on Robinhood Chain Blockscout and check current liquidity, holders, ownership controls, and market conditions.
 - Answer direct questions: a memecoin is a freely deployed ERC-20 whose value/liquidity are market-driven; it is not a Stock Token and it does not convey equity in Robinhood. The key practical distinction is whether the contract and pool are independently verifiable.
 - For research-style questions, share the evidence you have: candidate name, exact contract only if sourced, venue/pool, observable liquidity or holder signals, and what remains unknown. Label this a research snapshot, not a buy/sell call. End with the DYOR footer.
 - For "how do I check it?": use the exact chain-4663 contract on Blockscout; inspect verified code/privileged roles and holders; then inspect the specific DEX pool, liquidity depth, and swap simulation. Do not use an Ethereum or another-chain address by mistake.
@@ -251,6 +263,7 @@ const KNOWLEDGE_FOCUS = [
   { priority: 'research', pattern: /\b(?:good|best|promising|active|trending|hot)\b[\s\S]{0,100}\bnoxa(?:\.fun)?\b|\bnoxa(?:\.fun)?\b[\s\S]{0,100}\b(?:good|best|promising|active|trending|hot|coin|token)\b/i, instruction: 'FOCUS: This is a NOXA candidate-research request. Do not refuse, do not call NOXA unconfirmed, and never start with â€œI cannot name a coinâ€ or â€œno specific token can be named.â€ Lead with a labelled research shortlist of NOXA-listed candidates from the LIVE WEB CONTEXT, using only the exact observed listing/rank/market data available there. If the RECENT NOXA DISCOVERY BASELINE is supplied instead, name its candidates as recent discovery starting points and explicitly say their current rank and metrics need a refresh. Explain in one line why each candidate is on the shortlist, then the specific missing verification. Never convert a shortlist into a personalized buy instruction or a promise of returns. End with the compact DYOR footer.' },
   { priority: 'research', pattern: /\bnoxa(?:\.fun)?\b/i, instruction: 'FOCUS: Answer directly: NOXA Fun is a community-operated multi-DEX token launchpad, not an official Robinhood product or endorsement. Explain that users can discover, launch, and trade community tokens there, but must verify the exact contract, pool liquidity, and owner controls before interacting. Never say NOXA is undocumented, unknown, or unconfirmed.' },
   { priority: 'research', pattern: /\b(launchpad|noxa|bankr|doppler|virtuals|hood\.fun|hoodfun|foragepad|cashcat)\b/i, instruction: 'FOCUS: Treat this as ecosystem research. Name the known platform or venue directly when it is in the ecosystem directory, state official versus community-operated status plainly, and separate discovery from token-level verification. Do not answer as if Bankr, NOXA, HoodFun, or Virtuals are unknown just because the exact candidate ranking needs current data.' },
+  { priority: 'high', pattern: /\b(hoodwise token|hood wise token|hoodwise contract|hoodwise address|hwi|0x6bdb637a9e988835dc368ef72cb5d143540f037c)\b/i, instruction: 'FOCUS: Answer directly that the Hoodwise project contract is 0x6bdb637a9e988835dc368ef72cb5d143540f037c and that the project owner supplied it as the Hoodwise launch contract on Virtuals.io. Make clear this is Hoodwise project context, not an official Robinhood asset. Give the practical verification path: Blockscout exact address, source verification, holders, liquidity/pool, ownership controls, and current market conditions.' },
   { pattern: /\b(contract|address|deploy|solidity|hardhat|foundry|rpc|chain id|wallet|gas)\b/i, instruction: 'FOCUS: Give exact network/developer facts first. Include chain ID or official contract/RPC details when relevant. Keep production caveats practical.' },
   { pattern: /\b(stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i, instruction: 'FOCUS: State whether the asset is canonical, explain the legal/economic structure directly, and include an exact contract only when it is in the curated baseline.' },
   { pattern: /\b(memecoin|meme coin|cashcat|noxa|liquidity|holder|rug|honeypot)\b/i, instruction: 'FOCUS: Answer the memecoin question directly. Separate a community deployment from an official Robinhood asset, distinguish evidence from narrative, and give the concrete contract/pool checks that matter.' },
