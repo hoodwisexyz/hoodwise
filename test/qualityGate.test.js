@@ -25,3 +25,7 @@ test('memecoin research policy permits evidence-led research with a DYOR footer'
 test('quality policy keeps source URLs in source chips instead of the answer body', () => {
   assert.match(SYSTEM_PROMPT, /Do not paste raw URLs or Markdown links/);
 });
+test('reasoning policy requires direct evidence-led answers without generic padding', () => {
+  assert.match(SYSTEM_PROMPT, /use this reasoning order/);
+  assert.match(SYSTEM_PROMPT, /Do not turn DYOR into a refusal/);
+});
