@@ -6,11 +6,13 @@ const path = require('path');
 const logger = require('./lib/logger');
 const requestId = require('./middleware/requestId');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const metrics = require('./services/metricsService');
 
 const healthRoutes = require('./routes/health');
 const conversationRoutes = require('./routes/conversations');
 const chatRoutes = require('./routes/chat');
 const contractRoutes = require('./routes/contracts');
+const opsRoutes = require('./routes/ops');
 
 function createApp() {
   const app = express();
@@ -46,6 +48,7 @@ function createApp() {
     const startedAt = process.hrtime.bigint();
     res.on('finish', () => {
       const durationMs = Number(process.hrtime.bigint() - startedAt) / 1e6;
+      metrics.recordRequest(req.path, res.statusCode, durationMs);
       logger.info('request', {
         requestId: req.requestId,
         method: req.method,
@@ -76,6 +79,7 @@ function createApp() {
   app.use('/api', conversationRoutes);
   app.use('/api', chatRoutes);
   app.use('/api', contractRoutes);
+  app.use('/api', opsRoutes);
 
   app.use('/api', notFoundHandler);
   app.use(errorHandler);

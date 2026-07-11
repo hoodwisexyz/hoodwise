@@ -28,6 +28,8 @@ const config = Object.freeze({
     maxRetries: toInt(process.env.OPENROUTER_MAX_RETRIES, 1)
   }),
 
+  ops: Object.freeze({ token: process.env.OPS_DASHBOARD_TOKEN || null }),
+
   db: Object.freeze({
     path: process.env.DB_PATH || null // resolved relative to project root by db.js if null
   }),

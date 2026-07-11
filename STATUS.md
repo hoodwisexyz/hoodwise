@@ -38,7 +38,7 @@
 ### Engineering quality
 
 - Node built-in test suite covering conversations, errors, identity sanitization, source matching, streaming safety, and search-trigger behavior.
-- GitHub Actions CI runs the test suite on supported Node versions.
+- GitHub Actions CI runs the test suite on supported Node versions.`n- Privacy-safe in-memory observability counters for chat/verifier requests, errors, average chat latency, and live-search usage; protected ops summary API is disabled unless `OPS_DASHBOARD_TOKEN` is configured.
 
 ## Current limitations
 

@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { config } = require('../config');
 const logger = require('../lib/logger');
+const metrics = require('./metricsService');
 
 const TRUSTED_SEARCH_HOSTS = new Set(['robinhood.com', 'docs.robinhood.com', 'investors.robinhood.com', 'arbitrum.io', 'chain.link', 'blockscout.com', 'coindesk.com', 'thedefiant.io']);
 function isTrustedSearchUrl(value) {
@@ -32,6 +33,7 @@ function looksTimeSensitive(message) {
  */
 async function searchWeb(query, { requestId } = {}) {
   if (!config.search.enabled) return { results: [], attempted: false };
+  metrics.record('liveSearches');
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), config.search.timeoutMs);

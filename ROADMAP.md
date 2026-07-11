@@ -19,7 +19,7 @@ This roadmap reflects the live product as of July 11, 2026. It is ordered by pro
    - Keep the existing rule: live web context supplements sources; it never becomes an unverified replacement for the baseline.
 
 3. **Production observation**
-   - Review Railway logs and error rate after releases.
+   - Review Railway logs and error rate after releases. Basic privacy-safe aggregate counters are now available behind the protected ops API; the next step is an owner-facing UI.
    - Define a simple incident checklist: health endpoint, provider error rate, stream fallback frequency, database volume status, and domain/SSL status.
 
 ## Next: make the product easier to use
