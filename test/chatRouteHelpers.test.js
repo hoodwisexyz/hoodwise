@@ -53,3 +53,23 @@ test('chat helper builds candidate context from live launchpad results', () => {
   assert.match(message.content, /LIVE CANDIDATE EXTRACTS/);
   assert.match(message.content, /Cash Cat \(CASHCAT\)/);
 });
+test('chat briefing preserves Hoodwise project context for contract cards', () => {
+  const brief = chatRouter._test.buildBrief('Hoodwise contract context.', [], [], {
+    address: '0x6bdb637a9e988835dc368ef72cb5d143540f037c',
+    classification: 'erc20',
+    canonical: null,
+    sourceCodeVerified: false,
+    sourceCodeVerificationAvailable: true,
+    proxyType: null,
+    tokenActivity: {},
+    dexPools: [],
+    explorerUrl: 'https://robinhoodchain.blockscout.com/address/0x6bdb637a9e988835dc368ef72cb5d143540f037c',
+    projectContext: {
+      name: 'Hoodwise',
+      venue: 'Virtuals.io launchpad',
+      framing: 'Hoodwise project contract supplied by the project owner'
+    }
+  });
+  assert.equal(brief.onchainScan.projectContext.name, 'Hoodwise');
+  assert.equal(brief.onchainScan.projectContext.venue, 'Virtuals.io launchpad');
+});

@@ -142,7 +142,7 @@ function recordQuality(question, reply, sources, usedLiveSearch, requestId) {
 function buildBrief(reply, sources, liveResults, onchainScan) {
   const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
   if (!onchainScan) return brief;
-  return { ...brief, onchainScan: { address: onchainScan.address, classification: onchainScan.classification, canonical: onchainScan.canonical, sourceCodeVerified: onchainScan.sourceCodeVerified, sourceCodeVerificationAvailable: onchainScan.sourceCodeVerificationAvailable, proxyType: onchainScan.proxyType, tokenActivity: onchainScan.tokenActivity, dexPools: onchainScan.dexPools || [], explorerUrl: onchainScan.explorerUrl } };
+  return { ...brief, onchainScan: { address: onchainScan.address, classification: onchainScan.classification, canonical: onchainScan.canonical, sourceCodeVerified: onchainScan.sourceCodeVerified, sourceCodeVerificationAvailable: onchainScan.sourceCodeVerificationAvailable, proxyType: onchainScan.proxyType, tokenActivity: onchainScan.tokenActivity, dexPools: onchainScan.dexPools || [], explorerUrl: onchainScan.explorerUrl, projectContext: onchainScan.projectContext } };
 }
 // ---------- Non-streaming (used by simple clients / fallback) ----------
 router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {

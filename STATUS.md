@@ -8,16 +8,16 @@
 - **Hosting:** Railway production service, sourced from `hoodwisexyz/hoodwise`.
 - **Health check:** `GET /api/health` configured through `railway.toml`.
 - **Persistence:** Railway volume mounted at `/data`; production database path is `/data/hoodwise.db`.
-- **Automated verification:** `npm test` - 75 passing tests at the last review.
+- **Automated verification:** `npm test` - 80 passing tests at the last review.
 
 ## Shipped
 
 ### Product and frontend
 
 - Premium marketing landing page with animated network/aurora surfaces, signal console, coverage deck, observatory, interactive Chain Intelligence Map, action-ready starter prompts, source-led product narrative, responsive navigation, and accessible motion fallbacks.
-- Clean URLs: `/`, `/app`, and `/app/c/<conversation-id>`; legacy `.html` URLs redirect to canonical routes.
+- Clean URLs: `/`, `/token`, `/app`, and `/app/c/<conversation-id>`; legacy `.html` URLs redirect to canonical routes.
 - Chat briefing interface with streaming replies, source chips, persistent evidence/contract/risk briefing cards, action-ready welcome lanes, suggested prompts, message copy, anonymous conversation history, mobile sidebar behavior, light/dark theme, character counter, keyboard support, and clear loading/interaction state.
-- Original Hoodwise logo mark, favicon, social preview banner, and brand assets.
+- Original Hoodwise logo mark, favicon, social preview banner, brand assets, and a shareable Hoodwise token/contract page with copy, Blockscout, and Ask Hoodwise actions.
 
 ### Backend and reliability
 
@@ -36,7 +36,7 @@
 - Cross-launchpad ecosystem intelligence for NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, and Virtuals-related Robinhood Chain research, with direct candidate handling when live evidence exists and explicit DYOR verification when it does not.
 - Live candidate extraction from search snippets for visible token names, tickers, contracts, and market-context terms, passed to the model as evidence-bound research context.
 - Tavily live-search layer is configured in production for time-sensitive questions, source merging, and prompt-injection-safe handling of fetched snippets.
-- Live contract intelligence for pasted addresses: RPC bytecode/metadata, official canonical-directory match, Blockscout source-verification status, explorer token activity, and indexed DEX-pool lookup when available.
+- Live contract intelligence for pasted addresses: RPC bytecode/metadata, official canonical-directory match, Blockscout source-verification status, explorer token activity, indexed DEX-pool lookup when available, and Hoodwise project-context framing for the Virtuals launch contract.
 
 ### Engineering quality
 

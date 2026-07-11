@@ -72,6 +72,7 @@ function createApp() {
   app.get('/guides/stock-tokens', (req, res) => res.sendFile(path.join(publicDir, 'guide-stock-tokens.html')));
   app.get('/guides/contract-safety', (req, res) => res.sendFile(path.join(publicDir, 'guide-contract-safety.html')));
   app.get('/guides', (req, res) => res.sendFile(path.join(publicDir, 'guides.html')));
+  app.get('/token', (req, res) => res.sendFile(path.join(publicDir, 'token.html')));
   app.get('/ops', (req, res) => res.sendFile(path.join(publicDir, 'ops.html')));
   app.get(['/app', '/app/', '/app/c/:conversationId'], (req, res) => {
     res.sendFile(path.join(publicDir, 'app.html'));

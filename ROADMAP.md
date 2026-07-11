@@ -10,6 +10,8 @@ This roadmap reflects the live product as of July 12, 2026. It is ordered by pro
 - **Privacy-safe quality observation:** aggregate answer-quality reviews and flags are available in the protected ops view without storing prompt or reply content.
 - **Lightweight knowledge routing:** developer, Stock Token, memecoin, launchpad, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
 - **Cross-launchpad research baseline:** Hoodwise now recognizes NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, and Virtuals-related Robinhood Chain questions as known ecosystem surfaces instead of generic unknowns.
+- **Hoodwise token page:** `/token` provides a clean public contract page with copy action, Blockscout link, Ask Hoodwise handoff, and project-context framing for the Virtuals launch address.
+
 ## Now: protect quality in production
 
 1. **Knowledge refresh cadence**

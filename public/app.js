@@ -242,7 +242,16 @@
       const scan = brief.onchainScan;
       const card = document.createElement('section');
       card.className = 'token-intelligence-card';
-      const title = document.createElement('div'); title.className = 'token-intelligence-head'; title.textContent = 'LIVE TOKEN INTELLIGENCE'; card.appendChild(title);
+      const title = document.createElement('div'); title.className = 'token-intelligence-head'; title.textContent = scan.projectContext ? 'HOODWISE PROJECT SIGNAL' : 'LIVE TOKEN INTELLIGENCE'; card.appendChild(title);
+      if (scan.projectContext) {
+        const project = document.createElement('div');
+        project.className = 'token-project-callout';
+        const projectName = document.createElement('b'); projectName.textContent = scan.projectContext.name || 'Hoodwise';
+        const projectMeta = document.createElement('span'); projectMeta.textContent = (scan.projectContext.venue || 'Virtuals.io launchpad') + ' - project-supplied contract context';
+        const projectFraming = document.createElement('p'); projectFraming.textContent = scan.projectContext.framing || 'Verify the exact address and current market state before interacting.';
+        project.append(projectName, projectMeta, projectFraming);
+        card.appendChild(project);
+      }
       const grid = document.createElement('div'); grid.className = 'token-intelligence-grid';
       const facts = [
         ['Status', scan.canonical ? 'Canonical asset' : scan.classification || 'Unknown'],
@@ -417,7 +426,7 @@
         <div class="welcome-eyebrow"><span></span> YOUR PRIVATE CHAIN BRIEFING</div>
         <h1>Start with the signal,<br><em>not the noise.</em></h1>
         <p>Ask a direct question, or use one of the briefing lanes below. Hoodwise stays focused on Robinhood Chain and always keeps risk in view.</p>
-        <div class="welcome-lanes"><button type="button" data-welcome-question="What are Stock Tokens and Robinhood Earn, in simple terms?"><b>01</b><span>Products<br><small>Stock Tokens · Earn</small></span><i>↗</i></button><button type="button" data-welcome-question="Explain the Robinhood Chain infrastructure: Orbit, Chainlink, and DeFi."><b>02</b><span>Infrastructure<br><small>Orbit · Chainlink · DeFi</small></span><i>↗</i></button><button type="button" data-welcome-question="What should I know about the Robinhood Chain ecosystem, memecoins, and risk?"><b>03</b><span>Ecosystem<br><small>Agents · memecoins · risk</small></span><i>↗</i></button></div>
+        <div class="welcome-lanes"><button type="button" data-welcome-question="What are Stock Tokens and Robinhood Earn, in simple terms?"><b>01</b><span>Products<br><small>Stock Tokens · Earn</small></span><i>↗</i></button><button type="button" data-welcome-question="Explain the Robinhood Chain infrastructure: Orbit, Chainlink, and DeFi."><b>02</b><span>Infrastructure<br><small>Orbit · Chainlink · DeFi</small></span><i>↗</i></button><button type="button" data-welcome-question="What should I know about the Robinhood Chain ecosystem, memecoins, and risk?"><b>03</b><span>Ecosystem<br><small>Agents · memecoins · risk</small></span><i>↗</i></button><button type="button" data-welcome-question="Tell me about the Hoodwise contract 0x6bdb637a9e988835dc368ef72cb5d143540f037c"><b>04</b><span>Hoodwise token<br><small>Virtuals - contract - DYOR</small></span><i>-></i></button></div>
       <div class="contract-verifier"><label for="contractAddress">VERIFY A CONTRACT</label><div><input id="contractAddress" placeholder="Paste a 0x address" maxlength="42"><button id="verifyContractBtn" type="button">Verify</button></div><p id="contractResult">Read-only onchain check · Chain ID 4663</p></div></section>`;
     const welcomeBubble = addMessage('bot', "I’m Hoodwise. Ask anything about Robinhood Chain — I’ll separate the structural facts, the current context, and the risks that matter.");
     welcomeBubble.closest('.row').dataset.welcomeMessage = 'true';

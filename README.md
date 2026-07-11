@@ -6,13 +6,14 @@
 
 <p align="center">
   Hoodwise is an independent, source-grounded guide to Robinhood Chain.<br />
-  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â with live source and onchain context when it helps.
+  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers - with live source and onchain context when it helps.
 </p>
 
 <p align="center">
-  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> Ãƒâ€šÃ‚Â·
-  <a href="./CONTEXT.md"><strong>Product context</strong></a> Ãƒâ€šÃ‚Â·
-  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â·
+  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> |
+  <a href="https://hoodwise.xyz/token"><strong>Token page</strong></a> |
+  <a href="./CONTEXT.md"><strong>Product context</strong></a> |
+  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> |
   <a href="./CONTENT.md"><strong>Content kit</strong></a>
 </p>
 
@@ -41,13 +42,13 @@ Hoodwise is built for the question behind the headline: what is confirmed, how d
 
 Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 
-- Clean public routes: `/`, `/app`, and `/app/c/<conversation-id>`.
+- Clean public routes: `/`, `/token`, `/app`, and `/app/c/<conversation-id>`.
 - Health check: `/api/health`.
 - Persistent SQLite volume mounted at `/data` in production.
 - Streaming chat with a completion fallback if an upstream stream closes early.
 - Landing starter prompts hand off into the composer, and chat briefing lanes launch real questions directly.
-- Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, and indexed DEX pools when available.
-- Automated test suite: `npm test` (75 passing tests at the latest stabilization review).
+- Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, indexed DEX pools when available, and a Hoodwise project callout for the Virtuals launch contract `0x6bdb637a9e988835dc368ef72cb5d143540f037c`.
+- Automated test suite: `npm test` (80 passing tests at the latest stabilization review).
 
 For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 

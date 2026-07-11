@@ -1,4 +1,6 @@
 (function () {
+  const motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // ---------- Launch sequence ----------
   const bootSequence = document.getElementById('bootSequence');
   if (bootSequence) {
@@ -234,6 +236,25 @@
       window.history.replaceState({}, '', window.location.pathname + window.location.search);
     });
   }
+
+  // ---------- Contract copy buttons ----------
+  document.querySelectorAll('[data-copy-contract]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const value = button.dataset.copyContract;
+      const original = button.textContent;
+      try {
+        await navigator.clipboard.writeText(value);
+        button.textContent = 'Copied';
+        button.classList.add('is-copied');
+      } catch (error) {
+        button.textContent = 'Copy failed';
+      }
+      window.setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('is-copied');
+      }, 1500);
+    });
+  });
   // ---------- Smooth page transition on internal navigation ----------
   const pageTransition = document.getElementById('pageTransition');
   if (pageTransition) {
@@ -312,7 +333,6 @@
   }
 
   // ---------- Product-surface motion ----------
-  const motionAllowed = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const consoleSurface = document.querySelector('.signal-console');
   if (motionAllowed && consoleSurface) {
     consoleSurface.addEventListener('pointermove', (event) => {

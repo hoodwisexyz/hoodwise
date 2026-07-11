@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://hoodwise.xyz/</loc></url>
+  <url><loc>https://hoodwise.xyz/token</loc></url>
   <url><loc>https://hoodwise.xyz/guides</loc></url>
   <url><loc>https://hoodwise.xyz/guides/stock-tokens</loc></url>
   <url><loc>https://hoodwise.xyz/guides/contract-safety</loc></url>
