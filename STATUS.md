@@ -8,7 +8,7 @@
 - **Hosting:** Railway production service, sourced from `hoodwisexyz/hoodwise`.
 - **Health check:** `GET /api/health` configured through `railway.toml`.
 - **Persistence:** Railway volume mounted at `/data`; production database path is `/data/hoodwise.db`.
-- **Automated verification:** `npm test` - 25 passing tests at the last review.
+- **Automated verification:** `npm test` - 47 passing tests at the last review.
 
 ## Shipped
 
@@ -33,19 +33,19 @@
 - Canonical contract references for WETH, USDG, key Stock Tokens, and tokenized ETFs.
 - Direct-answer prompt rules: factual answer first, then only the caveat that changes it.
 - Memecoin/community-token handling that answers the question while distinguishing unofficial deployments from canonical Robinhood assets.
-- Optional Tavily live-search layer for time-sensitive questions, source merging, and prompt-injection-safe handling of fetched snippets.
+- Tavily live-search layer is configured in production for time-sensitive questions, source merging, and prompt-injection-safe handling of fetched snippets.`r`n- Live contract intelligence for pasted addresses: RPC bytecode/metadata, official canonical-directory match, Blockscout source-verification status, explorer token activity, and indexed DEX-pool lookup when available.
 
 ### Engineering quality
 
 - Node built-in test suite covering conversations, errors, identity sanitization, source matching, streaming safety, and search-trigger behavior.
-- GitHub Actions CI runs the test suite on supported Node versions.`n- Privacy-safe in-memory observability counters for chat/verifier requests, errors, average chat latency, and live-search usage; protected ops summary API is disabled unless `OPS_DASHBOARD_TOKEN` is configured.
+- GitHub Actions CI runs the test suite on supported Node versions.`r`n- Privacy-safe in-memory observability counters for chat/verifier requests, errors, average chat latency, and live-search usage; protected ops summary API is disabled unless `OPS_DASHBOARD_TOKEN` is configured.
 
 ## Current limitations
 
-- **Tavily is not configured in production.** The live-search code is ready, but no `TAVILY_API_KEY` is currently set; changing facts therefore rely on the curated baseline unless this is enabled.
-- **No structured onchain/market feed.** Hoodwise does not provide guaranteed real-time prices, liquidity, holders, TVL, status, or token safety scores.
+- **Live sources remain supplemental.** Tavily and explorer/DEX results can be unavailable, delayed, incomplete, or inconsistent; Hoodwise labels missing evidence rather than inventing it.
+- **No guaranteed market feed.** Explorer and DEX snapshots are informational, may be unavailable, and never establish safety or a trading recommendation.
 - **No accounts.** Clearing browser storage loses the local session identifier; server-side history can no longer be reopened from that browser.
-- **No analytics or operations dashboard.** Railway logs are available, but there is no first-party product/usage dashboard.
+- **Aggregate-only operations dashboard.** `/ops` is protected by `OPS_DASHBOARD_TOKEN`; it exposes service aggregates, never prompts or user message content.
 - **`www.hoodwise.xyz` is not configured as an additional Railway custom domain.** The canonical production URL is `https://hoodwise.xyz`.
 
 ## Explicit non-goals

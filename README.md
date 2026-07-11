@@ -33,7 +33,7 @@ Hoodwise is built for the question behind the headline: what is confirmed, how d
 
 - **Direct, not vague.** The answer comes first; caveats explain what changes that answer.
 - **Source-grounded.** Curated official documentation is the baseline. Relevant replies include source links.
-- **Current when configured.** An optional Tavily layer can add live context for changing questions; it never replaces the curated baseline.
+- **Current when needed.** Tavily and onchain/explorer checks can add live evidence for changing questions; neither replaces the curated baseline.
 - **Private by default.** No login or wallet connection. Conversation history belongs to an anonymous browser session and is stored on the production volume.
 
 ## Production status
@@ -43,8 +43,8 @@ Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 - Clean public routes: `/`, `/app`, and `/app/c/<conversation-id>`.
 - Health check: `/api/health`.
 - Persistent SQLite volume mounted at `/data` in production.
-- Streaming chat with a completion fallback if an upstream stream closes early.
-- Automated test suite: `npm test` (currently 25 tests).
+- Streaming chat with a completion fallback if an upstream stream closes early.`r`n- Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, and indexed DEX pools when available.
+- Automated test suite: `npm test` (47 tests at the latest stabilization review).
 
 For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 
