@@ -4,18 +4,18 @@ const { UpstreamServiceError, BadRequestError } = require('../lib/errors');
 const RPC_URL = 'https://rpc.mainnet.chain.robinhood.com';
 const EXPLORER = 'https://robinhoodchain.blockscout.com/address/';
 const ADDRESS = /^0x[a-fA-F0-9]{40}$/;
-async function rpc(method, params) {
-  const response = await fetch(RPC_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) });
-  if (!response.ok) throw new UpstreamServiceError('The Robinhood Chain verifier is temporarily unavailable.');
-  const body = await response.json();
-  if (body.error) throw new UpstreamServiceError('The Robinhood Chain verifier could not read that address.');
-  return body.result;
-}
+const SELECTORS = { name: '0x06fdde03', symbol: '0x95d89b41', decimals: '0x313ce567', owner: '0x8da5cb5b' };
+async function rpc(method, params) { const response = await fetch(RPC_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) }); if (!response.ok) throw new UpstreamServiceError('The Robinhood Chain verifier is temporarily unavailable.'); const body = await response.json(); if (body.error) throw new UpstreamServiceError('The Robinhood Chain verifier could not read that address.'); return body.result; }
+function decodeString(value) { if (!value || value === '0x') return null; const hex = value.slice(2); try { const offset = parseInt(hex.slice(0, 64), 16) * 2; const length = parseInt(hex.slice(offset, offset + 64), 16) * 2; if (Number.isFinite(length) && length >= 0 && offset + 64 + length <= hex.length) return Buffer.from(hex.slice(offset + 64, offset + 64 + length), 'hex').toString('utf8').replace(/\0/g, '') || null; return Buffer.from(hex.slice(0, 64), 'hex').toString('utf8').replace(/\0/g, '') || null; } catch { return null; } }
+function decodeUint(value) { return value && value !== '0x' ? parseInt(value, 16) : null; }
+function decodeAddress(value) { return value && /^0x[0-9a-f]{64}$/i.test(value) ? '0x' + value.slice(-40) : null; }
+async function readCall(address, selector) { try { return await rpc('eth_call', [{ to: address, data: selector }, 'latest']); } catch { return null; } }
 async function verifyContract(address) {
   if (!ADDRESS.test(address || '')) throw new BadRequestError('Enter a valid 0x contract address.');
   const normalized = address.toLowerCase();
   const [chainId, code] = await Promise.all([rpc('eth_chainId', []), rpc('eth_getCode', [address, 'latest'])]);
-  const canonical = getCanonicalAsset(normalized);
-  return { address, chainId: parseInt(chainId, 16), isContract: Boolean(code && code !== '0x'), canonical: canonical ? { ...canonical, official: true } : null, classification: canonical ? 'canonical' : (code && code !== '0x' ? 'community-or-unverified' : 'not-a-contract'), explorerUrl: EXPLORER + address, verificationNote: canonical ? 'Matches the official Robinhood Chain token-contract directory.' : 'This check cannot establish safety or endorsement. Review code, ownership, liquidity, and the exact pool.' };
+  const isContract = Boolean(code && code !== '0x'); const canonical = getCanonicalAsset(normalized);
+  const [nameRaw, symbolRaw, decimalsRaw, ownerRaw] = isContract ? await Promise.all([readCall(address, SELECTORS.name), readCall(address, SELECTORS.symbol), readCall(address, SELECTORS.decimals), readCall(address, SELECTORS.owner)]) : [null, null, null, null];
+  return { address, chainId: parseInt(chainId, 16), isContract, canonical: canonical ? { ...canonical, official: true } : null, classification: canonical ? 'canonical' : (isContract ? 'community-or-unverified' : 'not-a-contract'), explorerUrl: EXPLORER + address, bytecodeBytes: isContract ? Math.max(0, (code.length - 2) / 2) : 0, metadata: { name: decodeString(nameRaw), symbol: decodeString(symbolRaw), decimals: decodeUint(decimalsRaw), owner: decodeAddress(ownerRaw) }, verificationNote: canonical ? 'Matches the official Robinhood Chain token-contract directory.' : 'This check cannot establish safety or endorsement. Review verified code, ownership, liquidity, and the exact pool.' };
 }
-module.exports = { verifyContract };
+module.exports = { verifyContract, decodeString, decodeUint, decodeAddress };

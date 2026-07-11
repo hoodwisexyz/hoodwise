@@ -350,7 +350,10 @@
         const response = await fetch('/api/contracts/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId, address: verifyInput.value.trim() }) });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
-        verifyResult.innerHTML = data.canonical ? '<b>Canonical ' + data.canonical.symbol + '</b> · ' + data.canonical.type : (data.isContract ? '<b>Contract found</b> · community or unverified' : '<b>Not a contract</b>');
+        const status = data.canonical ? '<b>Canonical ' + data.canonical.symbol + '</b> · ' + data.canonical.type : (data.isContract ? '<b>Contract found</b> · community or unverified' : '<b>Not a contract</b>');
+        const meta = data.metadata || {};
+        const fields = [meta.name && 'Name: ' + meta.name, meta.symbol && 'Symbol: ' + meta.symbol, Number.isInteger(meta.decimals) && 'Decimals: ' + meta.decimals, data.isContract && 'Bytecode: ' + data.bytecodeBytes + ' bytes', meta.owner && 'Owner: ' + meta.owner.slice(0, 8) + '…' + meta.owner.slice(-6)].filter(Boolean);
+        verifyResult.innerHTML = status + (fields.length ? '<br><span>' + fields.join(' · ') + '</span>' : '') + '<br><a href=\'' + data.explorerUrl + '\' target=\'_blank\' rel=\'noopener noreferrer\'>View in explorer ↗</a>';
       } catch (error) { verifyResult.textContent = error.message || 'Could not verify this address.'; }
     });
   }
