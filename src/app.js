@@ -69,6 +69,7 @@ function createApp() {
   app.get('/favicon.ico', (req, res) => {
     res.type('image/svg+xml').sendFile(path.join(publicDir, 'hoodwise-mark.svg'));
   });
+  app.get('/ops', (req, res) => res.sendFile(path.join(publicDir, 'ops.html')));
   app.get(['/app', '/app/', '/app/c/:conversationId'], (req, res) => {
     res.sendFile(path.join(publicDir, 'app.html'));
   });
