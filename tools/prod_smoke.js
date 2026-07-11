@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const https = require('https');
 
 const BASE_URL = (process.env.HOODWISE_SMOKE_URL || process.env.PUBLIC_APP_URL || 'https://hoodwise.xyz').replace(/\/$/, '');
 const LIMIT_ARG = process.argv.find(arg => arg.startsWith('--limit='));
@@ -48,21 +48,44 @@ function assertCase(testCase, response) {
   return failures;
 }
 
+function postJson(url, payload) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(payload);
+    const target = new URL(url);
+    const req = https.request({
+      method: 'POST',
+      hostname: target.hostname,
+      path: `${target.pathname}${target.search}`,
+      port: target.port || 443,
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+        'Connection': 'close'
+      },
+      timeout: 90000
+    }, (res) => {
+      let text = '';
+      res.setEncoding('utf8');
+      res.on('data', chunk => { text += chunk; });
+      res.on('end', () => resolve({ status: res.statusCode, text }));
+      res.on('error', reject);
+    });
+    req.on('timeout', () => req.destroy(new Error('request timed out')));
+    req.on('error', reject);
+    req.end(body);
+  });
+}
+
 async function runCase(testCase, index) {
   const body = {
     sessionId: `${RUN_ID}-${index}`,
     message: testCase.prompt
   };
-  const response = await fetch(`${BASE_URL}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  const text = await response.text();
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${text.slice(0, 300)}`);
+  const response = await postJson(`${BASE_URL}/api/chat`, body);
+  if (response.status < 200 || response.status >= 300) {
+    throw new Error(`HTTP ${response.status}: ${response.text.slice(0, 300)}`);
   }
-  const json = JSON.parse(text);
+  const json = JSON.parse(response.text);
   return { json, failures: assertCase(testCase, json) };
 }
 
