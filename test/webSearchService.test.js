@@ -37,3 +37,8 @@ test('isTrustedSearchUrl excludes low-signal sources from live context', () => {
   assert.equal(isTrustedSearchUrl('https://www.youtube.com/watch?v=test'), false);
   assert.equal(isTrustedSearchUrl('not a url'), false);
 });
+test('isTrustedSearchUrl admits DEX research sources for memecoin snapshots', () => {
+  const { isTrustedSearchUrl } = require('../src/services/webSearchService');
+  assert.equal(isTrustedSearchUrl('https://dexscreener.com/robinhood-chain/example'), true);
+  assert.equal(isTrustedSearchUrl('https://www.geckoterminal.com/robinhood-chain/pools/example'), true);
+});

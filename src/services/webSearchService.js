@@ -3,7 +3,7 @@ const { config } = require('../config');
 const logger = require('../lib/logger');
 const metrics = require('./metricsService');
 
-const TRUSTED_SEARCH_HOSTS = new Set(['robinhood.com', 'docs.robinhood.com', 'investors.robinhood.com', 'arbitrum.io', 'chain.link', 'blockscout.com', 'coindesk.com', 'thedefiant.io']);
+const TRUSTED_SEARCH_HOSTS = new Set(['robinhood.com', 'docs.robinhood.com', 'investors.robinhood.com', 'arbitrum.io', 'chain.link', 'blockscout.com', 'dexscreener.com', 'geckoterminal.com', 'dextools.io', 'coindesk.com', 'thedefiant.io']);
 function isTrustedSearchUrl(value) {
   try {
     const host = new URL(value).hostname.replace(/^www\./, '');
