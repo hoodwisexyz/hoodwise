@@ -89,6 +89,11 @@ function mergeSources(reply, liveResults, onchainScan) {
     .slice(0, 4);
 }
 
+function buildBrief(reply, sources, liveResults, onchainScan) {
+  const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
+  if (!onchainScan) return brief;
+  return { ...brief, onchainScan: { address: onchainScan.address, classification: onchainScan.classification, canonical: onchainScan.canonical, sourceCodeVerified: onchainScan.sourceCodeVerified, sourceCodeVerificationAvailable: onchainScan.sourceCodeVerificationAvailable, proxyType: onchainScan.proxyType, tokenActivity: onchainScan.tokenActivity, explorerUrl: onchainScan.explorerUrl } };
+}
 // ---------- Non-streaming (used by simple clients / fallback) ----------
 router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
   const { conversationId, message, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
@@ -158,7 +163,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
     }
 
     const sources = mergeSources(fullReply, liveResults, onchainScan);
-    const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0 || Boolean(onchainScan));
+    const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
     conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
@@ -193,7 +198,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       send('token', { text: separator + fallbackText });
 
       const sources = mergeSources(fullReply, liveResults, onchainScan);
-      const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0 || Boolean(onchainScan));
+      const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
       conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {

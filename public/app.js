@@ -235,7 +235,25 @@
     const panel = document.createElement('section');
     panel.className = 'briefing-meta';
     panel.innerHTML = `<div class="briefing-meta-head"><span>BRIEFING SIGNAL</span><b>${brief.evidence}</b></div>`;
-    if (brief.contracts && brief.contracts.length) {
+    if (brief.onchainScan) {
+      const scan = brief.onchainScan;
+      const card = document.createElement('section');
+      card.className = 'token-intelligence-card';
+      const title = document.createElement('div'); title.className = 'token-intelligence-head'; title.textContent = 'LIVE TOKEN INTELLIGENCE'; card.appendChild(title);
+      const grid = document.createElement('div'); grid.className = 'token-intelligence-grid';
+      const facts = [
+        ['Status', scan.canonical ? 'Canonical asset' : scan.classification || 'Unknown'],
+        ['Source code', scan.sourceCodeVerificationAvailable ? (scan.sourceCodeVerified ? 'Verified' : 'Not verified') : 'Unavailable'],
+        ['Proxy', scan.proxyType || 'None detected'],
+        ['Holders', scan.tokenActivity?.holders || 'Unavailable'],
+        ['24h volume', scan.tokenActivity?.volume24h || 'Unavailable'],
+        ['Market cap', scan.tokenActivity?.circulatingMarketCap || 'Unavailable']
+      ];
+      facts.forEach(([label, value]) => { const item = document.createElement('div'); const key = document.createElement('span'); key.textContent = label; const val = document.createElement('b'); val.textContent = value; item.append(key, val); grid.appendChild(item); });
+      card.appendChild(grid);
+      const link = document.createElement('a'); link.href = scan.explorerUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Open live explorer record ↗'; card.appendChild(link);
+      panel.appendChild(card);
+    }    if (brief.contracts && brief.contracts.length) {
       const contract = document.createElement('button');
       contract.className = 'briefing-contract';
       contract.type = 'button';
