@@ -9,6 +9,7 @@ const { BadRequestError } = require('../lib/errors');
 const conversations = require('../services/conversationService');
 const { callChatModel, streamChatModel } = require('../services/openrouterService');
 const { searchWeb, looksTimeSensitive } = require('../services/webSearchService');
+const { scanContractInMessage, buildOnchainContextMessage, scanSource } = require('../services/onchainScanService');
 const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
 const logger = require('../lib/logger');
@@ -63,29 +64,34 @@ async function prepareTurn(req) {
     .getRecentHistory(conversationId, config.chat.maxHistoryMessages)
     .map(m => ({ role: m.role, content: m.content }));
 
-  let liveResults = [];
-  if (config.search.enabled && looksTimeSensitive(message)) {
-    const { results } = await searchWeb(message, { requestId: req.requestId });
-    liveResults = results;
-  }
+  const searchPromise = config.search.enabled && looksTimeSensitive(message)
+    ? searchWeb(message, { requestId: req.requestId })
+    : Promise.resolve({ results: [] });
+  const [search, onchainScan] = await Promise.all([
+    searchPromise,
+    scanContractInMessage(message, { requestId: req.requestId })
+  ]);
+  const liveResults = search.results;
   const liveContextMessage = buildLiveContextMessage(liveResults);
-  const messagesForModel = liveContextMessage ? [...history, liveContextMessage] : history;
+  const onchainContextMessage = buildOnchainContextMessage(onchainScan);
+  const messagesForModel = [...history, liveContextMessage, onchainContextMessage].filter(Boolean);
 
-  return { conversationId, message, messagesForModel, liveResults };
+  return { conversationId, message, messagesForModel, liveResults, onchainScan };
 }
 
-function mergeSources(reply, liveResults) {
+function mergeSources(reply, liveResults, onchainScan) {
   const curatedSources = findSources(reply);
   const liveSources = liveResults.map(r => ({ title: r.title, url: r.url }));
+  const onchainSource = scanSource(onchainScan);
   const seenUrls = new Set();
-  return [...liveSources, ...curatedSources]
+  return [...(onchainSource ? [onchainSource] : []), ...liveSources, ...curatedSources]
     .filter(s => (seenUrls.has(s.url) ? false : (seenUrls.add(s.url), true)))
     .slice(0, 4);
 }
 
 // ---------- Non-streaming (used by simple clients / fallback) ----------
 router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
-  const { conversationId, message, messagesForModel, liveResults } = await prepareTurn(req);
+  const { conversationId, message, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
 
   const rawReply = await callChatModel({
     systemPrompt: getSystemPromptForQuestion(message),
@@ -93,8 +99,8 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
     requestId: req.requestId
   });
   const reply = sanitizeReply(rawReply);
-  const sources = mergeSources(reply, liveResults);
-  const brief = buildBriefingMeta(reply, sources, liveResults.length > 0);
+  const sources = mergeSources(reply, liveResults, onchainScan);
+  const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
 
   conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
   conversations.touchConversation(conversationId);
@@ -108,7 +114,7 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
 
 // ---------- Streaming (used by the Hoodwise web app for the live-typing feel) ----------
 router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
-  const { conversationId, message, messagesForModel, liveResults } = await prepareTurn(req);
+  const { conversationId, message, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -151,8 +157,8 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       send('token', { text: remainder });
     }
 
-    const sources = mergeSources(fullReply, liveResults);
-    const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0);
+    const sources = mergeSources(fullReply, liveResults, onchainScan);
+    const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0 || Boolean(onchainScan));
     conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
@@ -186,8 +192,8 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       fullReply += separator + fallbackText;
       send('token', { text: separator + fallbackText });
 
-      const sources = mergeSources(fullReply, liveResults);
-      const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0);
+      const sources = mergeSources(fullReply, liveResults, onchainScan);
+      const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0 || Boolean(onchainScan));
       conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {
