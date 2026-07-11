@@ -94,18 +94,20 @@ function createStreamingSanitizer() {
   };
 }
 
+function sourcePriority(source, replyText) {
+  if (source.url.includes('/chain/contracts/') && (/\b0x[a-f0-9]{40}\b/i.test(replyText) || /\b(canonical|official stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i.test(replyText))) return 20;
+  if (source.url.includes('docs.robinhood.com')) return 8;
+  return 0;
+}
 function findSources(replyText) {
   const lower = replyText.toLowerCase();
-  const matched = [];
   const seenUrls = new Set();
-  for (const source of SOURCES) {
-    if (matched.length >= 3) break;
-    if (source.keywords.some(keyword => lower.includes(keyword)) && !seenUrls.has(source.url)) {
-      matched.push({ title: source.title, url: source.url });
-      seenUrls.add(source.url);
-    }
-  }
-  return matched;
+  return SOURCES
+    .filter(source => source.keywords.some(keyword => lower.includes(keyword)))
+    .sort((a, b) => sourcePriority(b, replyText) - sourcePriority(a, replyText))
+    .filter(source => (seenUrls.has(source.url) ? false : (seenUrls.add(source.url), true)))
+    .slice(0, 3)
+    .map(source => ({ title: source.title, url: source.url }));
 }
 
 const SYSTEM_PROMPT = `You are Hoodwise, the specialist explainer for Robinhood Chain. Your job is to make people genuinely understand the chain: what is confirmed, how it works, what it does not imply, and what risks or limits matter. Stay strictly in scope: Robinhood Chain, its ecosystem, related Robinhood onchain products, and necessary comparisons. Always answer in English.

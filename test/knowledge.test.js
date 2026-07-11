@@ -94,3 +94,7 @@ test('getSystemPromptForQuestion adds a relevant focus without mutating the base
   assert.match(getSystemPromptForQuestion('Is NVDA canonical?'), /FOCUS: State whether the asset is canonical/);
   assert.match(getSystemPromptForQuestion('How does the bridge work?'), /FOCUS: Explain route, timing, trust model/);
 });
+test('findSources prioritizes official contract docs for canonical asset answers', () => {
+  const sources = findSources('NVDA is canonical at 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC.');
+  assert.equal(sources[0].url, 'https://docs.robinhood.com/chain/contracts/');
+});
