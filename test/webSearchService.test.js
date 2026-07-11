@@ -42,3 +42,8 @@ test('isTrustedSearchUrl admits DEX research sources for memecoin snapshots', ()
   assert.equal(isTrustedSearchUrl('https://dexscreener.com/robinhood-chain/example'), true);
   assert.equal(isTrustedSearchUrl('https://www.geckoterminal.com/robinhood-chain/pools/example'), true);
 });
+test('isMemecoinResearchQuery targets DEX-backed research for memecoin questions', () => {
+  const { isMemecoinResearchQuery } = require('../src/services/webSearchService');
+  assert.equal(isMemecoinResearchQuery('Which memecoin has the most liquidity on Robinhood Chain?'), true);
+  assert.equal(isMemecoinResearchQuery('How does Robinhood Chain settle transactions?'), false);
+});
