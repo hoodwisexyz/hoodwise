@@ -1,0 +1,19 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { QUALITY_CASES } = require('./qualityFixtures');
+const { SYSTEM_PROMPT, getSystemPromptForQuestion, findSources } = require('../src/data/knowledge');
+
+test('quality benchmark covers each critical Hoodwise answer domain', () => {
+  assert.deepEqual(QUALITY_CASES.map(item => item.id), ['canonical-nvda', 'memecoin-boundary', 'bridge-mechanics', 'earn-risk', 'latest-update', 'base-comparison']);
+});
+test('quality gate requires directness, source weighting, and no personalized advice', () => {
+  assert.match(SYSTEM_PROMPT, /CLARITY RULE/);
+  assert.match(SYSTEM_PROMPT, /official docs\/newsroom first/);
+  assert.match(SYSTEM_PROMPT, /Do not give personalized financial/);
+});
+test('critical benchmark prompts receive topic-specific instructions and sources', () => {
+  assert.match(getSystemPromptForQuestion(QUALITY_CASES[0].prompt), /FOCUS: State whether the asset is canonical/);
+  assert.match(getSystemPromptForQuestion(QUALITY_CASES[1].prompt), /FOCUS: Answer the memecoin question directly/);
+  assert.match(getSystemPromptForQuestion(QUALITY_CASES[2].prompt), /FOCUS: Explain route, timing, trust model/);
+  assert.ok(findSources('NVDA canonical contract 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC').length > 0);
+});
