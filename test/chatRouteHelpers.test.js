@@ -40,6 +40,12 @@ test('ecosystem fallback keeps Virtuals research direct without inventing candid
   assert.match(fallback.content, /do not call the topic unknown/);
   assert.match(fallback.content, /Never fabricate a ticker/);
 });
+
+test('ecosystem fallback requires DYOR footer for launchpad candidate gaps', () => {
+  const fallback = chatRouter._test.buildEcosystemDiscoveryFallback('Pick a hood.fun token to research on Robinhood Chain', []);
+  assert.match(fallback.content, /hood\.fun \/ HoodFun/);
+  assert.match(fallback.content, /End the answer with this exact compact footer: DYOR/);
+});
 test('chat helper builds candidate context from live launchpad results', () => {
   const message = chatRouter._test.buildCandidateContextFromResults([
     { title: 'NOXA trending', url: 'https://www.noxa.fun/', snippet: 'Cash Cat (CASHCAT) volume $18k.' }

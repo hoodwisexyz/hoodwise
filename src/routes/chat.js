@@ -69,7 +69,7 @@ function buildEcosystemDiscoveryFallback(message, liveResults) {
   }
   return {
     role: 'system',
-    content: `RECENT ECOSYSTEM RESEARCH FALLBACK (not live market data): The user asked for a candidate from ${venue}. ${detail} If no candidate-level result is available in this turn, say that the current ranking could not be verified and explain the exact refresh check—but do not describe the platform as unknown and do not refuse the research question. Never fabricate a ticker, contract, price, liquidity, or return.`
+    content: `RECENT ECOSYSTEM RESEARCH FALLBACK (not live market data): The user asked for a candidate from ${venue}. ${detail} If no candidate-level result is available in this turn, say that the current ranking could not be verified and explain the exact refresh check—but do not describe the platform as unknown and do not refuse the research question. End the answer with this exact compact footer: DYOR: verify the exact contract, pool liquidity, ownership controls, and current market conditions before interacting. Never fabricate a ticker, contract, price, liquidity, or return.`
   };
 }
 function buildNoxaDiscoveryFallback(message, liveResults) {
