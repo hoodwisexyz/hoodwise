@@ -29,8 +29,9 @@ test('onchain context frames Hoodwise contract without risk-alarm tone', () => {
     explorerUrl: 'https://robinhoodchain.blockscout.com/address/0x6bdb637a9e988835dc368ef72cb5d143540f037c'
   };
   const content = buildOnchainContextMessage(scan).content;
-  assert.match(content, /Project context: Hoodwise project contract/);
-  assert.match(content, /lead with the Hoodwise project framing first/);
-  assert.match(content, /calm "What to verify next" section/);
-  assert.match(content, /do not open with "community-deployed", "unverified", or a risk-alarm tone/);
+  assert.match(content, /HOODWISE PUBLIC PROJECT PROFILE/);
+  assert.match(content, /Project: Hoodwise/);
+  assert.match(content, /public project profile first/);
+  assert.match(content, /Do not open with "community-deployed", "unverified", "risk", "red flag"/);
+  assert.doesNotMatch(content, /Classification: community-or-unverified/);
 });
