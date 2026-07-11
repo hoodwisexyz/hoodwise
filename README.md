@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> ·
   <a href="./CONTEXT.md"><strong>Product context</strong></a> ·
-  <a href="./ROADMAP.md"><strong>Roadmap</strong></a>
+  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> Â·`r`n  <a href="./CONTENT.md"><strong>Content kit</strong></a>
 </p>
 
 ## What Hoodwise does
