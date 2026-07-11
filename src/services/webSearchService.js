@@ -22,8 +22,8 @@ function isTrustedSearchUrl(value) {
 const FRESHNESS_PATTERN = /\b(today|now|currently|latest|newest|recent|recently|this week|this month|update|updates|updated|price|trending|status|available|availability|supported|is .* live|meme ?coin|this token|ticker|cashcat|noxa|launchpad|liquidity|volume|holders|contract address|perp|bridge|rpc|chain id|gas fee|lore|thesis|narrative|tokenomics|new (launchpad|token|memecoin|partner)|just (launched|announced)|breaking|news)\b/i;
 const MEMECOIN_RESEARCH_PATTERN = /\b(meme ?coin|cashcat|noxa|bankr|virtuals|hood\.fun|hoodfun|foragepad|launchpad|liquidity|volume|holders|rug|honeypot)\b/i;
 const NOXA_CANDIDATE_PATTERN = /\bnoxa(?:\.fun)?\b/i;
-const CANDIDATE_REQUEST_PATTERN = /\b(?:good|best|promising|active|trending|hot|coin|token)\b/i;
-const ECOSYSTEM_PLATFORM_PATTERN = /\b(noxa|bankr|virtuals|hood\.fun|hoodfun|foragepad|cashcat)\b/i;
+const CANDIDATE_REQUEST_PATTERN = /\b(?:good|best|promising|active|trending|hot|coin|token|recommend|suggest|watch|research|pick)\b/i;
+const ECOSYSTEM_PLATFORM_PATTERN = /\b(noxa|bankr|doppler|virtuals|hood\.fun|hoodfun|foragepad|cashcat)\b/i;
 function looksTimeSensitive(message) {
   return FRESHNESS_PATTERN.test(message);
 }

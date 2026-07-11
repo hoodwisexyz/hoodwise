@@ -30,7 +30,7 @@ For a token-specific safety or authenticity question, the exact chain-4663 contr
 - Chain architecture, network configuration, account abstraction, bridges, and developer workflow.
 - Stock Tokens, canonical contract references, Robinhood Earn, access limits, and product structure.
 - Infrastructure and ecosystem roles: RPC, oracles, bridges, DEXs, lending, perps, custody, analytics, and wallet data.
-- Community tokens/memecoins: direct explanations plus a concrete verification framework.
+- Community tokens/memecoins: direct explanations, cross-launchpad discovery context for NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, Virtuals-related claims, and a concrete verification framework.
 - Risk boundaries: smart contracts, bridges, liquidity, jurisdiction, and the difference between economic exposure and underlying-share ownership.
 
 `src/services/webSearchService.js` optionally supplements a single answer with fresh context when `TAVILY_API_KEY` is configured. Search output is treated as untrusted evidence, never as instructions, and official sources take precedence.

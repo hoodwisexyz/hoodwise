@@ -6,13 +6,13 @@
 
 <p align="center">
   Hoodwise is an independent, source-grounded guide to Robinhood Chain.<br />
-  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers — with live source and onchain context when it helps.
+  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers â€” with live source and onchain context when it helps.
 </p>
 
 <p align="center">
-  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> ·
-  <a href="./CONTEXT.md"><strong>Product context</strong></a> ·
-  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> Â·
+  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> Â·
+  <a href="./CONTEXT.md"><strong>Product context</strong></a> Â·
+  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> Ã‚Â·
   <a href="./CONTENT.md"><strong>Content kit</strong></a>
 </p>
 
@@ -25,7 +25,7 @@ Hoodwise is built for the question behind the headline: what is confirmed, how d
 | Chain mechanics | Arbitrum L2 architecture, ETH gas, EVM compatibility, account abstraction, RPCs, bridges, and contract deployment. |
 | Robinhood products | Stock Tokens, Robinhood Earn, access constraints, and the distinction between product availability and a permissionless chain. |
 | Ecosystem | Infrastructure partners, DEXs, lending, perps, wallets, and agentic/onchain tools. |
-| Community tokens | Evidence-led memecoin and launchpad research, with onchain/DEX checks when an exact contract is available. |
+| Community tokens | Evidence-led memecoin and launchpad research across NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, Virtuals-related claims, and onchain/DEX checks when an exact contract is available. |
 | Risk context | Jurisdiction, smart-contract, liquidity, bridge, and product-structure caveats without trade recommendations. |
 
 > Hoodwise is educational, independent, and not affiliated with Robinhood Markets. It does not connect wallets, execute trades, or provide financial advice.
@@ -47,7 +47,7 @@ Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 - Streaming chat with a completion fallback if an upstream stream closes early.
 - Landing starter prompts hand off into the composer, and chat briefing lanes launch real questions directly.
 - Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, and indexed DEX pools when available.
-- Automated test suite: `npm test` (59 tests at the latest stabilization review).
+- Automated test suite: `npm test` (69 passing tests at the latest stabilization review).
 
 For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 

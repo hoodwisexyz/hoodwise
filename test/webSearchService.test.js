@@ -61,3 +61,10 @@ test('isNoxaCandidateRequest distinguishes a coin shortlist from a general NOXA 
   assert.equal(isNoxaCandidateRequest('Just tell me a good coin from noxa.fun asap'), true);
   assert.equal(isNoxaCandidateRequest('Tell me about noxa.fun'), false);
 });
+test('isEcosystemCandidateRequest recognizes broad launchpad candidate wording', () => {
+  const { isEcosystemCandidateRequest } = require('../src/services/webSearchService');
+  assert.equal(isEcosystemCandidateRequest('Recommend a Bankr token to research on Robinhood Chain'), true);
+  assert.equal(isEcosystemCandidateRequest('Any Virtuals coin worth watching on Robinhood Chain?'), true);
+  assert.equal(isEcosystemCandidateRequest('Pick a hood.fun token to research'), true);
+  assert.equal(isEcosystemCandidateRequest('Tell me about Bankr'), false);
+});

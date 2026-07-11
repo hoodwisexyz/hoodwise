@@ -27,3 +27,16 @@ test('NOXA candidate fallback supplies named discovery candidates when live sear
   assert.match(fallback.content, /not live market data/);
   assert.equal(chatRouter._test.buildNoxaDiscoveryFallback('Tell me about noxa.fun', []), null);
 });
+test('ecosystem fallback recognizes Bankr as a Robinhood Chain launch surface', () => {
+  const fallback = chatRouter._test.buildEcosystemDiscoveryFallback('What is a good coin from Bankr on Robinhood Chain?', []);
+  assert.match(fallback.content, /Bankr \/ Doppler/);
+  assert.match(fallback.content, /token launches on Robinhood Chain through Doppler/);
+  assert.match(fallback.content, /do not describe the platform as unknown/);
+});
+
+test('ecosystem fallback keeps Virtuals research direct without inventing candidates', () => {
+  const fallback = chatRouter._test.buildEcosystemDiscoveryFallback('Any hot Virtuals coin on Robinhood Chain?', []);
+  assert.match(fallback.content, /Virtuals is an agent-token ecosystem/);
+  assert.match(fallback.content, /do not call the topic unknown/);
+  assert.match(fallback.content, /Never fabricate a ticker/);
+});

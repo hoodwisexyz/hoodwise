@@ -53,14 +53,14 @@ function buildEcosystemDiscoveryFallback(message, liveResults) {
   let venue = 'the Robinhood Chain ecosystem';
   let detail = 'Use the live launchpad, DEX, and Blockscout evidence supplied for this question to name the candidate and its observable metrics.';
   if (lower.includes('bankr')) {
-    venue = 'Bankr';
-    detail = 'Bankr documentation confirms token launches on Robinhood Chain through Doppler; name a current Bankr-linked candidate only when live listing or onchain evidence identifies it.';
+    venue = 'Bankr / Doppler';
+    detail = 'Bankr documentation confirms token launches on Robinhood Chain through Doppler. If no live Bankr candidate list is available, describe Bankr as the discovery surface and tell the user to refresh current candidates in Bankr/Doppler, then verify the successful launch contract on Blockscout.';
   } else if (lower.includes('virtuals')) {
     venue = 'Virtuals';
-    detail = 'Treat Virtuals agent/token claims as community evidence until a current listing or onchain source ties the exact token to Robinhood Chain; do not invent a candidate or contract.';
+    detail = 'Virtuals is an agent-token ecosystem, but a Robinhood Chain-specific candidate needs current listing or onchain evidence tying the exact token/agent to Robinhood Chain. Explain the thesis and verification path directly; do not call the topic unknown.';
   } else if (lower.includes('hood.fun') || lower.includes('hoodfun')) {
     venue = 'hood.fun / HoodFun';
-    detail = 'Treat the platform as a community launchpad and use its current listing plus DEX/Blockscout evidence to name candidates; a launchpad listing is not an endorsement.';
+    detail = 'Treat the platform as a community launchpad and use its current listing plus DEX/Blockscout evidence to name candidates. If live listing data is absent, describe it as the discovery surface and say the current ranking needs a refresh.';
   }
   return {
     role: 'system',

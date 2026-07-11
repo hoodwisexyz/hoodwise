@@ -1,6 +1,6 @@
 # Hoodwise roadmap
 
-This roadmap reflects the live product as of July 11, 2026. It is ordered by product value and operational safety, not by novelty.
+This roadmap reflects the live product as of July 12, 2026. It is ordered by product value and operational safety, not by novelty.
 
 ## Recently shipped
 
@@ -8,7 +8,8 @@ This roadmap reflects the live product as of July 11, 2026. It is ordered by pro
 - **Structured briefing cards:** completed chat replies now retain evidence state, canonical contract references when present, material risk tags, and a next verification step.
 - **Interaction polish:** landing starter prompts hand off cleanly into the chat composer, while chat briefing lanes are directly actionable with motion-safe tactile states.
 - **Privacy-safe quality observation:** aggregate answer-quality reviews and flags are available in the protected ops view without storing prompt or reply content.
-- **Lightweight knowledge routing:** developer, Stock Token, memecoin, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
+- **Lightweight knowledge routing:** developer, Stock Token, memecoin, launchpad, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
+- **Cross-launchpad research baseline:** Hoodwise now recognizes NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, and Virtuals-related Robinhood Chain questions as known ecosystem surfaces instead of generic unknowns.
 ## Now: protect quality in production
 
 1. **Knowledge refresh cadence**

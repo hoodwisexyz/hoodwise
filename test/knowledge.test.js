@@ -139,3 +139,17 @@ test('summarizeSources never labels community discovery as primary documentation
   assert.equal(summarizeSources([{ sourceClass: 'community' }]), 'Community discovery baseline');
   assert.equal(summarizeSources([{ sourceClass: 'primary' }, { sourceClass: 'community' }]), 'Primary documentation baseline');
 });
+test('getSystemPromptForQuestion gives Bankr and Virtuals requests a cross-ecosystem research focus', () => {
+  const { getSystemPromptForQuestion } = require('../src/data/knowledge');
+  const bankrPrompt = getSystemPromptForQuestion('What is a good coin from Bankr on Robinhood Chain?');
+  const virtualsPrompt = getSystemPromptForQuestion('Any hot Virtuals coin on Robinhood Chain?');
+  assert.match(bankrPrompt, /cross-ecosystem candidate-research request/);
+  assert.match(bankrPrompt, /Bankr supports launching tokens on Robinhood Chain through Doppler/);
+  assert.match(virtualsPrompt, /cross-ecosystem candidate-research request/);
+  assert.match(virtualsPrompt, /Virtuals-related agent-token claims need current evidence/);
+});
+
+test('findSources prioritizes named launchpad sources for ecosystem questions', () => {
+  assert.equal(findSources('Bankr launches tokens on Robinhood Chain through Doppler.')[0].url, 'https://docs.bankr.bot/faq/token-launching/');
+  assert.equal(findSources('Virtuals agent token research on Robinhood Chain.')[0].url, 'https://whitepaper.virtuals.io/builders-hub/commonly-asked-questions/launching-an-ai-agent-token');
+});

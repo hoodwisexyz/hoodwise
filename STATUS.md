@@ -1,6 +1,6 @@
 # Hoodwise status
 
-**Last reviewed:** July 11, 2026
+**Last reviewed:** July 12, 2026
 
 ## Live production baseline
 
@@ -8,7 +8,7 @@
 - **Hosting:** Railway production service, sourced from `hoodwisexyz/hoodwise`.
 - **Health check:** `GET /api/health` configured through `railway.toml`.
 - **Persistence:** Railway volume mounted at `/data`; production database path is `/data/hoodwise.db`.
-- **Automated verification:** `npm test` - 59 passing tests at the last review.
+- **Automated verification:** `npm test` - 69 passing tests at the last review.
 
 ## Shipped
 
@@ -33,6 +33,7 @@
 - Canonical contract references for WETH, USDG, key Stock Tokens, and tokenized ETFs.
 - Direct-answer prompt rules: factual answer first, then only the caveat that changes it.
 - Memecoin/community-token handling that answers the question while distinguishing unofficial deployments from canonical Robinhood assets.
+- Cross-launchpad ecosystem intelligence for NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, and Virtuals-related Robinhood Chain research, with direct candidate handling when live evidence exists and explicit DYOR verification when it does not.
 - Tavily live-search layer is configured in production for time-sensitive questions, source merging, and prompt-injection-safe handling of fetched snippets.
 - Live contract intelligence for pasted addresses: RPC bytecode/metadata, official canonical-directory match, Blockscout source-verification status, explorer token activity, and indexed DEX-pool lookup when available.
 
@@ -45,7 +46,7 @@
 ## Current limitations
 
 - **Live sources remain supplemental.** Tavily and explorer/DEX results can be unavailable, delayed, incomplete, or inconsistent; Hoodwise labels missing evidence rather than inventing it.
-- **No guaranteed market feed.** Explorer and DEX snapshots are informational, may be unavailable, and never establish safety or a trading recommendation.
+- **No guaranteed market feed.** Explorer, launchpad, and DEX snapshots are informational, may be unavailable, and never establish safety, a current ranking, or a trading recommendation.
 - **No accounts.** Clearing browser storage loses the local session identifier; server-side history can no longer be reopened from that browser.
 - **Aggregate-only operations dashboard.** `/ops` is protected by `OPS_DASHBOARD_TOKEN`; it exposes service aggregates, never prompts or user message content.
 - **`www.hoodwise.xyz` is not configured as an additional Railway custom domain.** The canonical production URL is `https://hoodwise.xyz`.
