@@ -37,7 +37,7 @@ const config = Object.freeze({
   chat: Object.freeze({
     maxMessageLength: toInt(process.env.MAX_MESSAGE_LENGTH, 4000),
     maxHistoryMessages: toInt(process.env.MAX_HISTORY_MESSAGES, 20),
-    maxOutputTokens: toInt(process.env.MAX_OUTPUT_TOKENS, 900)
+    maxOutputTokens: toInt(process.env.MAX_OUTPUT_TOKENS, 1200)
   }),
 
   rateLimit: Object.freeze({

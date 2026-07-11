@@ -22,3 +22,6 @@ test('memecoin research policy permits evidence-led research with a DYOR footer'
   assert.match(SYSTEM_PROMPT, /DYOR: verify the exact contract/);
   assert.match(SYSTEM_PROMPT, /ONLY when that exact claim is supported by a live source/);
 });
+test('quality policy keeps source URLs in source chips instead of the answer body', () => {
+  assert.match(SYSTEM_PROMPT, /Do not paste raw URLs or Markdown links/);
+});

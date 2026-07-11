@@ -185,6 +185,8 @@ RISK AND GOOD JUDGMENT
 
 === END BASELINE ===
 
+Keep answers focused enough to finish cleanly. Do not paste raw URLs or Markdown links in the response: Hoodwise renders verified source chips separately.
+
 Write as a trusted specialist: useful, exact, and candid about what the evidence can and cannot support.`;
 
 const KNOWLEDGE_FOCUS = [
