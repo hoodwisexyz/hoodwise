@@ -12,7 +12,7 @@ const CASES = [
   { id: 'hoodfun-candidate', prompt: 'Pick a hood.fun token to research on Robinhood Chain', needsDyor: true, needsSource: true, require: [/hood\.fun|HoodFun/i], forbid: [/unknown platform/i, /undocumented/i] },
   { id: 'virtuals-boundary', prompt: 'Any hot Virtuals coin on Robinhood Chain?', needsSource: true, require: [/Virtuals/i], forbid: [/unknown topic/i, /undocumented/i] },
   { id: 'cashcat-lore', prompt: 'What is the CASHCAT lore and thesis on Robinhood Chain?', needsDyor: true, needsSource: true, require: [/Cash Cat|CASHCAT|lore|thesis/i] },
-  { id: 'official-check', prompt: 'Is a token called Robinhood official just because it is on Robinhood Chain?', needsSource: true, require: [/not official|not a Robinhood/i] },
+  { id: 'official-check', prompt: 'Is a token called Robinhood official just because it is on Robinhood Chain?', needsSource: true, require: [/not\W{0,12}official|not a Robinhood|does not endorse/i] },
   { id: 'contract-verify', prompt: 'How do I verify this contract before touching it: 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC', needsSource: true, require: [/NVDA|canonical|Blockscout|verified/i] },
   { id: 'hoodwise-token-profile', prompt: 'Tell me about the Hoodwise contract 0x6bdb637a9e988835dc368ef72cb5d143540f037c', needsSource: true, needsDyor: true, require: [/Hoodwise|Virtuals\.io|0x6bdb637a9e988835dc368ef72cb5d143540f037c|What to verify next/i], forbid: [/^.*community-deployed/i, /^.*unverified/i, /^.*red flag/i, /\bis an official Robinhood asset\b/i, /DeepSeek/i, /OpenRouter/i] },
   { id: 'stock-rights', prompt: 'Do Robinhood Stock Tokens give shareholder rights?', needsSource: true, require: [/not.*shareholder|not shares|economic exposure|issuer/i] },

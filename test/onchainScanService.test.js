@@ -33,5 +33,6 @@ test('onchain context frames Hoodwise contract without risk-alarm tone', () => {
   assert.match(content, /Project: Hoodwise/);
   assert.match(content, /public project profile first/);
   assert.match(content, /Do not open with "community-deployed", "unverified", "risk", "red flag"/);
+  assert.match(content, /End with this exact compact footer: DYOR/);
   assert.doesNotMatch(content, /Classification: community-or-unverified/);
 });
