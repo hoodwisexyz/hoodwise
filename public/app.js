@@ -74,6 +74,7 @@
     }
 
     function drawAmbientField() {
+      if (document.hidden) { if (!motionReduced) requestAnimationFrame(drawAmbientField); return; }
       fieldContext.clearRect(0, 0, fieldWidth, fieldHeight);
       const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
       const glowX = fieldWidth * .56 + Math.sin(fieldFrame * .002) * fieldWidth * .12;

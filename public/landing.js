@@ -14,8 +14,9 @@
     let width, height, tick = 0, rails = [];
 
     function resize() {
-      width = canvas.width = canvas.offsetWidth * devicePixelRatio;
-      height = canvas.height = canvas.offsetHeight * devicePixelRatio;
+      const pixelRatio = Math.min(devicePixelRatio, 1.5);
+      width = canvas.width = canvas.offsetWidth * pixelRatio;
+      height = canvas.height = canvas.offsetHeight * pixelRatio;
       const railCount = Math.max(5, Math.floor(canvas.offsetHeight / 130));
       rails = Array.from({ length: railCount }, (_, index) => ({
         y: height * (.2 + index / (railCount + 1) * .68),
@@ -67,7 +68,10 @@
       const gradient = ctx.createLinearGradient(0, scan - 25 * devicePixelRatio, 0, scan + 25 * devicePixelRatio);
       gradient.addColorStop(0, 'rgba(0,230,118,0)'); gradient.addColorStop(.5, 'rgba(0,230,118,.09)'); gradient.addColorStop(1, 'rgba(0,230,118,0)');
       ctx.fillStyle = gradient; ctx.fillRect(0, scan - 25 * devicePixelRatio, width, 50 * devicePixelRatio);
-      if (!reduceMotion) { tick += 1; requestAnimationFrame(frame); }
+      if (!reduceMotion) {
+        if (!document.hidden) tick += 1;
+        requestAnimationFrame(frame);
+      }
     }
 
     resize();
@@ -103,6 +107,7 @@
     }
 
     function drawLandingAtmosphere() {
+      if (document.hidden) { requestAnimationFrame(drawLandingAtmosphere); return; }
       atmosphereContext.clearRect(0, 0, atmosphereWidth, atmosphereHeight);
       const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
       const scrollShift = window.scrollY * .035 * ratio;
