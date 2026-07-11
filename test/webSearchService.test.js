@@ -26,3 +26,8 @@ test('looksTimeSensitive detects current availability questions', () => {
   assert.equal(looksTimeSensitive('Is Robinhood Earn currently available?'), true);
   assert.equal(looksTimeSensitive('Is the bridge live now?'), true);
 });
+test('looksTimeSensitive detects memecoin and onchain verification questions', () => {
+  assert.equal(looksTimeSensitive('What is the latest memecoin on Robinhood Chain?'), true);
+  assert.equal(looksTimeSensitive('Can you check this token address?'), true);
+  assert.equal(looksTimeSensitive('what is a stock token'), false);
+});

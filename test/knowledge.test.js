@@ -85,3 +85,7 @@ test('findSources returns official documentation for developer network answers',
   const sources = findSources('Use chain ID 4663 and a production RPC when deploying with Hardhat.');
   assert.ok(sources.some(source => source.url.includes('docs.robinhood.com/chain/connecting')));
 });
+test('findSources returns official token-contract documentation for canonical assets', () => {
+  const sources = findSources('The canonical NVDA Stock Token and WETH addresses on Robinhood Chain.');
+  assert.ok(sources.some(source => source.url.includes('docs.robinhood.com/chain/contracts')));
+});

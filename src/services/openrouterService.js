@@ -28,7 +28,7 @@ async function callChatModel({ systemPrompt, messages, requestId }) {
     model: config.openrouter.model,
     messages: [{ role: 'system', content: systemPrompt }, ...messages],
     max_tokens: config.chat.maxOutputTokens,
-    temperature: 0.4
+    temperature: 0.25
   });
 
   let lastError;
@@ -120,7 +120,7 @@ async function streamChatModel({ systemPrompt, messages, requestId, onToken, sig
     model: config.openrouter.model,
     messages: [{ role: 'system', content: systemPrompt }, ...messages],
     max_tokens: config.chat.maxOutputTokens,
-    temperature: 0.4,
+    temperature: 0.25,
     stream: true
   });
 
