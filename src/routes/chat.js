@@ -9,7 +9,8 @@ const { BadRequestError } = require('../lib/errors');
 const conversations = require('../services/conversationService');
 const { callChatModel, streamChatModel } = require('../services/openrouterService');
 const { searchWeb, looksTimeSensitive } = require('../services/webSearchService');
-const { SYSTEM_PROMPT, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
+const { buildBriefingMeta } = require('../services/briefingService');
+const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
 const logger = require('../lib/logger');
 
 function validateChatBody(body) {
@@ -70,7 +71,7 @@ async function prepareTurn(req) {
   const liveContextMessage = buildLiveContextMessage(liveResults);
   const messagesForModel = liveContextMessage ? [...history, liveContextMessage] : history;
 
-  return { conversationId, messagesForModel, liveResults };
+  return { conversationId, message, messagesForModel, liveResults };
 }
 
 function mergeSources(reply, liveResults) {
@@ -84,29 +85,30 @@ function mergeSources(reply, liveResults) {
 
 // ---------- Non-streaming (used by simple clients / fallback) ----------
 router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
-  const { conversationId, messagesForModel, liveResults } = await prepareTurn(req);
+  const { conversationId, message, messagesForModel, liveResults } = await prepareTurn(req);
 
   const rawReply = await callChatModel({
-    systemPrompt: SYSTEM_PROMPT,
+    systemPrompt: getSystemPromptForQuestion(message),
     messages: messagesForModel,
     requestId: req.requestId
   });
   const reply = sanitizeReply(rawReply);
   const sources = mergeSources(reply, liveResults);
+  const brief = buildBriefingMeta(reply, sources, liveResults.length > 0);
 
-  conversations.appendMessage(conversationId, 'assistant', reply, sources);
+  conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
   conversations.touchConversation(conversationId);
 
   logger.info('chat reply sent', {
     requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0
   });
 
-  res.json({ conversationId, reply, sources });
+  res.json({ conversationId, reply, sources, brief });
 }));
 
 // ---------- Streaming (used by the Hoodwise web app for the live-typing feel) ----------
 router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
-  const { conversationId, messagesForModel, liveResults } = await prepareTurn(req);
+  const { conversationId, message, messagesForModel, liveResults } = await prepareTurn(req);
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -130,7 +132,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
 
   try {
     await streamChatModel({
-      systemPrompt: SYSTEM_PROMPT,
+      systemPrompt: getSystemPromptForQuestion(message),
       messages: messagesForModel,
       requestId: req.requestId,
       signal: abortController.signal,
@@ -150,14 +152,15 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
     }
 
     const sources = mergeSources(fullReply, liveResults);
-    conversations.appendMessage(conversationId, 'assistant', fullReply, sources);
+    const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0);
+    conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
     logger.info('chat stream completed', {
       requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0
     });
 
-    send('done', { conversationId, sources });
+    send('done', { conversationId, sources, brief });
   } catch (err) {
     // A provider can occasionally close an SSE response after emitting a few
     // tokens (node-fetch reports this as "Premature close"). Preserve the
@@ -175,7 +178,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
         ? [...messagesForModel, { role: 'assistant', content: fullReply }, { role: 'user', content: continuationInstruction }]
         : messagesForModel;
       const fallbackText = sanitizeReply(await callChatModel({
-        systemPrompt: SYSTEM_PROMPT,
+        systemPrompt: getSystemPromptForQuestion(message),
         messages: fallbackMessages,
         requestId: req.requestId
       }));
@@ -184,12 +187,13 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       send('token', { text: separator + fallbackText });
 
       const sources = mergeSources(fullReply, liveResults);
-      conversations.appendMessage(conversationId, 'assistant', fullReply, sources);
+      const brief = buildBriefingMeta(fullReply, sources, liveResults.length > 0);
+      conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {
         requestId: req.requestId, conversationId, sourceCount: sources.length
       });
-      send('done', { conversationId, sources });
+      send('done', { conversationId, sources, brief });
     } catch (fallbackErr) {
       logger.error('chat stream fallback failed', {
         requestId: req.requestId, conversationId, error: fallbackErr.message

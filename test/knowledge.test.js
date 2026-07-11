@@ -89,3 +89,8 @@ test('findSources returns official token-contract documentation for canonical as
   const sources = findSources('The canonical NVDA Stock Token and WETH addresses on Robinhood Chain.');
   assert.ok(sources.some(source => source.url.includes('docs.robinhood.com/chain/contracts')));
 });
+test('getSystemPromptForQuestion adds a relevant focus without mutating the baseline', () => {
+  const { getSystemPromptForQuestion } = require('../src/data/knowledge');
+  assert.match(getSystemPromptForQuestion('Is NVDA canonical?'), /FOCUS: State whether the asset is canonical/);
+  assert.match(getSystemPromptForQuestion('How does the bridge work?'), /FOCUS: Explain route, timing, trust model/);
+});

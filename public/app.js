@@ -229,7 +229,32 @@
     target.appendChild(fragment);
   }
 
-  function addMessage(role, text, sources) {
+  function appendBriefingMeta(bubble, brief) {
+    if (!brief || !brief.evidence) return;
+    const panel = document.createElement('section');
+    panel.className = 'briefing-meta';
+    panel.innerHTML = `<div class="briefing-meta-head"><span>BRIEFING SIGNAL</span><b>${brief.evidence}</b></div>`;
+    if (brief.contracts && brief.contracts.length) {
+      const contract = document.createElement('button');
+      contract.className = 'briefing-contract';
+      contract.type = 'button';
+      contract.textContent = 'Canonical contract: ' + brief.contracts[0];
+      contract.title = 'Copy canonical contract address';
+      contract.addEventListener('click', () => navigator.clipboard?.writeText(brief.contracts[0]));
+      panel.appendChild(contract);
+    }
+    if (brief.risks && brief.risks.length) {
+      const risks = document.createElement('div');
+      risks.className = 'briefing-risks';
+      brief.risks.forEach(risk => { const tag = document.createElement('span'); tag.textContent = risk; risks.appendChild(tag); });
+      panel.appendChild(risks);
+    }
+    const verify = document.createElement('p');
+    verify.textContent = brief.verification;
+    panel.appendChild(verify);
+    bubble.appendChild(panel);
+  }
+  function addMessage(role, text, sources, brief) {
     const row = document.createElement('div');
     row.className = 'row ' + (role === 'user' ? 'user' : 'bot');
     if (role !== 'user') {
@@ -261,6 +286,7 @@
       bubble.appendChild(srcWrap);
     }
 
+    if (role !== 'user') appendBriefingMeta(bubble, brief);
     row.appendChild(bubble);
     if (role !== 'user' && text) {
       const copyBtn = document.createElement('button');
@@ -373,7 +399,7 @@
       conversationTitleEl.textContent = data.conversation.title;
       messagesEl.innerHTML = '';
       chipsEl.style.display = 'none';
-      data.messages.forEach(m => addMessage(m.role, m.content, m.sources));
+      data.messages.forEach(m => addMessage(m.role, m.content, m.sources, m.brief));
       loadHistoryList();
       if (window.innerWidth <= 780) sidebar.classList.add('collapsed');
     } catch (e) {
@@ -417,7 +443,7 @@
         renderMessageContent(messageContent, fullText);
         messagesEl.scrollTop = messagesEl.scrollHeight;
       },
-      finalize(sources) {
+      finalize(sources, brief) {
         bubble.classList.remove('streaming-bubble');
         if (sources && sources.length) {
           const srcWrap = document.createElement('div');
@@ -434,6 +460,7 @@
           bubble.appendChild(document.createElement('br'));
           bubble.appendChild(srcWrap);
         }
+        appendBriefingMeta(bubble, brief);
         if (fullText) {
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
@@ -538,7 +565,7 @@
         } else if (event === 'done') {
           currentConversationId = data.conversationId;
           syncConversationRoute(currentConversationId);
-          if (streamBot) streamBot.finalize(data.sources);
+          if (streamBot) streamBot.finalize(data.sources, data.brief);
           if (conversationTitleEl.textContent === 'New chat') {
             conversationTitleEl.textContent = text.length > 48 ? text.slice(0, 48) + '…' : text;
           }

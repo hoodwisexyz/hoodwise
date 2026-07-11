@@ -2,6 +2,11 @@
 
 This roadmap reflects the live product as of July 11, 2026. It is ordered by product value and operational safety, not by novelty.
 
+## Recently shipped
+
+- **Interactive Chain Intelligence Map:** a landing-page exploration surface for network, products, ecosystem, and risk context.
+- **Structured briefing cards:** completed chat replies now retain evidence state, canonical contract references when present, material risk tags, and a next verification step.
+- **Lightweight knowledge routing:** developer, Stock Token, memecoin, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
 ## Now: protect quality in production
 
 1. **Knowledge refresh cadence**

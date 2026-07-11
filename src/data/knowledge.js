@@ -175,4 +175,15 @@ RISK AND GOOD JUDGMENT
 
 Write as a trusted specialist: useful, exact, and candid about what the evidence can and cannot support.`;
 
-module.exports = { SYSTEM_PROMPT, findSources, sanitizeReply, createStreamingSanitizer };
+const KNOWLEDGE_FOCUS = [
+  { pattern: /\b(contract|address|deploy|solidity|hardhat|foundry|rpc|chain id|wallet|gas)\b/i, instruction: 'FOCUS: Give exact network/developer facts first. Include chain ID or official contract/RPC details when relevant. Keep production caveats practical.' },
+  { pattern: /\b(stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i, instruction: 'FOCUS: State whether the asset is canonical, explain the legal/economic structure directly, and include an exact contract only when it is in the curated baseline.' },
+  { pattern: /\b(memecoin|meme coin|cashcat|noxa|liquidity|holder|rug|honeypot)\b/i, instruction: 'FOCUS: Answer the memecoin question directly. Separate a community deployment from an official Robinhood asset, and give the concrete contract/pool checks that matter.' },
+  { pattern: /\b(bridge|bridging|withdraw|deposit|layerzero|ccip|stargate)\b/i, instruction: 'FOCUS: Explain route, timing, trust model, fees, and the next onchain step. Do not imply a bridge is risk-free.' },
+  { pattern: /\b(earn|lending|yield|morpho|perp|lighter)\b/i, instruction: 'FOCUS: Explain product mechanics and eligibility before discussing yield, leverage, or availability. Distinguish a product announcement from user access.' }
+];
+function getSystemPromptForQuestion(message) {
+  const focus = KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
+  return focus ? SYSTEM_PROMPT + '\n\n' + focus.instruction : SYSTEM_PROMPT;
+}
+module.exports = { SYSTEM_PROMPT, findSources, sanitizeReply, createStreamingSanitizer, getSystemPromptForQuestion };

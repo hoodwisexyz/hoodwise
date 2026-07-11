@@ -384,4 +384,21 @@
       });
     }
   }
+  const mapReadout = document.getElementById('mapReadout');
+  const mapData = {
+    network: { kicker: '01 / NETWORK', title: 'Ethereum-compatible, built for financial rails.', body: 'Arbitrum L2, ETH gas, EVM tooling, and predictable sequencing make the base layer familiar to builders.', fact: 'Chain ID 4663 · public RPC is rate-limited' },
+    products: { kicker: '02 / PRODUCTS', title: 'Onchain products have structure, access, and limits.', body: 'Stock Tokens, Earn, and perpetual venues are separate products with different issuer, availability, and risk boundaries.', fact: 'Permissionless chain ≠ universal product access' },
+    ecosystem: { kicker: '03 / ECOSYSTEM', title: 'Infrastructure and community activity are not the same thing.', body: 'Oracles, bridges, DEXs, lending, and wallets form the documented stack; community tokens remain independent deployments.', fact: 'Verify the exact contract and venue' },
+    risk: { kicker: '04 / RISK LAYER', title: 'The best answer says what needs checking next.', body: 'Availability, contract authority, liquidity, bridge route, and jurisdiction can materially change a practical decision.', fact: 'Direct answer first · verification second' }
+  };
+  document.querySelectorAll('.map-node').forEach(node => node.addEventListener('click', () => {
+    const detail = mapData[node.dataset.map];
+    if (!detail || !mapReadout) return;
+    document.querySelectorAll('.map-node').forEach(item => { item.classList.toggle('active', item === node); item.setAttribute('aria-selected', item === node ? 'true' : 'false'); });
+    mapReadout.classList.add('is-switching');
+    window.setTimeout(() => {
+      mapReadout.innerHTML = `<span class="map-readout-kicker">${detail.kicker}</span><h3>${detail.title}</h3><p>${detail.body}</p><div><span>CONFIRMED</span><b>${detail.fact}</b></div>`;
+      mapReadout.classList.remove('is-switching');
+    }, 120);
+  }));
 })();

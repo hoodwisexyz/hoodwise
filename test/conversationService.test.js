@@ -66,3 +66,11 @@ test('parseSources fails closed for malformed persisted metadata', () => {
   assert.deepEqual(conversations.parseSources('{not valid json'), []);
   assert.deepEqual(conversations.parseSources('{"not":"an array"}'), []);
 });
+test('persists and restores briefing metadata with an assistant message', () => {
+  const sessionId = 'session-brief-meta';
+  const convoId = conversations.createConversation(sessionId, 'test briefing');
+  const brief = { evidence: 'Curated source baseline', contracts: ['0x0000000000000000000000000000000000000000'], risks: [] };
+  conversations.appendMessage(convoId, 'assistant', 'briefing answer', [], brief);
+  const { messages } = conversations.getMessages(convoId, sessionId);
+  assert.deepEqual(messages[0].brief, brief);
+});

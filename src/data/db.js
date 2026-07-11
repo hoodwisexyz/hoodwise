@@ -39,6 +39,10 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
 `);
 
+const messageColumns = db.prepare('PRAGMA table_info(messages)').all();
+if (!messageColumns.some(column => column.name === 'brief')) {
+  db.exec('ALTER TABLE messages ADD COLUMN brief TEXT');
+}
 logger.info('database ready', { path: DB_PATH });
 
 function closeDb() {

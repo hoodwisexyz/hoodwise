@@ -14,9 +14,9 @@
 
 ### Product and frontend
 
-- Premium marketing landing page with animated network/aurora surfaces, signal console, coverage deck, observatory, source-led product narrative, responsive navigation, and accessible motion fallbacks.
+- Premium marketing landing page with animated network/aurora surfaces, signal console, coverage deck, observatory, interactive Chain Intelligence Map, source-led product narrative, responsive navigation, and accessible motion fallbacks.
 - Clean URLs: `/`, `/app`, and `/app/c/<conversation-id>`; legacy `.html` URLs redirect to canonical routes.
-- Chat briefing interface with streaming replies, source chips, suggested prompts, message copy, anonymous conversation history, mobile sidebar behavior, light/dark theme, character counter, keyboard support, and clear loading/interaction state.
+- Chat briefing interface with streaming replies, source chips, persistent evidence/contract/risk briefing cards, suggested prompts, message copy, anonymous conversation history, mobile sidebar behavior, light/dark theme, character counter, keyboard support, and clear loading/interaction state.
 - Original Hoodwise logo mark, favicon, social preview banner, and brand assets.
 
 ### Backend and reliability
