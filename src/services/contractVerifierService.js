@@ -9,7 +9,7 @@ const SELECTORS = { name: '0x06fdde03', symbol: '0x95d89b41', decimals: '0x313ce
 async function rpc(method, params) { const response = await fetch(RPC_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) }); if (!response.ok) throw new UpstreamServiceError('The Robinhood Chain verifier is temporarily unavailable.'); const body = await response.json(); if (body.error) throw new UpstreamServiceError('The Robinhood Chain verifier could not read that address.'); return body.result; }
 async function getExplorerAddress(address) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
+  const timeout = setTimeout(() => controller.abort(), 12000);
   try {
     const response = await fetch(EXPLORER_API + address, { signal: controller.signal });
     if (!response.ok) return null;
