@@ -560,3 +560,9 @@ body::before { content:''; position:fixed; inset:0; z-index:-4; pointer-events:n
 @media(max-width:780px){.hero::after{opacity:.7}.hero-copy::before{width:260px;height:260px;left:-110px;top:-80px}.hero-proof{gap:13px}.hero-proof span + span::before{left:-7px}.signal-console{transform:none}.how-step{padding:18px}.why::before{font-size:108px}.nav::before{width:92vw}}
 @media(prefers-reduced-motion:reduce){.hero-copy::before,.final-cta::before{animation:none}.signal-console{transition:none}.nav-cta::after,.btn-primary::after{display:none}.how-step:hover{transform:none}}
 .btn-primary { position:relative; overflow:hidden; isolation:isolate; }
+
+/* Documentation-aligned trust details */
+.trust-item { position:relative; overflow:hidden; }
+.trust-item::after { content:''; position:absolute; inset:auto 16px 0; height:1px; background:linear-gradient(90deg,transparent,rgba(0,230,118,.4),transparent); opacity:0; transition:opacity .3s ease; }
+.trust-item:hover::after { opacity:1; }
+.section-head p { max-width:58ch; }

@@ -1,80 +1,53 @@
-# ROADMAP.md — What's next
+# Hoodwise roadmap
 
-Suggested order, roughly grouped by priority.
+This roadmap reflects the live product as of July 11, 2026. It is ordered by product value and operational safety, not by novelty.
 
-## Priority 1 — Before/at public launch
+## Now: protect quality in production
 
-1. **Deploy to Railway + connect hoodwise.xyz**
-   Follow README.md section 2. This is the one hard blocker to actually
-   being live.
-2. **Attach a Railway Volume for the database**
-   Without this, chat history resets on every redeploy. Cheap to set up,
-   easy to forget — do it at the same time as the first deploy.
-3. **Real logo / brand mark**
-   Current mark is a functional placeholder. Worth a proper design pass
-   once the brand direction feels locked in — keep the trademark-safety
-   constraints from CONTEXT.md in mind.
+1. **Knowledge refresh cadence**
+   - Review official Robinhood Chain docs, contract lists, and newsroom updates on a recurring schedule.
+   - Keep `src/data/knowledge.js`, source links, and the canonical asset directory aligned.
+   - Add regression tests whenever a new answer rule or critical fact is introduced.
 
-~~Basic abuse protection~~ — done: `/api/chat` and `/api/chat/stream` are
-rate-limited per session/IP via `express-rate-limit` (see
-`src/middleware/rateLimiter.js`), and Express trusts Railway's proxy hop so
-this resolves the real client IP correctly in production.
+2. **Live context decision**
+   - If fresh availability, incident, token, or market questions become important, configure `TAVILY_API_KEY` with a controlled usage limit.
+   - Keep the existing rule: live web context supplements sources; it never becomes an unverified replacement for the baseline.
 
-~~Automated tests~~ — done: `npm test` runs the suite in `test/` (21 tests).
+3. **Production observation**
+   - Review Railway logs and error rate after releases.
+   - Define a simple incident checklist: health endpoint, provider error rate, stream fallback frequency, database volume status, and domain/SSL status.
 
-~~Streaming responses~~ — done: `POST /api/chat/stream` streams tokens via
-Server-Sent Events, with a dedicated streaming-safe identity sanitizer.
+## Next: make the product easier to use
 
-~~CI pipeline~~ — done: `.github/workflows/test.yml` runs the suite on
-every push/PR.
+4. **Mobile real-device QA**
+   - Test the landing page and chat on current iOS/Android browsers, small screens, reduced-motion mode, and slow networks.
 
-## Priority 2 — Quality of life
+5. **Answer-quality evaluation set**
+   - Add a small set of representative prompts: Stock Token authenticity, bridge mechanics, canonical contract lookup, memecoin explanation, access/jurisdiction, and developer setup.
+   - Assert answer properties rather than brittle full text: direct opening, source presence, no unsupported claims, and no identity leaks.
 
-4. **Knowledge base refresh workflow**
-   Robinhood Chain is evolving fast. Consider a lightweight process (even
-   just a recurring reminder) to re-check for major changes — new
-   launchpads, partner announcements, regulatory news, a possible native
-   token — and update `src/data/knowledge.js` accordingly. Run `npm test`
-   after any edit.
-5. **Mobile polish pass**
-   The layout is responsive but hasn't been stress-tested on a range of
-   real devices — worth a dedicated pass once real users start hitting it
-   from phones.
-6. **Conversation titles**
-   Titles are currently just the first ~48 characters of the user's first
-   message. Could upgrade to an LLM-generated short title for a cleaner
-   sidebar, at the cost of one extra model call per new conversation.
-7. **Structured request logs → a log viewer**
-   Logs are already structured JSON (`src/lib/logger.js`) — piping them into
-   something like Railway's log explorer, Axiom, or Better Stack would make
-   the existing logging actually useful for debugging production issues,
-   not just local ones.
+6. **Structured live data, only where defensible**
+   - Consider read-only Blockscout/network status integration for exact contract/transaction data.
+   - Consider a reliable market-data source only if it can identify the asset/venue unambiguously and disclose freshness. Never style delayed data as live.
 
-## Priority 3 — Nice to have / explore later
+7. **Conversation experience**
+   - Evaluate better conversation titles and a user-controlled transcript export action in the UI.
+   - Keep sharing opt-in and read-only; never expose an anonymous conversation by default.
 
-8. ~~Live data hooks~~ — partially done: the optional live web search layer
-   (`src/services/webSearchService.js`) covers ad-hoc "what's the latest on
-   X" questions. A structured live feed (e.g. a direct Blockscout API
-   integration for token/TVL data, or a price feed) is still open if you
-   want numeric live data rather than search-result summaries.
-9. **Analytics**
-    Lightweight, privacy-respecting usage analytics (e.g. daily active
-    sessions, most-asked topics) to understand what people actually want to
-    know, and to spot knowledge-base gaps.
-10. ~~Shareable answers~~ — partially done: conversations can now be
-    exported as a plain-text transcript (`GET /api/conversations/:id/export`).
-    A "share via link" feature (public read-only URL for one conversation)
-    is still open if that's wanted.
-11. **Multi-language support**
-    Current scope is English-only by design. If demand shows up from other
-    regions, an explicit language toggle (not auto-detection) would keep
-    quality controlled — reuse the same knowledge base, translate the
-    system-prompt instructions and UI copy.
-## Explicitly not planned (unless priorities change)
+## Later: learn without compromising privacy
 
-- Wallet connection / on-chain actions of any kind — Hoodwise is
-  informational only, by design.
-- Trading signals, price predictions, or anything resembling financial
-  advice.
-- User accounts / login — the anonymous session model is intentional for
-  a low-friction, no-signup experience.
+8. **Privacy-respecting product analytics**
+   - Measure aggregate errors, latency, and topic gaps without logging sensitive prompt content or tying activity to an identity.
+
+9. **Operations view**
+   - Add a small internal dashboard or log integration for uptime, requests, provider failures, and knowledge-refresh reminders.
+
+10. **Intentional multilingual support**
+    - Add explicit language selection only after maintaining equivalent source quality and safety rules for each supported language.
+
+## Not planned
+
+- Wallet connection, custody, transaction signing, or execution.
+- Trading recommendations, price targets, or personalized investment advice.
+- Mandatory account creation or tracking-heavy analytics.
+- Rebranding with Robinhood's official logo, feather, or wordmark.

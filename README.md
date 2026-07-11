@@ -1,109 +1,75 @@
 <p align="center">
-  <img src="./public/hoodwise-banner.png" alt="Hoodwise — Your AI guide to Robinhood Chain" width="100%" />
-</p>
-
-<p align="center">
-  <a href="https://hoodwise.xyz"><strong>Explore Hoodwise ↗</strong></a>
-  &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#the-signal"><strong>The signal</strong></a>
-  &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#under-the-hood"><strong>Under the hood</strong></a>
+  <img src="./public/hoodwise-banner.png" alt="Hoodwise - Your AI guide to Robinhood Chain" width="100%" />
 </p>
 
 <h1 align="center">Chain intelligence, without the noise.</h1>
 
 <p align="center">
   Hoodwise is an independent, source-grounded guide to Robinhood Chain.<br />
-  Clear context for the products, infrastructure, ecosystem, and risks that matter.
+  It turns product, protocol, ecosystem, and risk context into clear answers.
 </p>
 
 <p align="center">
-  <a href="https://hoodwise.xyz"><img alt="Launch Hoodwise" src="https://img.shields.io/badge/Launch_Hoodwise-00D97E?style=for-the-badge&logoColor=07120d" /></a>
-  <a href="https://github.com/hoodwisexyz/hoodwise/actions"><img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/hoodwisexyz/hoodwise/test.yml?branch=main&style=for-the-badge&label=Product%20checks" /></a>
+  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> ·
+  <a href="./CONTEXT.md"><strong>Product context</strong></a> ·
+  <a href="./ROADMAP.md"><strong>Roadmap</strong></a>
 </p>
 
-<p align="center">
-  <img src="./public/hoodwise-signal.svg" alt="Animated Hoodwise signal surface" width="100%" />
-</p>
+## What Hoodwise does
 
-## The signal
+Hoodwise is built for the question behind the headline: what is confirmed, how does it work, what does it not imply, and what should be verified next?
 
-Hoodwise turns a fast-moving chain into a briefing you can actually use. Ask a direct question, follow the source links, and stay oriented without digging through a dozen tabs.
-
-| | What Hoodwise makes easier |
+| Area | What users can ask |
 | --- | --- |
-| **Products** | Stock Tokens, Robinhood Earn, and the practical “what does this mean?” layer. |
-| **Infrastructure** | Orbit, Chainlink, DeFi, wallets, access, and how the chain fits together. |
-| **Ecosystem** | Agents, experiments, culture, memes, and the trade-offs behind the headline. |
-| **Risk context** | A clear distinction between structural facts, current context, and uncertainty. |
+| Chain mechanics | Arbitrum L2 architecture, ETH gas, EVM compatibility, account abstraction, RPCs, bridges, and contract deployment. |
+| Robinhood products | Stock Tokens, Robinhood Earn, access constraints, and the distinction between product availability and a permissionless chain. |
+| Ecosystem | Infrastructure partners, DEXs, lending, perps, wallets, and agentic/onchain tools. |
+| Community tokens | What a memecoin is, how to distinguish it from a canonical Stock Token, and what contract/pool checks are meaningful. |
+| Risk context | Jurisdiction, smart-contract, liquidity, bridge, and product-structure caveats without trade recommendations. |
 
-> **Independent by design.** Hoodwise is educational, not financial advice, and is not affiliated with Robinhood Markets.
+> Hoodwise is educational, independent, and not affiliated with Robinhood Markets. It does not connect wallets, execute trades, or provide financial advice.
 
-## Built for a better first question
+## Product principles
 
-<table>
-  <tr>
-    <td width="56%" valign="top">
-      <h3>Focused answers</h3>
-      <p>Start with the signal, not the noise. Hoodwise keeps explanations direct and keeps the important caveats visible.</p>
-      <h3>Sources in the flow</h3>
-      <p>Relevant answers carry source links so you can go from a quick briefing to primary context without breaking your flow.</p>
-    </td>
-    <td width="44%" align="center">
-      <img src="./public/hoodwise-profile.png" alt="Hoodwise mark" width="220" />
-    </td>
-  </tr>
-</table>
+- **Direct, not vague.** The answer comes first; caveats explain what changes that answer.
+- **Source-grounded.** Curated official documentation is the baseline. Relevant replies include source links.
+- **Current when configured.** An optional Tavily layer can add live context for changing questions; it never replaces the curated baseline.
+- **Private by default.** No login or wallet connection. Conversation history belongs to an anonymous browser session and is stored on the production volume.
 
-## Under the hood
+## Production status
 
-The product is intentionally simple at the surface and deliberate underneath.
+Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 
-~~~
-Question → curated chain context → optional live context → source-grounded answer
-~~~
+- Clean public routes: `/`, `/app`, and `/app/c/<conversation-id>`.
+- Health check: `/api/health`.
+- Persistent SQLite volume mounted at `/data` in production.
+- Streaming chat with a completion fallback if an upstream stream closes early.
+- Automated test suite: `npm test` (currently 25 tests).
 
-- A curated knowledge layer is the always-on source of truth.
-- An optional, scoped live-search layer can supplement questions that are clearly time-sensitive.
-- Conversation history is private to each anonymous browser session.
-- Responses stream into a polished chat surface, with safe identity handling and source matching built in.
+For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md).
 
-For the fuller product picture, see [CONTEXT.md](./CONTEXT.md), [STATUS.md](./STATUS.md), and [ROADMAP.md](./ROADMAP.md).
+## Architecture
 
-## A product, not a black box
+```text
+Browser UI -> Express API -> validated chat turn -> curated knowledge
+                                   |                 + optional live context
+                                   v
+                            conversation store + source-linked response
+```
 
-| Surface | What it does |
-| --- | --- |
-| Landing experience | Sets the context, explains coverage, and gives users a confident starting point. |
-| Briefing chat | Saves a user’s own conversation history and delivers grounded answers progressively. |
-| Source layer | Matches relevant links to help users verify and continue their research. |
-| Production baseline | Input validation, rate limiting, safe error handling, health checks, and automated tests. |
+The backend is deliberately layered: routes validate and orchestrate, services handle conversations/model/search, data owns SQLite, and middleware owns request IDs, rate limits, and error handling.
 
----
+## Local development
 
-<details>
-<summary><strong>Run Hoodwise locally</strong></summary>
-
-<br />
-
-~~~
+```bash
 npm install
 cp .env.example .env
-# Add OPENROUTER_API_KEY to .env
+# set OPENROUTER_API_KEY in .env
 npm start
-~~~
+```
 
-Open http://localhost:3000, then run npm test for the automated suite. Keep .env private; it is intentionally ignored by Git.
-</details>
+Open `http://localhost:3000` and run `npm test`. Keep `.env` private; it is ignored by Git.
 
-<details>
-<summary><strong>Deploy</strong></summary>
+## Deployment
 
-<br />
-
-Railway detects the Node service automatically. Set OPENROUTER_API_KEY, NODE_ENV=production, and PUBLIC_APP_URL in Railway Variables. For persistent conversation history, mount a Railway volume at /data and set DB_PATH=/data/hoodwise.db.
-</details>
-
-<p align="center">
-  <sub>Hoodwise explains how Robinhood Chain works. It is not affiliated with Robinhood Markets, and nothing here is financial advice.</sub>
-</p>
+Railway is the production target. Set `OPENROUTER_API_KEY`, `NODE_ENV=production`, `PUBLIC_APP_URL=https://hoodwise.xyz`, and `DB_PATH=/data/hoodwise.db`; mount a volume at `/data`. `railway.toml` configures the `/api/health` deployment check.

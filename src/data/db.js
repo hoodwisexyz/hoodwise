@@ -12,6 +12,9 @@ const DB_PATH = config.db.path || path.join(__dirname, '..', '..', 'hoodwise.db'
 const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
+// Absorb short write contention windows instead of failing a user turn when
+// SQLite is checkpointing or another request just committed.
+db.pragma('busy_timeout = 5000');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS conversations (

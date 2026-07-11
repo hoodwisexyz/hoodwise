@@ -61,3 +61,8 @@ test.after(() => {
     if (fs.existsSync(f)) fs.unlinkSync(f);
   }
 });
+
+test('parseSources fails closed for malformed persisted metadata', () => {
+  assert.deepEqual(conversations.parseSources('{not valid json'), []);
+  assert.deepEqual(conversations.parseSources('{"not":"an array"}'), []);
+});

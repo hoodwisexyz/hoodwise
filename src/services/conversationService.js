@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const { db } = require('../data/db');
 const { NotFoundError } = require('../lib/errors');
+const logger = require('../lib/logger');
 
 function titleFromMessage(text) {
   const clean = text.trim().replace(/\s+/g, ' ');
@@ -31,6 +32,17 @@ function createConversation(sessionId, firstMessage) {
   return id;
 }
 
+function parseSources(rawSources) {
+  if (!rawSources) return [];
+  try {
+    const parsed = JSON.parse(rawSources);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    logger.warn('conversation message has invalid source metadata');
+    return [];
+  }
+}
+
 function getMessages(conversationId, sessionId) {
   const convo = getOwnedConversation(conversationId, sessionId);
   const rows = db
@@ -38,7 +50,7 @@ function getMessages(conversationId, sessionId) {
     .all(conversationId);
   return {
     conversation: convo,
-    messages: rows.map(m => ({ ...m, sources: m.sources ? JSON.parse(m.sources) : [] }))
+    messages: rows.map(m => ({ ...m, sources: parseSources(m.sources) }))
   };
 }
 
@@ -76,5 +88,6 @@ module.exports = {
   appendMessage,
   touchConversation,
   deleteConversation,
-  titleFromMessage
+  titleFromMessage,
+  parseSources
 };
