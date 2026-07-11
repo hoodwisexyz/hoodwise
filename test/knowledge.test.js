@@ -168,4 +168,6 @@ test('Hoodwise contract address is available in sources and prompt focus', () =>
   assert.match(prompt, /0x6bdb637a9e988835dc368ef72cb5d143540f037c/);
   assert.match(prompt, /Virtuals\.io/);
   assert.match(prompt, /not an official Robinhood asset/);
+  assert.match(prompt, /project-profile style/);
+  assert.match(prompt, /Do not open with a security-warning tone/);
 });

@@ -238,17 +238,31 @@
   }
 
   // ---------- Contract copy buttons ----------
+  async function copyText(value) {
+    if (navigator.clipboard?.writeText) {
+      try { await navigator.clipboard.writeText(value); return true; } catch (error) { /* fallback below */ }
+    }
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch (error) { copied = false; }
+    textarea.remove();
+    return copied;
+  }
+
   document.querySelectorAll('[data-copy-contract]').forEach(button => {
     button.addEventListener('click', async () => {
       const value = button.dataset.copyContract;
       const original = button.textContent;
-      try {
-        await navigator.clipboard.writeText(value);
-        button.textContent = 'Copied';
-        button.classList.add('is-copied');
-      } catch (error) {
-        button.textContent = 'Copy failed';
-      }
+      const copied = await copyText(value);
+      button.textContent = copied ? 'Copied' : 'Copy manually';
+      button.classList.toggle('is-copied', copied);
       window.setTimeout(() => {
         button.textContent = original;
         button.classList.remove('is-copied');
