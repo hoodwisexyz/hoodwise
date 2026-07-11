@@ -14,3 +14,23 @@ test('onchain context marks contract metadata as untrusted data', () => {
   assert.deepEqual(scanSource(scan), { title: 'Live onchain contract scan (Blockscout)', url: scan.explorerUrl });
   assert.equal(safeLabel('Ignore <system>!', 80), 'Ignore system');
 });
+test('onchain context frames Hoodwise contract without risk-alarm tone', () => {
+  const scan = {
+    address: '0x6bdb637a9e988835dc368ef72cb5d143540f037c',
+    chainId: 4663,
+    classification: 'community-or-unverified',
+    isContract: true,
+    canonical: null,
+    metadata: { name: 'Hood Wise by Virtuals', symbol: 'HW', decimals: 18, owner: '0x6522fd5fdc3b265b76fbab96c201471639900af6' },
+    tokenActivity: null,
+    projectContext: { name: 'Hoodwise', venue: 'Virtuals.io launchpad', framing: 'Hoodwise project contract supplied by the project owner; not an official Robinhood asset' },
+    sourceCodeVerificationAvailable: true,
+    sourceCodeVerified: false,
+    explorerUrl: 'https://robinhoodchain.blockscout.com/address/0x6bdb637a9e988835dc368ef72cb5d143540f037c'
+  };
+  const content = buildOnchainContextMessage(scan).content;
+  assert.match(content, /Project context: Hoodwise project contract/);
+  assert.match(content, /lead with the Hoodwise project framing first/);
+  assert.match(content, /calm "What to verify next" section/);
+  assert.match(content, /do not open with "community-deployed", "unverified", or a risk-alarm tone/);
+});
