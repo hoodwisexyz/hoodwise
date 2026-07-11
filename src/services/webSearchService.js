@@ -2,6 +2,14 @@ const fetch = require('node-fetch');
 const { config } = require('../config');
 const logger = require('../lib/logger');
 
+const TRUSTED_SEARCH_HOSTS = new Set(['robinhood.com', 'docs.robinhood.com', 'investors.robinhood.com', 'arbitrum.io', 'chain.link', 'blockscout.com', 'coindesk.com', 'thedefiant.io']);
+function isTrustedSearchUrl(value) {
+  try {
+    const host = new URL(value).hostname.replace(/^www\./, '');
+    return [...TRUSTED_SEARCH_HOSTS].some(allowed => host === allowed || host.endsWith('.' + allowed));
+  } catch { return false; }
+}
+
 /**
  * Heuristic for "does this question likely need something fresher than the
  * static knowledge base?" — deliberately conservative and fast (a regex,
@@ -51,7 +59,7 @@ async function searchWeb(query, { requestId } = {}) {
     const results = (data.results || [])
       .slice(0, config.search.maxResults)
       .map(r => ({ title: r.title, url: r.url, snippet: (r.content || '').slice(0, 400) }))
-      .filter(r => r.title && r.url);
+      .filter(r => r.title && r.url && isTrustedSearchUrl(r.url));
 
     return { results, attempted: true };
   } catch (err) {
@@ -65,4 +73,4 @@ async function searchWeb(query, { requestId } = {}) {
   }
 }
 
-module.exports = { searchWeb, looksTimeSensitive };
+module.exports = { searchWeb, looksTimeSensitive, isTrustedSearchUrl };

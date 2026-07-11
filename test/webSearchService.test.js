@@ -31,3 +31,9 @@ test('looksTimeSensitive detects memecoin and onchain verification questions', (
   assert.equal(looksTimeSensitive('Can you check this token address?'), true);
   assert.equal(looksTimeSensitive('what is a stock token'), false);
 });
+test('isTrustedSearchUrl excludes low-signal sources from live context', () => {
+  const { isTrustedSearchUrl } = require('../src/services/webSearchService');
+  assert.equal(isTrustedSearchUrl('https://docs.robinhood.com/chain/'), true);
+  assert.equal(isTrustedSearchUrl('https://www.youtube.com/watch?v=test'), false);
+  assert.equal(isTrustedSearchUrl('not a url'), false);
+});
