@@ -1,6 +1,6 @@
 const INTERNAL_LEAK_PATTERN = /\b(openrouter|deepseek|system prompt|api[_ -]?key|private key|session id|database path|railway)\b/i;
 const RAW_URL_PATTERN = /https?:\/\//i;
-const RESEARCH_PATTERN = /\b(memecoin|meme coin|launchpad|noxa|hoodfun|lore|thesis|tokenomics|trending)\b/i;
+const RESEARCH_PATTERN = /\b(memecoin|meme coin|launchpad|noxa|bankr|doppler|virtuals|hood\.fun|hoodfun|lore|thesis|tokenomics|trending)\b/i;
 
 /**
  * Privacy-safe, deterministic quality review for completed answers. It never

@@ -9,6 +9,7 @@ const { BadRequestError } = require('../lib/errors');
 const conversations = require('../services/conversationService');
 const { callChatModel, streamChatModel } = require('../services/openrouterService');
 const { searchWeb, looksTimeSensitive, isNoxaCandidateRequest, isEcosystemCandidateRequest } = require('../services/webSearchService');
+const { extractCandidatesFromResults, buildCandidateContextMessage } = require('../services/candidateExtractorService');
 const { scanContractInMessage, buildOnchainContextMessage, scanSource } = require('../services/onchainScanService');
 const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
@@ -109,7 +110,7 @@ async function prepareTurn(req) {
   const noxaDiscoveryFallbackMessage = buildNoxaDiscoveryFallback(message, liveResults);
   const ecosystemDiscoveryFallbackMessage = buildEcosystemDiscoveryFallback(message, liveResults);
   const onchainContextMessage = buildOnchainContextMessage(onchainScan);
-  const messagesForModel = [...history, liveContextMessage, noxaDiscoveryFallbackMessage, ecosystemDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
+  const messagesForModel = [...history, liveContextMessage, candidateContextMessage, noxaDiscoveryFallbackMessage, ecosystemDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
 
   return { conversationId, message, messagesForModel, liveResults, onchainScan };
 }
@@ -275,5 +276,5 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   }
 }));
 
-router._test = { mergeSources, buildBrief, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
+router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
 module.exports = router;

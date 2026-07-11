@@ -14,4 +14,4 @@ Every material answer change should be checked against the benchmark cases in `t
 
 ## Production smoke review
 
-Run a small, deliberate set of live questions after a material model/prompt/source change. Review: opening directness, canonical address accuracy, source relevance, launchpad recognition, candidate evidence, risk framing, and identity safety. Do not add this as a CI test because it has external cost and non-deterministic model output.
+Run `npm run smoke:prod` after a material model/prompt/source change. Review: opening directness, canonical address accuracy, source relevance, launchpad recognition, candidate evidence, risk framing, and identity safety. Use `npm run smoke:prod -- --limit=4` for a short debug pass. Do not add this as a CI test because it has external cost and non-deterministic model output.
