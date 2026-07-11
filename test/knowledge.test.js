@@ -32,6 +32,12 @@ test('sanitizeReply removes an accidental DYOR instruction echo', () => {
   assert.equal(output, 'Cash Cat is a recent discovery candidate.');
 });
 
+test('sanitizeReply scrubs private credential labels', () => {
+  const output = sanitizeReply('I do not reveal API keys or backend details.');
+  assert.doesNotMatch(output, /api[_ -]?key/i);
+  assert.match(output, /private credentials/);
+});
+
 test('findSources matches memecoin-related keywords', () => {
   const sources = findSources('The memecoin scene includes CASHCAT and NOXA launchpad activity.');
   assert.ok(sources.length > 0, 'expected at least one matched source');
