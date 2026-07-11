@@ -1,4 +1,5 @@
 const express = require('express');
+const { config } = require('../config');
 const router = express.Router();
 
 const startedAt = Date.now();
@@ -10,7 +11,8 @@ router.get('/health', (req, res) => {
   res.json({
     ok: true,
     service: 'hoodwise',
-    uptimeSeconds: Math.floor((Date.now() - startedAt) / 1000)
+    uptimeSeconds: Math.floor((Date.now() - startedAt) / 1000),
+    liveSearchConfigured: config.search.enabled
   });
 });
 

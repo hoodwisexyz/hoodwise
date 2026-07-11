@@ -46,7 +46,7 @@ Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 - Streaming chat with a completion fallback if an upstream stream closes early.
 - Automated test suite: `npm test` (currently 25 tests).
 
-For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md).
+For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 
 ## Architecture
 

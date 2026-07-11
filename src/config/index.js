@@ -78,6 +78,12 @@ function validateConfig(log) {
   if (config.rateLimit.max < 1) {
     throw new Error('RATE_LIMIT_MAX must be a positive integer');
   }
+  if (config.search.maxResults < 1 || config.search.maxResults > 6) {
+    throw new Error('SEARCH_MAX_RESULTS must be between 1 and 6');
+  }
+  if (config.search.timeoutMs < 1000 || config.search.timeoutMs > 15000) {
+    throw new Error('SEARCH_TIMEOUT_MS must be between 1000 and 15000');
+  }
 }
 
 module.exports = { config, validateConfig };
