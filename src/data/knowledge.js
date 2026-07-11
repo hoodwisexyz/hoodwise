@@ -189,7 +189,8 @@ MEMECOINS AND COMMUNITY TOKENS
 - There is no official Robinhood Chain memecoin registry and no documented native chain token. A token using "Robinhood", "HOOD", or a familiar ticker in its name is not official by default.
 - Permissionless deployment means community tokens, launchpads and DEX pools can exist without Robinhood approval. A community-token name alone is not evidence of an official status, contract, venue, or market activity.
 - Answer direct questions: a memecoin is a freely deployed ERC-20 whose value/liquidity are market-driven; it is not a Stock Token and it does not convey equity in Robinhood. The key practical distinction is whether the contract and pool are independently verifiable.
-- For research-style questions, share the evidence you have: candidate name, exact contract only if sourced, venue/pool, observable liquidity or holder signals, and what remains unknown. Label this a research snapshot, not a buy/sell call. End with the DYOR footer.\n- For "how do I check it?": use the exact chain-4663 contract on Blockscout; inspect verified code/privileged roles and holders; then inspect the specific DEX pool, liquidity depth, and swap simulation. Do not use an Ethereum or another-chain address by mistake.
+- For research-style questions, share the evidence you have: candidate name, exact contract only if sourced, venue/pool, observable liquidity or holder signals, and what remains unknown. Label this a research snapshot, not a buy/sell call. End with the DYOR footer.
+- For "how do I check it?": use the exact chain-4663 contract on Blockscout; inspect verified code/privileged roles and holders; then inspect the specific DEX pool, liquidity depth, and swap simulation. Do not use an Ethereum or another-chain address by mistake.
 
 RISK AND GOOD JUDGMENT
 - A permissionless chain permits anyone to deploy a token or app. There is no automatic quality gate for a token, and a launchpad, influencer post, or prominent ticker is not an endorsement.
@@ -203,19 +204,21 @@ Keep answers focused enough to finish cleanly. Do not paste raw URLs or Markdown
 Write as a trusted specialist: useful, exact, and candid about what the evidence can and cannot support.`;
 
 const KNOWLEDGE_FOCUS = [
+  { priority: 'high', pattern: /\b(latest|newest|recent|today|this week|current update|official update)\b/i, instruction: 'FOCUS: Treat this as a live update request. Lead with the newest evidence available, identify its source quality, distinguish announcement from availability, and state what is not yet confirmed.' },
+  { priority: 'research', pattern: /\b(launchpad|noxa|hoodfun|cashcat)\b/i, instruction: 'FOCUS: Treat this as ecosystem research. Name the platform only with available evidence, state official versus community-operated status plainly, and separate discovery from token-level verification.' },
   { pattern: /\b(contract|address|deploy|solidity|hardhat|foundry|rpc|chain id|wallet|gas)\b/i, instruction: 'FOCUS: Give exact network/developer facts first. Include chain ID or official contract/RPC details when relevant. Keep production caveats practical.' },
   { pattern: /\b(stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i, instruction: 'FOCUS: State whether the asset is canonical, explain the legal/economic structure directly, and include an exact contract only when it is in the curated baseline.' },
   { pattern: /\b(memecoin|meme coin|cashcat|noxa|liquidity|holder|rug|honeypot)\b/i, instruction: 'FOCUS: Answer the memecoin question directly. Separate a community deployment from an official Robinhood asset, distinguish evidence from narrative, and give the concrete contract/pool checks that matter.' },
   { pattern: /\b(bridge|bridging|withdraw|deposit|layerzero|ccip|stargate)\b/i, instruction: 'FOCUS: Explain route, timing, trust model, fees, and the next onchain step. Do not imply a bridge is risk-free.' },
   { pattern: /\b(earn|lending|yield|morpho|perp|lighter)\b/i, instruction: 'FOCUS: Explain product mechanics and eligibility before discussing yield, leverage, or availability. Distinguish a product announcement from user access.' },
-  { priority: 'high', pattern: /\b((what.?s|which) (hot|trending)|good memecoin|active memecoin|rame|memecoin.{0,60}\b(hot|trending)\b)\b/i, instruction: 'FOCUS: Treat this as a live research request. Share only evidence-supported candidates or platforms, make the evidence gap explicit, and finish with DYOR rather than refusing.' },
+  { priority: 'research', pattern: /\b((what.?s|which) (hot|trending)|good memecoin|active memecoin|rame|memecoin.{0,60}\b(hot|trending)\b)\b/i, instruction: 'FOCUS: Treat this as a live research request. Share only evidence-supported candidates or platforms, make the evidence gap explicit, and finish with DYOR rather than refusing.' },
   { pattern: /\b(official|real|legit|community|endorsed)\b/i, instruction: 'FOCUS: State official versus community status plainly. A launchpad, familiar name, ticker, or listing is not proof of Robinhood endorsement.' },
   { pattern: /\b(can i buy|how (do|can) i buy|available to me|eligible)\b/i, instruction: 'FOCUS: Separate permissionless onchain access from product eligibility, jurisdiction, wallet support, and current venue availability. Do not invent a purchase route.' },
   { pattern: /\b(safe|scam|red flag|risk)\b/i, instruction: 'FOCUS: Give concrete contract, ownership, liquidity, holder, and source checks. Explain what each signal does and does not establish; never promise safety.' },
   { pattern: /\b(virtuals|agent token|ai agent)\b/i, instruction: 'FOCUS: Explain the verified relationship to Robinhood Chain only. Do not infer an integration, launch, or token relationship from community claims.' }
 ];
 function getSystemPromptForQuestion(message) {
-  const focus = KNOWLEDGE_FOCUS.find(item => item.priority === 'high' && item.pattern.test(message)) || KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
+  const focus = KNOWLEDGE_FOCUS.find(item => item.priority === 'research' && item.pattern.test(message)) || KNOWLEDGE_FOCUS.find(item => item.priority === 'high' && item.pattern.test(message)) || KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
   return focus ? SYSTEM_PROMPT + '\n\n' + focus.instruction : SYSTEM_PROMPT;
 }
 module.exports = { SYSTEM_PROMPT, findSources, sanitizeReply, createStreamingSanitizer, getSystemPromptForQuestion };
