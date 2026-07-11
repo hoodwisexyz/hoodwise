@@ -22,9 +22,11 @@ test('critical benchmark prompts receive topic-specific instructions and sources
   assert.ok(findSources('NVDA canonical contract 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC').length > 0);
 });
 test('memecoin research policy permits evidence-led research with a DYOR footer', () => {
-  assert.match(SYSTEM_PROMPT, /provide a research snapshot/);
+  assert.match(SYSTEM_PROMPT, /Produce a clearly labelled research shortlist/);
   assert.match(SYSTEM_PROMPT, /DYOR: verify the exact contract/);
-  assert.match(SYSTEM_PROMPT, /ONLY when that exact claim is supported by a live source/);
+  assert.match(SYSTEM_PROMPT, /State candidate-level facts only when supported by current context/);
+  assert.match(SYSTEM_PROMPT, /do not answer with a generic refusal/);
+  assert.match(SYSTEM_PROMPT, /launchpad's own trending\/listing page is valid OBSERVED discovery evidence/);
 });
 test('quality policy keeps source URLs in source chips instead of the answer body', () => {
   assert.match(SYSTEM_PROMPT, /Do not paste raw URLs or Markdown links/);

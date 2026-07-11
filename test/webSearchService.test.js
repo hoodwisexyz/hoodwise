@@ -49,6 +49,10 @@ test('isMemecoinResearchQuery targets DEX-backed research for memecoin questions
   assert.equal(isMemecoinResearchQuery('Which memecoin has the most liquidity on Robinhood Chain?'), true);
   assert.equal(isMemecoinResearchQuery('How does Robinhood Chain settle transactions?'), false);
 });
+test('isMemecoinResearchQuery recognizes a direct NOXA coin request', () => {
+  const { isMemecoinResearchQuery } = require('../src/services/webSearchService');
+  assert.equal(isMemecoinResearchQuery('Just tell me a good coin from noxa.fun asap'), true);
+});
 test('looksTimeSensitive detects thesis and lore research questions', () => {
   assert.equal(looksTimeSensitive('What is the lore and thesis behind this Robinhood Chain memecoin?'), true);
 });

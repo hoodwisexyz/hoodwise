@@ -116,6 +116,12 @@ test('getSystemPromptForQuestion gives live memecoin research a direct evidence-
   assert.match(prompt, /Treat this as a live research request/);
   assert.match(prompt, /confirmed \(primary\/onchain evidence\), observed \(current market or listing evidence\), and unverified/);
 });
+test('getSystemPromptForQuestion gives a NOXA coin request a candidate-research focus before generic NOXA context', () => {
+  const { getSystemPromptForQuestion } = require('../src/data/knowledge');
+  const prompt = getSystemPromptForQuestion('Just tell me a good coin from noxa.fun asap');
+  assert.match(prompt, /NOXA candidate-research request/);
+  assert.match(prompt, /Do not refuse/);
+});
 test('findSources prioritizes a direct NOXA source while retaining verification context', () => {
   const sources = findSources('noxa');
   assert.equal(sources[0].url, 'https://www.noxa.fun/');

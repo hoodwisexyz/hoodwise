@@ -21,6 +21,7 @@ function isTrustedSearchUrl(value) {
  */
 const FRESHNESS_PATTERN = /\b(today|now|currently|latest|newest|recent|recently|this week|this month|update|updates|updated|price|trending|status|available|availability|supported|is .* live|meme ?coin|this token|ticker|cashcat|noxa|launchpad|liquidity|volume|holders|contract address|perp|bridge|rpc|chain id|gas fee|lore|thesis|narrative|tokenomics|new (launchpad|token|memecoin|partner)|just (launched|announced)|breaking|news)\b/i;
 const MEMECOIN_RESEARCH_PATTERN = /\b(meme ?coin|cashcat|noxa|launchpad|liquidity|volume|holders|rug|honeypot)\b/i;
+const NOXA_CANDIDATE_PATTERN = /\bnoxa(?:\.fun)?\b/i;
 
 function looksTimeSensitive(message) {
   return FRESHNESS_PATTERN.test(message);
@@ -46,13 +47,16 @@ async function searchWeb(query, { requestId } = {}) {
 
   try {
     const memecoinResearch = isMemecoinResearchQuery(query);
+    const noxaCandidateResearch = memecoinResearch && NOXA_CANDIDATE_PATTERN.test(query);
     const response = await fetch(config.search.url, {
       method: 'POST',
       signal: controller.signal,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         api_key: config.search.tavilyApiKey,
-        query: memecoinResearch
+        query: noxaCandidateResearch
+          ? `site:noxa.fun Robinhood Chain NOXA Fun trending tokens market cap volume graduation ${query}`
+          : memecoinResearch
           ? `Robinhood Chain ${query} launchpad token liquidity volume contract address NOXA Fun HoodFun Virtuals`
           : `Robinhood Chain ${query}`,
         search_depth: 'basic',
