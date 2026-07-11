@@ -27,6 +27,11 @@ test('sanitizeReply is case-insensitive', () => {
   assert.doesNotMatch(output, /deepseek/i);
 });
 
+test('sanitizeReply removes an accidental DYOR instruction echo', () => {
+  const output = sanitizeReply('End with the DYOR footer. Cash Cat is a recent discovery candidate.');
+  assert.equal(output, 'Cash Cat is a recent discovery candidate.');
+});
+
 test('findSources matches memecoin-related keywords', () => {
   const sources = findSources('The memecoin scene includes CASHCAT and NOXA launchpad activity.');
   assert.ok(sources.length > 0, 'expected at least one matched source');

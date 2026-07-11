@@ -64,6 +64,7 @@ function sanitizeReply(text) {
   let clean = text;
   for (const { pattern, replacement } of IDENTITY_LEAK_PATTERNS) clean = clean.replace(pattern, replacement);
   clean = clean
+    .replace(/^\s*End with (?:the )?(?:compact )?DYOR footer\.?\s*/i, '')
     .replace(/\[([^\]\n]+)\]\(https?:\/\/[^\s)]+\)/g, '$' + '1')
     .replace(/https?:\/\/[^\s)\]]+/g, 'the linked source');
   return clean;
