@@ -25,6 +25,86 @@
     });
   }
 
+  // ---- Ambient command-field canvas ----
+  // Kept deliberately sparse so the chat remains readable while the surface
+  // feels responsive and alive behind the conversation.
+  const ambientField = document.getElementById('ambientField');
+  if (ambientField) {
+    const fieldContext = ambientField.getContext('2d');
+    const fieldParticles = [];
+    let fieldWidth = 0;
+    let fieldHeight = 0;
+    let fieldFrame = 0;
+    const particleCount = window.innerWidth < 780 ? 18 : 34;
+
+    function resizeAmbientField() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      fieldWidth = ambientField.width = Math.floor(ambientField.clientWidth * ratio);
+      fieldHeight = ambientField.height = Math.floor(ambientField.clientHeight * ratio);
+      fieldParticles.length = 0;
+      for (let index = 0; index < particleCount; index += 1) {
+        fieldParticles.push({
+          x: Math.random() * fieldWidth,
+          y: Math.random() * fieldHeight,
+          radius: (Math.random() * 1.25 + .45) * ratio,
+          velocityX: (Math.random() - .5) * .13 * ratio,
+          velocityY: (Math.random() - .5) * .13 * ratio,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function drawAmbientField() {
+      fieldContext.clearRect(0, 0, fieldWidth, fieldHeight);
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      const glowX = fieldWidth * .56 + Math.sin(fieldFrame * .002) * fieldWidth * .12;
+      const glowY = fieldHeight * .35;
+      const aura = fieldContext.createRadialGradient(glowX, glowY, 0, glowX, glowY, Math.max(fieldWidth, fieldHeight) * .48);
+      aura.addColorStop(0, 'rgba(0,230,118,.075)');
+      aura.addColorStop(.48, 'rgba(0,230,118,.018)');
+      aura.addColorStop(1, 'rgba(0,230,118,0)');
+      fieldContext.fillStyle = aura;
+      fieldContext.fillRect(0, 0, fieldWidth, fieldHeight);
+
+      fieldParticles.forEach((particle, index) => {
+        particle.x += particle.velocityX;
+        particle.y += particle.velocityY;
+        if (particle.x < -20 * ratio) particle.x = fieldWidth + 20 * ratio;
+        if (particle.x > fieldWidth + 20 * ratio) particle.x = -20 * ratio;
+        if (particle.y < -20 * ratio) particle.y = fieldHeight + 20 * ratio;
+        if (particle.y > fieldHeight + 20 * ratio) particle.y = -20 * ratio;
+
+        for (let next = index + 1; next < fieldParticles.length; next += 1) {
+          const peer = fieldParticles[next];
+          const distanceX = particle.x - peer.x;
+          const distanceY = particle.y - peer.y;
+          const distance = Math.hypot(distanceX, distanceY);
+          const maxDistance = 156 * ratio;
+          if (distance < maxDistance) {
+            fieldContext.strokeStyle = 'rgba(78,255,154,' + ((1 - distance / maxDistance) * .075) + ')';
+            fieldContext.lineWidth = .65 * ratio;
+            fieldContext.beginPath();
+            fieldContext.moveTo(particle.x, particle.y);
+            fieldContext.lineTo(peer.x, peer.y);
+            fieldContext.stroke();
+          }
+        }
+
+        const pulse = .45 + Math.sin(fieldFrame * .025 + particle.phase) * .25;
+        fieldContext.fillStyle = 'rgba(103,255,169,' + pulse + ')';
+        fieldContext.beginPath();
+        fieldContext.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        fieldContext.fill();
+      });
+
+      fieldFrame += 1;
+      if (!motionReduced) requestAnimationFrame(drawAmbientField);
+    }
+
+    resizeAmbientField();
+    drawAmbientField();
+    window.addEventListener('resize', resizeAmbientField);
+  }
   // ---- Session (anonymous, persisted locally so history survives refresh) ----
   function uuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {

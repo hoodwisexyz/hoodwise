@@ -501,3 +501,9 @@ section::before { content:''; position:absolute; width:32rem; height:32rem; bord
 @media (prefers-reduced-motion:reduce) { .observatory * { animation:none !important; } }
 @media (max-width:900px) { .observatory{grid-template-columns:1fr;gap:46px}.observatory-surface{max-width:650px;width:100%;transform:none}.observatory-copy{max-width:620px} }
 @media (max-width:520px) { .observatory{padding:86px 20px}.observatory-body{grid-template-columns:1fr 130px}.observatory-readout div{padding:15px 11px}.orbit-three{width:280px;height:280px}.observatory-copy h2{font-size:42px}.observatory-surface{border-radius:16px} }
+/* ===== High-luxury horizon treatment ===== */
+.hero-grid::after { content:''; position:absolute; left:2%; right:2%; bottom:-48px; height:1px; pointer-events:none; background:linear-gradient(90deg,transparent,rgba(0,230,118,.32),transparent); box-shadow:0 0 28px rgba(0,230,118,.14); }
+.signal-deck { box-shadow:0 44px 120px rgba(0,0,0,.15); }
+.signal-deck::before { content:''; position:absolute; inset:-1px; pointer-events:none; border-radius:inherit; padding:1px; background:linear-gradient(110deg,transparent 22%,rgba(133,255,185,.38),transparent 64%); mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); mask-composite:exclude; opacity:.46; animation:deckEdge 7s ease-in-out infinite; }
+@keyframes deckEdge { 50%{opacity:.82;filter:brightness(1.35)} }
+@media (prefers-reduced-motion:reduce) { .signal-deck::before { animation:none; } }
