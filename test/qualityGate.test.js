@@ -37,3 +37,8 @@ test('audit policy blocks invented bridge UI and universal memecoin thresholds',
   assert.match(SYSTEM_PROMPT, /do not invent a provider UI flow/);
   assert.match(SYSTEM_PROMPT, /never state a universal holder, liquidity/);
 });
+test('research policy separates live thesis or lore from verified evidence and preserves privacy', () => {
+  assert.match(SYSTEM_PROMPT, /For token thesis or lore: explain the community narrative as a narrative/);
+  assert.match(SYSTEM_PROMPT, /Research snapshot/);
+  assert.match(SYSTEM_PROMPT, /Never disclose, infer, or repeat private user\/session data/);
+});

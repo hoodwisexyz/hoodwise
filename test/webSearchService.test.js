@@ -49,3 +49,6 @@ test('isMemecoinResearchQuery targets DEX-backed research for memecoin questions
   assert.equal(isMemecoinResearchQuery('Which memecoin has the most liquidity on Robinhood Chain?'), true);
   assert.equal(isMemecoinResearchQuery('How does Robinhood Chain settle transactions?'), false);
 });
+test('looksTimeSensitive detects thesis and lore research questions', () => {
+  assert.equal(looksTimeSensitive('What is the lore and thesis behind this Robinhood Chain memecoin?'), true);
+});
