@@ -441,3 +441,23 @@ html, body {
 .topbar { border-bottom-color:rgba(151,255,194,.12); }
 .topbar-title { text-shadow:0 0 18px rgba(0,230,118,.16); }
 @media (prefers-reduced-motion:reduce) { .ambient-field { display:none; } }
+/* ===== Chat concierge interaction system ===== */
+.topbar-presence { display:flex; align-items:center; gap:7px; margin-left:auto; margin-right:18px; color:#89b99b; font:9px 'JetBrains Mono',monospace; letter-spacing:.12em; }
+.topbar-presence i { width:6px; height:6px; border-radius:50%; background:var(--primary); box-shadow:0 0 12px var(--primary); animation:presencePulse 2.2s ease-in-out infinite; }
+.composer-meta { display:flex; justify-content:space-between; gap:16px; padding:5px max(28px,calc((100% - 1040px) / 2)) 0; color:rgba(132,184,153,.58); background:rgba(3,11,7,.97); font:8px 'JetBrains Mono',monospace; letter-spacing:.025em; }
+.composer-meta span:last-child { color:rgba(158,255,203,.72); }
+.interaction-status { position:fixed; z-index:20; left:50%; bottom:28px; max-width:min(90vw,430px); transform:translate(-50%,18px); padding:10px 14px; border:1px solid rgba(97,255,157,.25); border-radius:999px; background:rgba(5,20,12,.88); box-shadow:0 14px 42px rgba(0,0,0,.28),inset 0 1px 0 rgba(210,255,226,.08); backdrop-filter:blur(16px); color:#c9f8d8; font:10px 'JetBrains Mono',monospace; letter-spacing:.025em; opacity:0; pointer-events:none; transition:opacity .28s ease,transform .35s cubic-bezier(.16,1,.3,1); }
+.interaction-status.is-visible { opacity:1; transform:translate(-50%,0); }
+.send-btn { isolation:isolate; }
+.send-btn.is-ready { box-shadow:0 14px 30px rgba(0,230,118,.24),inset 0 1px 0 rgba(255,255,255,.28); }
+.send-btn.is-loading { cursor:wait; }
+.send-btn.is-loading svg { opacity:0; transform:scale(.55); }
+.send-btn.is-loading::after { content:''; position:absolute; z-index:2; width:15px; height:15px; border:2px solid rgba(3,25,13,.35); border-top-color:#06361c; border-radius:50%; animation:sendSpin .7s linear infinite; }
+.chip:focus-visible,.new-chat-btn:focus-visible,.theme-toggle:focus-visible,.delete-btn:focus-visible,.history-item .title:focus-visible { outline:2px solid var(--primary); outline-offset:3px; border-radius:7px; }
+.history-item .title[role="button"] { cursor:pointer; }
+.history-item .title[role="button"]:focus-visible { color:var(--mint); }
+.copy-btn.copied::after { content:'Copied'; position:absolute; right:0; top:-28px; padding:5px 7px; border:1px solid rgba(105,255,165,.28); border-radius:6px; background:#0b2317; color:var(--mint); font:8px 'JetBrains Mono',monospace; box-shadow:0 8px 18px rgba(0,0,0,.22); }
+@keyframes presencePulse { 50%{opacity:.35;transform:scale(.65)} }
+@keyframes sendSpin { to{transform:rotate(360deg)} }
+@media(max-width:780px){.topbar-presence{margin-right:0;font-size:8px}.ledger{display:none}.composer-meta{padding-left:18px;padding-right:18px;font-size:7px}.composer-meta span:first-child{max-width:72%}.interaction-status{bottom:88px;font-size:8px}}
+@media(prefers-reduced-motion:reduce){.topbar-presence i,.send-btn.is-loading::after{animation:none}.interaction-status{transition:none}}

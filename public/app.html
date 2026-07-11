@@ -75,6 +75,7 @@
         <div class="topbar-title">
           <span id="conversationTitle">New chat</span>
         </div>
+        <div class="topbar-presence" aria-label="Private browser session"><i></i><span>PRIVATE</span></div>
         <div class="ledger" aria-hidden="true">
           <svg viewBox="0 0 600 40" preserveAspectRatio="none">
             <g class="ledger-track">
@@ -96,16 +97,18 @@
       </div>
 
       <form class="inputbar" id="inputForm">
-        <textarea class="input" id="input" rows="1" placeholder="Ask anything about Robinhood Chain..."></textarea>
-        <button class="send-btn" id="sendBtn" type="submit">
+        <textarea class="input" id="input" rows="1" maxlength="4000" aria-describedby="composerMeta" placeholder="Ask anything about Robinhood Chain..."></textarea>
+        <button class="send-btn" id="sendBtn" type="submit" aria-label="Send message">
           <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </form>
+      <div class="composer-meta" id="composerMeta"><span>Enter to send · Shift + Enter for a new line</span><span id="charCount">0 / 4,000</span></div>
       <div class="disclaimer">Hoodwise explains how Robinhood Chain works. It is not affiliated with Robinhood Markets, and nothing here is financial advice.</div>
     </main>
   </div>
 
   <div class="hw-page-transition" id="pageTransition"></div>
+  <div class="interaction-status" id="interactionStatus" role="status" aria-live="polite"></div>
   <script src="/app.js"></script>
 </body>
 </html>

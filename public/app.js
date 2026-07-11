@@ -15,6 +15,25 @@
   const themeIconSun = document.getElementById('themeIconSun');
   const themeLabel = document.getElementById('themeLabel');
   const motionReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const composerMeta = document.getElementById('composerMeta');
+  const charCountEl = document.getElementById('charCount');
+  const interactionStatus = document.getElementById('interactionStatus');
+  let isSending = false;
+
+  function setInteractionStatus(message) {
+    if (!interactionStatus) return;
+    interactionStatus.textContent = message;
+    interactionStatus.classList.add('is-visible');
+    window.clearTimeout(setInteractionStatus.timer);
+    setInteractionStatus.timer = window.setTimeout(() => interactionStatus.classList.remove('is-visible'), 1800);
+  }
+
+  function updateComposerState() {
+    const count = inputEl.value.length;
+    if (charCountEl) charCountEl.textContent = count + ' / 4,000';
+    sendBtn.disabled = isSending || !inputEl.value.trim();
+    sendBtn.classList.toggle('is-ready', !sendBtn.disabled);
+  }
 
   // Subtle background parallax makes the chat feel like a product surface,
   // while remaining inert for users who prefer reduced motion.
@@ -142,12 +161,20 @@
   applyTheme(localStorage.getItem('hoodwise_theme') || 'dark');
   themeToggle.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme');
-    applyTheme(current === 'dark' ? 'light' : 'dark');
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    setInteractionStatus(next === 'dark' ? 'Dark mode active.' : 'Light mode active.');
   });
 
   // ---- Sidebar collapse (mobile + manual) ----
-  collapseBtn.addEventListener('click', () => sidebar.classList.add('collapsed'));
-  expandBtn.addEventListener('click', () => sidebar.classList.remove('collapsed'));
+  collapseBtn.addEventListener('click', () => {
+    sidebar.classList.add('collapsed');
+    setInteractionStatus('History panel collapsed.');
+  });
+  expandBtn.addEventListener('click', () => {
+    sidebar.classList.remove('collapsed');
+    setInteractionStatus('History panel expanded.');
+  });
   if (window.innerWidth <= 780) sidebar.classList.add('collapsed');
 
   // ---- Rendering helpers ----
@@ -303,7 +330,17 @@
         const item = document.createElement('div');
         item.className = 'history-item' + (c.id === currentConversationId ? ' active' : '');
         item.innerHTML = `<span class="title">${escapeHTML(c.title)}</span><button class="delete-btn" title="Delete">✕</button>`;
-        item.querySelector('.title').addEventListener('click', () => openConversation(c.id));
+        const historyTitle = item.querySelector('.title');
+        historyTitle.setAttribute('role', 'button');
+        historyTitle.setAttribute('tabindex', '0');
+        historyTitle.setAttribute('aria-label', 'Open conversation: ' + c.title);
+        historyTitle.addEventListener('click', () => openConversation(c.id));
+        historyTitle.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openConversation(c.id);
+          }
+        });
         item.querySelector('.delete-btn').addEventListener('click', async (e) => {
           e.stopPropagation();
           await fetch(`/api/conversations/${c.id}?sessionId=${sessionId}`, { method: 'DELETE' });
@@ -348,6 +385,9 @@
     currentConversationId = null;
     syncConversationRoute(null);
     conversationTitleEl.textContent = 'New chat';
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    updateComposerState();
     showWelcome();
     loadHistoryList();
   }
@@ -447,7 +487,7 @@
   }
 
   async function sendMessage(text) {
-    if (!text.trim()) return;
+    if (!text.trim() || isSending) return;
     if (!currentConversationId) {
       messagesEl.querySelector('.welcome-brief')?.remove();
       messagesEl.querySelector('[data-welcome-message]')?.remove();
@@ -456,7 +496,11 @@
     addMessage('user', text);
     inputEl.value = '';
     inputEl.style.height = 'auto';
-    sendBtn.disabled = true;
+    isSending = true;
+    sendBtn.classList.add('is-loading');
+    sendBtn.setAttribute('aria-busy', 'true');
+    updateComposerState();
+    setInteractionStatus('Hoodwise is preparing a source-grounded answer.');
     addThinking();
 
     try {
@@ -517,7 +561,10 @@
       addMessage('bot', 'Could not reach the server. Please check your connection and try again.');
       console.error(err);
     } finally {
-      sendBtn.disabled = false;
+      isSending = false;
+      sendBtn.classList.remove('is-loading');
+      sendBtn.removeAttribute('aria-busy');
+      updateComposerState();
       inputEl.focus();
     }
   }
@@ -535,9 +582,19 @@
   inputEl.addEventListener('input', () => {
     inputEl.style.height = 'auto';
     inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+    updateComposerState();
   });
   chipsEl.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => sendMessage(chip.getAttribute('data-q')));
+  });
+
+  document.addEventListener('keydown', event => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      inputEl.focus();
+      setInteractionStatus('Composer focused.');
+    }
+    if (event.key === 'Escape' && window.innerWidth <= 780) sidebar.classList.add('collapsed');
   });
 
   // ---- Smooth page transition back to landing ----
@@ -555,6 +612,7 @@
   }
 
   // ---- Init ----
+  updateComposerState();
   showWelcome();
   loadHistoryList().then(() => {
     if (initialConversationId) openConversation(initialConversationId);
