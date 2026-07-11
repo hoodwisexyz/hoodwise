@@ -34,6 +34,10 @@ function validateChatBody(body) {
 /** Builds an extra system-role message carrying live search results, or
  *  null if search wasn't triggered/found nothing — kept separate from the
  *  main SYSTEM_PROMPT so the static knowledge base is never mutated. */
+function buildCandidateContextFromResults(results) {
+  return buildCandidateContextMessage(extractCandidatesFromResults(results));
+}
+
 function buildLiveContextMessage(results) {
   if (!results.length) return null;
   const block = results
@@ -107,6 +111,7 @@ async function prepareTurn(req) {
   ]);
   const liveResults = search.results;
   const liveContextMessage = buildLiveContextMessage(liveResults);
+  const candidateContextMessage = buildCandidateContextFromResults(liveResults);
   const noxaDiscoveryFallbackMessage = buildNoxaDiscoveryFallback(message, liveResults);
   const ecosystemDiscoveryFallbackMessage = buildEcosystemDiscoveryFallback(message, liveResults);
   const onchainContextMessage = buildOnchainContextMessage(onchainScan);
@@ -276,5 +281,5 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   }
 }));
 
-router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
+router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildCandidateContextFromResults, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
 module.exports = router;

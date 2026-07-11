@@ -40,3 +40,10 @@ test('ecosystem fallback keeps Virtuals research direct without inventing candid
   assert.match(fallback.content, /do not call the topic unknown/);
   assert.match(fallback.content, /Never fabricate a ticker/);
 });
+test('chat helper builds candidate context from live launchpad results', () => {
+  const message = chatRouter._test.buildCandidateContextFromResults([
+    { title: 'NOXA trending', url: 'https://www.noxa.fun/', snippet: 'Cash Cat (CASHCAT) volume $18k.' }
+  ]);
+  assert.match(message.content, /LIVE CANDIDATE EXTRACTS/);
+  assert.match(message.content, /Cash Cat \(CASHCAT\)/);
+});

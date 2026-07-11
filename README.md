@@ -6,13 +6,13 @@
 
 <p align="center">
   Hoodwise is an independent, source-grounded guide to Robinhood Chain.<br />
-  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers Ã¢â‚¬â€ with live source and onchain context when it helps.
+  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â with live source and onchain context when it helps.
 </p>
 
 <p align="center">
-  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> Ã‚Â·
-  <a href="./CONTEXT.md"><strong>Product context</strong></a> Ã‚Â·
-  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> Ãƒâ€šÃ‚Â·
+  <a href="https://hoodwise.xyz"><strong>Open Hoodwise</strong></a> Ãƒâ€šÃ‚Â·
+  <a href="./CONTEXT.md"><strong>Product context</strong></a> Ãƒâ€šÃ‚Â·
+  <a href="./ROADMAP.md"><strong>Roadmap</strong></a> ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â·
   <a href="./CONTENT.md"><strong>Content kit</strong></a>
 </p>
 
@@ -47,7 +47,7 @@ Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 - Streaming chat with a completion fallback if an upstream stream closes early.
 - Landing starter prompts hand off into the composer, and chat briefing lanes launch real questions directly.
 - Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, and indexed DEX pools when available.
-- Automated test suite: `npm test` (74 passing tests at the latest stabilization review).
+- Automated test suite: `npm test` (75 passing tests at the latest stabilization review).
 
 For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 
