@@ -4,7 +4,7 @@ const { QUALITY_CASES } = require('./qualityFixtures');
 const { SYSTEM_PROMPT, getSystemPromptForQuestion, findSources } = require('../src/data/knowledge');
 
 test('quality benchmark covers each critical Hoodwise answer domain', () => {
-  assert.deepEqual(QUALITY_CASES.map(item => item.id), ['canonical-nvda', 'memecoin-boundary', 'bridge-mechanics', 'earn-risk', 'latest-update', 'base-comparison']);
+  assert.deepEqual(QUALITY_CASES.map(item => item.id), ['canonical-nvda', 'memecoin-boundary', 'bridge-mechanics', 'earn-risk', 'latest-update', 'base-comparison', 'developer-rpc', 'launchpad-research', 'ecosystem-roles']);
 });
 test('quality gate requires directness, source weighting, and no personalized advice', () => {
   assert.match(SYSTEM_PROMPT, /CLARITY RULE/);
