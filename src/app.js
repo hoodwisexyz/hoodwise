@@ -62,6 +62,9 @@ function createApp() {
   // URLs remain safe bookmarks, but redirect to their semantic counterparts.
   app.get('/index.html', (req, res) => res.redirect(308, '/'));
   app.get('/app.html', (req, res) => res.redirect(308, '/app'));
+  app.get('/favicon.ico', (req, res) => {
+    res.type('image/svg+xml').sendFile(path.join(publicDir, 'hoodwise-mark.svg'));
+  });
   app.get(['/app', '/app/', '/app/c/:conversationId'], (req, res) => {
     res.sendFile(path.join(publicDir, 'app.html'));
   });
