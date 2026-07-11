@@ -329,7 +329,7 @@
     return bubble;
   }
 
-  function addThinking() {
+  function addThinking(label = 'Preparing a clear answer...') {
     const row = document.createElement('div');
     row.className = 'row bot';
     row.id = 'thinkingRow';
@@ -341,15 +341,71 @@
     wrap.className = 'bubble thinking';
     wrap.innerHTML = `
       <svg viewBox="0 0 48 18"><path d="M0,9 L11,9 L15,3 L20,15 L25,3 L30,9 L48,9"/></svg>
-      <span class="thinking-label">reading the chain...</span>
+      <span class="thinking-label">${label}</span>
     `;
     row.appendChild(wrap);
     messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
+  function updateThinking(label) {
+    const labelEl = document.querySelector('#thinkingRow .thinking-label');
+    if (labelEl) labelEl.textContent = label;
+  }
   function removeThinking() {
     const el = document.getElementById('thinkingRow');
     if (el) el.remove();
+  }
+
+  function addRetryMessage(message, retryText) {
+    const bubble = addMessage('bot', message);
+    const retry = document.createElement('button');
+    retry.className = 'retry-btn';
+    retry.type = 'button';
+    retry.textContent = 'Try again';
+    retry.addEventListener('click', () => sendMessage(retryText));
+    bubble.appendChild(retry);
+  }
+
+  function getFollowUpPrompts(question) {
+    const value = question.toLowerCase();
+    if (/meme|noxa|launchpad|token/.test(value)) return [
+      ['Research launchpads', 'Research Robinhood Chain launchpads and explain what is confirmed versus community-operated.'],
+      ['Verify a contract', 'How do I verify a token contract on Robinhood Chain?'],
+      ['Explain red flags', 'What token and liquidity red flags should I check first?']
+    ];
+    if (/stock|nvda|aapl|amd|tsla|qqq|spy/.test(value)) return [
+      ['Check an official contract', 'Show me how to verify a canonical Robinhood Stock Token contract.'],
+      ['Explain legal structure', 'What rights do Robinhood Stock Tokens provide and not provide?'],
+      ['Compare to shares', 'How are Robinhood Stock Tokens different from holding the underlying stock?']
+    ];
+    if (/bridge|deposit|withdraw/.test(value)) return [
+      ['Compare routes', 'Compare the canonical bridge, LayerZero, and CCIP by trust model and timing.'],
+      ['Bridge safety', 'What should I verify before bridging assets to Robinhood Chain?'],
+      ['Developer setup', 'How do I add Robinhood Chain to a developer wallet or project?']
+    ];
+    return [
+      ['Latest official update', 'What is the latest official Robinhood Chain update?'],
+      ['Explore the ecosystem', 'What are the main products and ecosystem categories on Robinhood Chain?'],
+      ['Verify a contract', 'How do I verify a contract on Robinhood Chain?']
+    ];
+  }
+
+  function showFollowUps(question) {
+    const prompts = getFollowUpPrompts(question);
+    chipsEl.replaceChildren();
+    const label = document.createElement('span');
+    label.className = 'followup-label';
+    label.textContent = 'EXPLORE NEXT';
+    chipsEl.appendChild(label);
+    prompts.forEach(([labelText, prompt]) => {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.type = 'button';
+      chip.dataset.q = prompt;
+      chip.textContent = labelText;
+      chipsEl.appendChild(chip);
+    });
+    chipsEl.style.display = 'flex';
   }
 
   function showWelcome() {
@@ -481,7 +537,7 @@
         renderMessageContent(messageContent, fullText);
         messagesEl.scrollTop = messagesEl.scrollHeight;
       },
-      finalize(sources, brief) {
+      finalize(sources, brief, partial = false) {
         bubble.classList.remove('streaming-bubble');
         if (sources && sources.length) {
           const srcWrap = document.createElement('div');
@@ -499,6 +555,12 @@
           bubble.appendChild(srcWrap);
         }
         appendBriefingMeta(bubble, brief);
+        if (partial) {
+          const note = document.createElement('p');
+          note.className = 'completion-note';
+          note.textContent = 'This briefing ended early. You can rerun the question for a fresh complete pass.';
+          bubble.appendChild(note);
+        }
         if (fullText) {
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
@@ -565,8 +627,13 @@
     sendBtn.classList.add('is-loading');
     sendBtn.setAttribute('aria-busy', 'true');
     updateComposerState();
-    setInteractionStatus('Hoodwise is preparing a source-grounded answer.');
-    addThinking();
+    const researchLikely = /\b(latest|today|current|trending|meme|token|launchpad|liquidity|contract|price|volume|holders)\b/i.test(text);
+    setInteractionStatus(researchLikely ? 'Hoodwise is checking current evidence.' : 'Hoodwise is preparing a clear answer.');
+    addThinking(researchLikely ? 'Checking current evidence...' : 'Mapping the answer...');
+    const thinkingTimers = [
+      window.setTimeout(() => updateThinking(researchLikely ? 'Weighting sources and live signals...' : 'Turning the mechanics into a clear answer...'), 1600),
+      window.setTimeout(() => updateThinking('Finalizing the briefing...'), 4800)
+    ];
 
     try {
       const payload = { sessionId, message: text };
@@ -583,7 +650,7 @@
         removeThinking();
         let errMsg = 'Something went wrong. Please try again.';
         try { errMsg = (await res.json()).error || errMsg; } catch { /* keep default */ }
-        addMessage('bot', errMsg);
+        addRetryMessage(errMsg, text);
         return;
       }
 
@@ -603,29 +670,31 @@
         } else if (event === 'done') {
           currentConversationId = data.conversationId;
           syncConversationRoute(currentConversationId);
-          if (streamBot) streamBot.finalize(data.sources, data.brief);
+          if (streamBot) streamBot.finalize(data.sources, data.brief, Boolean(data.partial));
           if (conversationTitleEl.textContent === 'New chat') {
             conversationTitleEl.textContent = text.length > 48 ? text.slice(0, 48) + '…' : text;
           }
+          showFollowUps(text);
           loadHistoryList();
         } else if (event === 'error') {
           sawError = true;
           removeThinking();
           if (streamBot) streamBot.finalize([]);
-          addMessage('bot', data.error || 'Something went wrong. Please try again.');
+          addRetryMessage(data.error || 'Something went wrong. Please try again.', text);
         }
       });
 
       if (!streamBot && !sawError) {
         // Stream ended with no tokens and no explicit error — fail safe.
         removeThinking();
-        addMessage('bot', "Sorry, I couldn't generate a response — try asking again.");
+        addRetryMessage("Sorry, I couldn't generate a response — try asking again.", text);
       }
     } catch (err) {
       removeThinking();
-      addMessage('bot', 'Could not reach the server. Please check your connection and try again.');
+      addRetryMessage('Could not reach the server. Please check your connection and try again.', text);
       console.error(err);
     } finally {
+      thinkingTimers.forEach(timer => window.clearTimeout(timer));
       isSending = false;
       sendBtn.classList.remove('is-loading');
       sendBtn.removeAttribute('aria-busy');
@@ -649,8 +718,9 @@
     inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
     updateComposerState();
   });
-  chipsEl.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => sendMessage(chip.getAttribute('data-q')));
+  chipsEl.addEventListener('click', event => {
+    const chip = event.target.closest('.chip');
+    if (chip) sendMessage(chip.dataset.q);
   });
 
   document.addEventListener('keydown', event => {

@@ -79,8 +79,10 @@ async function prepareTurn(req) {
   return { conversationId, message, messagesForModel, liveResults, onchainScan };
 }
 
-function mergeSources(reply, liveResults, onchainScan) {
-  const curatedSources = findSources(reply);
+function mergeSources(message, reply, liveResults, onchainScan) {
+  // The question is often more explicit than a concise answer. Match against
+  // both so every completed briefing can surface the relevant primary docs.
+  const curatedSources = findSources(`${message}\n${reply}`);
   const liveSources = liveResults.map(r => ({ title: r.title, url: r.url }));
   const onchainSource = scanSource(onchainScan);
   const seenUrls = new Set();
@@ -104,8 +106,8 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
     requestId: req.requestId
   });
   const reply = sanitizeReply(rawReply);
-  const sources = mergeSources(reply, liveResults, onchainScan);
-  const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
+  const sources = mergeSources(message, reply, liveResults, onchainScan);
+  const brief = buildBrief(reply, sources, liveResults, onchainScan);
 
   conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
   conversations.touchConversation(conversationId);
@@ -162,7 +164,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       send('token', { text: remainder });
     }
 
-    const sources = mergeSources(fullReply, liveResults, onchainScan);
+    const sources = mergeSources(message, fullReply, liveResults, onchainScan);
     const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
     conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
@@ -197,7 +199,7 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       fullReply += separator + fallbackText;
       send('token', { text: separator + fallbackText });
 
-      const sources = mergeSources(fullReply, liveResults, onchainScan);
+      const sources = mergeSources(message, fullReply, liveResults, onchainScan);
       const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
       conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
@@ -209,11 +211,23 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       logger.error('chat stream fallback failed', {
         requestId: req.requestId, conversationId, error: fallbackErr.message
       });
-      send('error', { error: fallbackErr.expose ? fallbackErr.message : 'Something went wrong on the server. Please try again.' });
+      // A meaningful partial answer is still more useful than replacing it
+      // with a generic error. Preserve it, mark it clearly in the UI, and
+      // let the user rerun the question for a complete pass.
+      if (fullReply.trim().length >= 160) {
+        const sources = mergeSources(message, fullReply, liveResults, onchainScan);
+        const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
+        conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
+        conversations.touchConversation(conversationId);
+        send('done', { conversationId, sources, brief, partial: true });
+      } else {
+        send('error', { error: fallbackErr.expose ? fallbackErr.message : 'Something went wrong on the server. Please try again.' });
+      }
     }
   } finally {
     res.end();
   }
 }));
 
+router._test = { mergeSources, buildBrief };
 module.exports = router;

@@ -144,6 +144,14 @@ For a token or memecoin question: answer directly and do the research when LIVE 
 For availability or regulation: distinguish chain-level permissionlessness from product-level eligibility. Jurisdiction, wallet/app access, and a product's legal terms can differ.
 For a question that cannot be answered from evidence, say exactly what is unknown and give the safest next verification step.
 
+RESPONSE SHAPE
+- Make the first sentence a plain-language conclusion, not a disclaimer or a recap of the user's words.
+- Use headings only for answers that genuinely need them. Prefer these short labels when useful: "What is confirmed", "What is live", "What it means", and "What to check".
+- For live research, distinguish three levels explicitly: confirmed (primary/onchain evidence), observed (current market or listing evidence), and unverified (claims that still need validation). Never collapse those levels into one claim.
+- Do not use vague phrases such as "it may be worth looking into" or "there are many risks" without naming the exact condition or signal that matters.
+- End a normal answer when the useful explanation is complete. Add a next step only if it helps the user verify an address, a current condition, or eligibility.
+- For Stock Tokens, describe documented economic exposure and the issuer debt-security structure. Never call a token backed by, redeemable for, or a direct claim on an underlying share unless a current primary source establishes that exact term.
+
 FRESHNESS AND SOURCES
 The static knowledge below is a dated, curated baseline. If a LIVE WEB CONTEXT block is present, it is fresh context for this one question: prefer it for changing facts such as availability, integrations, launches, pricing, token status, incidents, and regulation. Give source-weighted answers: official docs/newsroom first, then reputable third-party reporting; do not treat a search snippet as proof. If no live context exists, never invent current status, metrics, prices, TVL, token listings, outages, audits, or roadmap dates. Still answer the durable part directly. For example: explain exactly what a memecoin or Stock Token is, then state precisely which current field needs checking (price, liquidity, holder count, availability, or contract).
 
@@ -200,14 +208,14 @@ const KNOWLEDGE_FOCUS = [
   { pattern: /\b(memecoin|meme coin|cashcat|noxa|liquidity|holder|rug|honeypot)\b/i, instruction: 'FOCUS: Answer the memecoin question directly. Separate a community deployment from an official Robinhood asset, distinguish evidence from narrative, and give the concrete contract/pool checks that matter.' },
   { pattern: /\b(bridge|bridging|withdraw|deposit|layerzero|ccip|stargate)\b/i, instruction: 'FOCUS: Explain route, timing, trust model, fees, and the next onchain step. Do not imply a bridge is risk-free.' },
   { pattern: /\b(earn|lending|yield|morpho|perp|lighter)\b/i, instruction: 'FOCUS: Explain product mechanics and eligibility before discussing yield, leverage, or availability. Distinguish a product announcement from user access.' },
-  { pattern: /\b(what.?s (hot|trending)|good memecoin|active memecoin|rame)\b/i, instruction: 'FOCUS: Treat this as a live research request. Share only evidence-supported candidates or platforms, make the evidence gap explicit, and finish with DYOR rather than refusing.' },
+  { priority: 'high', pattern: /\b((what.?s|which) (hot|trending)|good memecoin|active memecoin|rame|memecoin.{0,60}\b(hot|trending)\b)\b/i, instruction: 'FOCUS: Treat this as a live research request. Share only evidence-supported candidates or platforms, make the evidence gap explicit, and finish with DYOR rather than refusing.' },
   { pattern: /\b(official|real|legit|community|endorsed)\b/i, instruction: 'FOCUS: State official versus community status plainly. A launchpad, familiar name, ticker, or listing is not proof of Robinhood endorsement.' },
   { pattern: /\b(can i buy|how (do|can) i buy|available to me|eligible)\b/i, instruction: 'FOCUS: Separate permissionless onchain access from product eligibility, jurisdiction, wallet support, and current venue availability. Do not invent a purchase route.' },
   { pattern: /\b(safe|scam|red flag|risk)\b/i, instruction: 'FOCUS: Give concrete contract, ownership, liquidity, holder, and source checks. Explain what each signal does and does not establish; never promise safety.' },
   { pattern: /\b(virtuals|agent token|ai agent)\b/i, instruction: 'FOCUS: Explain the verified relationship to Robinhood Chain only. Do not infer an integration, launch, or token relationship from community claims.' }
 ];
 function getSystemPromptForQuestion(message) {
-  const focus = KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
+  const focus = KNOWLEDGE_FOCUS.find(item => item.priority === 'high' && item.pattern.test(message)) || KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
   return focus ? SYSTEM_PROMPT + '\n\n' + focus.instruction : SYSTEM_PROMPT;
 }
 module.exports = { SYSTEM_PROMPT, findSources, sanitizeReply, createStreamingSanitizer, getSystemPromptForQuestion };

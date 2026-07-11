@@ -98,3 +98,9 @@ test('findSources prioritizes official contract docs for canonical asset answers
   const sources = findSources('NVDA is canonical at 0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC.');
   assert.equal(sources[0].url, 'https://docs.robinhood.com/chain/contracts/');
 });
+test('getSystemPromptForQuestion gives live memecoin research a direct evidence-oriented focus', () => {
+  const { getSystemPromptForQuestion } = require('../src/data/knowledge');
+  const prompt = getSystemPromptForQuestion('What memecoin is trending on Robinhood Chain today?');
+  assert.match(prompt, /Treat this as a live research request/);
+  assert.match(prompt, /confirmed \(primary\/onchain evidence\), observed \(current market or listing evidence\), and unverified/);
+});
