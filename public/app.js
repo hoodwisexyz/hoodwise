@@ -186,7 +186,10 @@
   // Minimal, DOM-based Markdown renderer. It never injects model text as HTML:
   // only bold emphasis and list structure are interpreted, so replies remain safe.
   function appendInlineText(target, value) {
-    const parts = value.split(/(\*\*[^*]+\*\*)/g);
+    const cleanValue = value
+      .replace(/\[([^\]\n]+)\]\(https?:\/\/[^\s)]+\)/g, '$' + '1')
+      .replace(/https?:\/\/[^\s)\]]+/g, 'the linked source');
+    const parts = cleanValue.split(/(\*\*[^*]+\*\*)/g);
     parts.forEach(part => {
       const bold = part.match(/^\*\*(.+)\*\*$/);
       if (bold) {
@@ -667,6 +670,7 @@
         } else if (event === 'token') {
           if (!streamBot) {
             removeThinking();
+            setInteractionStatus('Briefing is streaming.');
             streamBot = addStreamingBotRow();
           }
           streamBot.appendText(data.text);
@@ -678,6 +682,7 @@
             conversationTitleEl.textContent = text.length > 48 ? text.slice(0, 48) + '…' : text;
           }
           showFollowUps(text);
+          setInteractionStatus('Briefing ready. Sources and next steps attached.');
           loadHistoryList();
         } else if (event === 'error') {
           sawError = true;

@@ -14,6 +14,13 @@ test('sanitizeReply leaves unrelated text untouched', () => {
   assert.equal(sanitizeReply(input), input);
 });
 
+test('sanitizeReply keeps source labels but removes raw Markdown URLs from answer text', () => {
+  const output = sanitizeReply('Check [Robinhood Chain Blockscout](https://robinhoodchain.blockscout.com) and https://docs.robinhood.com/chain/.');
+  assert.match(output, /Robinhood Chain Blockscout/);
+  assert.doesNotMatch(output, /https?:\/\//);
+  assert.doesNotMatch(output, /\[[^\]]+\]\(/);
+});
+
 test('sanitizeReply is case-insensitive', () => {
   const input = 'DEEPSEEK and deepseek and DeepSeek should all be caught.';
   const output = sanitizeReply(input);
