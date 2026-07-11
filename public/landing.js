@@ -75,6 +75,83 @@
     window.addEventListener('resize', resize);
   }
 
+  // ---------- Full-page atmosphere: slow constellation ribbons ----------
+  const landingAtmosphere = document.getElementById('landingAtmosphere');
+  if (landingAtmosphere) {
+    const atmosphereContext = landingAtmosphere.getContext('2d');
+    const reduceAtmosphereMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const particles = [];
+    let atmosphereWidth = 0;
+    let atmosphereHeight = 0;
+    let atmosphereTick = 0;
+
+    function resizeLandingAtmosphere() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      atmosphereWidth = landingAtmosphere.width = Math.floor(window.innerWidth * ratio);
+      atmosphereHeight = landingAtmosphere.height = Math.floor(window.innerHeight * ratio);
+      particles.length = 0;
+      const amount = window.innerWidth < 760 ? 13 : 25;
+      for (let index = 0; index < amount; index += 1) {
+        particles.push({
+          x: Math.random() * atmosphereWidth,
+          y: Math.random() * atmosphereHeight,
+          radius: (.6 + Math.random() * 1.2) * ratio,
+          drift: (.08 + Math.random() * .16) * ratio,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function drawLandingAtmosphere() {
+      atmosphereContext.clearRect(0, 0, atmosphereWidth, atmosphereHeight);
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      const scrollShift = window.scrollY * .035 * ratio;
+
+      particles.forEach((particle, index) => {
+        const y = (particle.y + scrollShift + Math.sin(atmosphereTick * .012 + particle.phase) * 18 * ratio) % atmosphereHeight;
+        const x = particle.x + Math.cos(atmosphereTick * .007 + particle.phase) * 18 * ratio;
+        const glow = atmosphereContext.createRadialGradient(x, y, 0, x, y, 16 * ratio);
+        glow.addColorStop(0, 'rgba(106,255,170,.72)');
+        glow.addColorStop(.2, 'rgba(0,230,118,.18)');
+        glow.addColorStop(1, 'rgba(0,230,118,0)');
+        atmosphereContext.fillStyle = glow;
+        atmosphereContext.beginPath();
+        atmosphereContext.arc(x, y, 16 * ratio, 0, Math.PI * 2);
+        atmosphereContext.fill();
+
+        for (let next = index + 1; next < particles.length; next += 1) {
+          const peer = particles[next];
+          const peerY = (peer.y + scrollShift + Math.sin(atmosphereTick * .012 + peer.phase) * 18 * ratio) % atmosphereHeight;
+          const peerX = peer.x + Math.cos(atmosphereTick * .007 + peer.phase) * 18 * ratio;
+          const distance = Math.hypot(x - peerX, y - peerY);
+          const threshold = 190 * ratio;
+          if (distance < threshold) {
+            atmosphereContext.strokeStyle = 'rgba(79,255,151,' + ((1 - distance / threshold) * .055) + ')';
+            atmosphereContext.lineWidth = .55 * ratio;
+            atmosphereContext.beginPath();
+            atmosphereContext.moveTo(x, y);
+            atmosphereContext.lineTo(peerX, peerY);
+            atmosphereContext.stroke();
+          }
+        }
+      });
+
+      const ribbonY = (Math.sin(atmosphereTick * .006) * .18 + .56) * atmosphereHeight;
+      const ribbon = atmosphereContext.createLinearGradient(0, ribbonY - 55 * ratio, 0, ribbonY + 55 * ratio);
+      ribbon.addColorStop(0, 'rgba(0,230,118,0)');
+      ribbon.addColorStop(.5, 'rgba(0,230,118,.045)');
+      ribbon.addColorStop(1, 'rgba(0,230,118,0)');
+      atmosphereContext.fillStyle = ribbon;
+      atmosphereContext.fillRect(0, ribbonY - 55 * ratio, atmosphereWidth, 110 * ratio);
+
+      atmosphereTick += 1;
+      if (!reduceAtmosphereMotion) requestAnimationFrame(drawLandingAtmosphere);
+    }
+
+    resizeLandingAtmosphere();
+    drawLandingAtmosphere();
+    window.addEventListener('resize', resizeLandingAtmosphere);
+  }
   // ---------- Scroll reveal ----------
   const revealEls = document.querySelectorAll('.hw-reveal');
   if ('IntersectionObserver' in window) {
