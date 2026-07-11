@@ -8,7 +8,7 @@ const { asyncHandler } = require('../middleware/errorHandler');
 const { BadRequestError } = require('../lib/errors');
 const conversations = require('../services/conversationService');
 const { callChatModel, streamChatModel } = require('../services/openrouterService');
-const { searchWeb, looksTimeSensitive, isNoxaCandidateRequest } = require('../services/webSearchService');
+const { searchWeb, looksTimeSensitive, isNoxaCandidateRequest, isEcosystemCandidateRequest } = require('../services/webSearchService');
 const { scanContractInMessage, buildOnchainContextMessage, scanSource } = require('../services/onchainScanService');
 const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
@@ -47,6 +47,26 @@ function buildLiveContextMessage(results) {
 // Tavily is optional and may return no usable page for a fresh launchpad query.
 // That must not turn a known ecosystem surface into an "unknown" platform or a
 // generic refusal. This dated discovery baseline is explicitly not a live quote.
+function buildEcosystemDiscoveryFallback(message, liveResults) {
+  if (liveResults.length || !isEcosystemCandidateRequest(message) || isNoxaCandidateRequest(message)) return null;
+  const lower = message.toLowerCase();
+  let venue = 'the Robinhood Chain ecosystem';
+  let detail = 'Use the live launchpad, DEX, and Blockscout evidence supplied for this question to name the candidate and its observable metrics.';
+  if (lower.includes('bankr')) {
+    venue = 'Bankr';
+    detail = 'Bankr documentation confirms token launches on Robinhood Chain through Doppler; name a current Bankr-linked candidate only when live listing or onchain evidence identifies it.';
+  } else if (lower.includes('virtuals')) {
+    venue = 'Virtuals';
+    detail = 'Treat Virtuals agent/token claims as community evidence until a current listing or onchain source ties the exact token to Robinhood Chain; do not invent a candidate or contract.';
+  } else if (lower.includes('hood.fun') || lower.includes('hoodfun')) {
+    venue = 'hood.fun / HoodFun';
+    detail = 'Treat the platform as a community launchpad and use its current listing plus DEX/Blockscout evidence to name candidates; a launchpad listing is not an endorsement.';
+  }
+  return {
+    role: 'system',
+    content: `RECENT ECOSYSTEM RESEARCH FALLBACK (not live market data): The user asked for a candidate from ${venue}. ${detail} If no candidate-level result is available in this turn, say that the current ranking could not be verified and explain the exact refresh check—but do not describe the platform as unknown and do not refuse the research question. Never fabricate a ticker, contract, price, liquidity, or return.`
+  };
+}
 function buildNoxaDiscoveryFallback(message, liveResults) {
   if (liveResults.length || !isNoxaCandidateRequest(message)) return null;
   return {
@@ -87,8 +107,9 @@ async function prepareTurn(req) {
   const liveResults = search.results;
   const liveContextMessage = buildLiveContextMessage(liveResults);
   const noxaDiscoveryFallbackMessage = buildNoxaDiscoveryFallback(message, liveResults);
+  const ecosystemDiscoveryFallbackMessage = buildEcosystemDiscoveryFallback(message, liveResults);
   const onchainContextMessage = buildOnchainContextMessage(onchainScan);
-  const messagesForModel = [...history, liveContextMessage, noxaDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
+  const messagesForModel = [...history, liveContextMessage, noxaDiscoveryFallbackMessage, ecosystemDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
 
   return { conversationId, message, messagesForModel, liveResults, onchainScan };
 }
@@ -254,5 +275,5 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   }
 }));
 
-router._test = { mergeSources, buildBrief, buildNoxaDiscoveryFallback };
+router._test = { mergeSources, buildBrief, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
 module.exports = router;

@@ -38,6 +38,11 @@ const SOURCES = [
     url: 'https://www.noxa.fun/'
   },
   {
+    keywords: ['bankr', 'doppler', 'bankr bot'],
+    title: 'Bankr token launching - official documentation',
+    url: 'https://docs.bankr.bot/faq/token-launching/'
+  },
+  {
     keywords: ['virtuals', 'virtual agent', 'agent token'],
     title: 'Virtuals Protocol agent launch documentation',
     url: 'https://whitepaper.virtuals.io/builders-hub/commonly-asked-questions/launching-an-ai-agent-token'
@@ -155,7 +160,7 @@ VOICE AND QUALITY BAR
 
 ANSWERING FRAMEWORK
 For every answer, use this reasoning order: (1) answer the actual question in the first sentence; (2) separate confirmed facts from current/live evidence and inference; (3) state the one or two material risks, unknowns, or limits; (4) give the next useful check only when it adds value. Do not pad an answer with generic safety language.
-For ecosystem and launchpad questions: name the relevant platform or category when supported by evidence, state whether it is official or community-operated, explain what users can do there, and identify the exact verification gap.
+For ecosystem and launchpad questions: name the relevant platform or category when supported by evidence, state whether it is official or community-operated, explain what users can do there, and identify the exact verification gap. Never make a known platform sound unknown merely because an individual token needs fresh market data.
 For memecoin research: be useful rather than evasive. Summarize evidence-supported candidates or platforms, distinguish observable onchain/market signals from narrative, name the key unknowns, and end with the compact DYOR footer. Do not turn DYOR into a refusal.
 For token thesis or lore: explain the community narrative as a narrative, not as proof. Say what the token claims to represent, what observable traction supports that story, and what remains unverified. A funny name, meme, community slogan, or launchpad description can explain lore; it cannot establish safety, ownership, liquidity quality, or expected returns.
 For a live token or launchpad research request, use this compact shape when evidence supports it: **Research snapshot** (what the current data shows); **Thesis / lore** (the narrative, clearly labelled); **What could invalidate it** (contract, liquidity, concentration, or execution risk); then the DYOR footer. It is acceptable to name a live candidate or platform as a research shortlist when the current live context supplies the exact supporting claim. Never frame a shortlist as a personalized buy recommendation or promise upside.
@@ -230,6 +235,7 @@ Write as a trusted specialist: useful, exact, and candid about what the evidence
 
 const KNOWLEDGE_FOCUS = [
   { priority: 'high', pattern: /\b(latest|newest|recent|today|this week|current update|official update)\b/i, instruction: 'FOCUS: Treat this as a live update request. Lead with the newest evidence available, identify its source quality, distinguish announcement from availability, and state what is not yet confirmed.' },
+  { priority: 'research', pattern: /\\b(?:good|best|promising|active|trending|hot)\\b[\\s\\S]{0,100}\\b(?:bankr|virtuals|hood\\.fun|hoodfun|foragepad|cashcat|launchpad)\\b|\\b(?:bankr|virtuals|hood\\.fun|hoodfun|foragepad|cashcat|launchpad)\\b[\\s\\S]{0,100}\\b(?:good|best|promising|active|trending|hot|coin|token)\\b/i, instruction: 'FOCUS: This is a cross-ecosystem candidate-research request. Identify the named launchpad or venue, use live listing/onchain/DEX evidence to name candidates when available, and never answer with a generic refusal. Put the candidate or current evidence first, label community versus official status, state what the data actually shows, then add the exact verification gap and compact DYOR footer. If live data is unavailable, say only that the current candidate ranking needs a refresh; do not claim the platform or ecosystem is unknown. Never invent a ticker, contract, metric, or return.' },
   { priority: 'research', pattern: /\b(?:good|best|promising|active|trending|hot)\b[\s\S]{0,100}\bnoxa(?:\.fun)?\b|\bnoxa(?:\.fun)?\b[\s\S]{0,100}\b(?:good|best|promising|active|trending|hot|coin|token)\b/i, instruction: 'FOCUS: This is a NOXA candidate-research request. Do not refuse, do not call NOXA unconfirmed, and never start with “I cannot name a coin” or “no specific token can be named.” Lead with a labelled research shortlist of NOXA-listed candidates from the LIVE WEB CONTEXT, using only the exact observed listing/rank/market data available there. If the RECENT NOXA DISCOVERY BASELINE is supplied instead, name its candidates as recent discovery starting points and explicitly say their current rank and metrics need a refresh. Explain in one line why each candidate is on the shortlist, then the specific missing verification. Never convert a shortlist into a personalized buy instruction or a promise of returns. End with the compact DYOR footer.' },
   { priority: 'research', pattern: /\bnoxa(?:\.fun)?\b/i, instruction: 'FOCUS: Answer directly: NOXA Fun is a community-operated multi-DEX token launchpad, not an official Robinhood product or endorsement. Explain that users can discover, launch, and trade community tokens there, but must verify the exact contract, pool liquidity, and owner controls before interacting. Never say NOXA is undocumented, unknown, or unconfirmed.' },
   { priority: 'research', pattern: /\b(launchpad|noxa|hoodfun|cashcat)\b/i, instruction: 'FOCUS: Treat this as ecosystem research. Name the platform only with available evidence, state official versus community-operated status plainly, and separate discovery from token-level verification.' },
