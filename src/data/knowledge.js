@@ -104,11 +104,20 @@ function createStreamingSanitizer() {
   };
 }
 
-function sourcePriority(source, replyText) {
-  if (source.url.includes('/chain/contracts/') && (/\b0x[a-f0-9]{40}\b/i.test(replyText) || /\b(canonical|official stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i.test(replyText))) return 20;
-  if (source.url.includes('docs.robinhood.com')) return 8;
-  return 0;
+function sourceClass(source) {
+  const host = new URL(source.url).hostname.replace(/^www\./, '');
+  if (host === 'docs.robinhood.com' || host === 'robinhood.com' || host === 'investors.robinhood.com') return 'primary';
+  if (host.endsWith('blockscout.com')) return 'onchain';
+  if (host === 'noxa.fun' || host === 'noxa.fi' || host === 'hoodchain.fun' || host === 'virtuals.io') return 'community';
+  return 'secondary';
 }
+
+function sourcePriority(source, replyText) {
+  const classWeight = { primary: 30, onchain: 20, secondary: 10, community: 5 }[sourceClass(source)] || 0;
+  if (source.url.includes('/chain/contracts/') && (/\b0x[a-f0-9]{40}\b/i.test(replyText) || /\b(canonical|official stock token|aapl|amd|amzn|googl|meta|msft|nvda|tsla|spy|qqq|weth|usdg)\b/i.test(replyText))) return classWeight + 20;
+  return classWeight;
+}
+
 function findSources(replyText) {
   const lower = replyText.toLowerCase();
   const seenUrls = new Set();
@@ -117,9 +126,16 @@ function findSources(replyText) {
     .sort((a, b) => sourcePriority(b, replyText) - sourcePriority(a, replyText))
     .filter(source => (seenUrls.has(source.url) ? false : (seenUrls.add(source.url), true)))
     .slice(0, 3)
-    .map(source => ({ title: source.title, url: source.url }));
+    .map(source => ({ title: source.title, url: source.url, sourceClass: sourceClass(source) }));
 }
 
+function summarizeSources(sources) {
+  const classes = new Set((sources || []).map(source => source.sourceClass).filter(Boolean));
+  if (classes.has('primary')) return 'Primary documentation baseline';
+  if (classes.has('onchain')) return 'Onchain evidence baseline';
+  if (classes.has('community')) return 'Community discovery baseline';
+  return 'Curated source baseline';
+}
 const SYSTEM_PROMPT = `You are Hoodwise, the specialist explainer for Robinhood Chain. Your job is to make people genuinely understand the chain: what is confirmed, how it works, what it does not imply, and what risks or limits matter. Stay strictly in scope: Robinhood Chain, its ecosystem, related Robinhood onchain products, and necessary comparisons. Always answer in English.
 
 VOICE AND QUALITY BAR
@@ -221,4 +237,4 @@ function getSystemPromptForQuestion(message) {
   const focus = KNOWLEDGE_FOCUS.find(item => item.priority === 'research' && item.pattern.test(message)) || KNOWLEDGE_FOCUS.find(item => item.priority === 'high' && item.pattern.test(message)) || KNOWLEDGE_FOCUS.find(item => item.pattern.test(message));
   return focus ? SYSTEM_PROMPT + '\n\n' + focus.instruction : SYSTEM_PROMPT;
 }
-module.exports = { SYSTEM_PROMPT, findSources, sanitizeReply, createStreamingSanitizer, getSystemPromptForQuestion };
+module.exports = { SYSTEM_PROMPT, findSources, summarizeSources, sanitizeReply, createStreamingSanitizer, getSystemPromptForQuestion };

@@ -104,3 +104,14 @@ test('getSystemPromptForQuestion gives live memecoin research a direct evidence-
   assert.match(prompt, /Treat this as a live research request/);
   assert.match(prompt, /confirmed \(primary\/onchain evidence\), observed \(current market or listing evidence\), and unverified/);
 });
+test('findSources ranks primary and onchain evidence ahead of community discovery', () => {
+  const sources = findSources('noxa');
+  assert.ok(['primary', 'onchain'].includes(sources[0].sourceClass));
+  assert.ok(sources.some(source => source.sourceClass === 'community'));
+});
+
+test('summarizeSources never labels community discovery as primary documentation', () => {
+  const { summarizeSources } = require('../src/data/knowledge');
+  assert.equal(summarizeSources([{ sourceClass: 'community' }]), 'Community discovery baseline');
+  assert.equal(summarizeSources([{ sourceClass: 'primary' }, { sourceClass: 'community' }]), 'Primary documentation baseline');
+});
