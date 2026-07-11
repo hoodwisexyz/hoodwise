@@ -429,3 +429,8 @@ html, body {
 .send-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(125deg,transparent 28%,rgba(255,255,255,.34),transparent 62%); transform:translateX(-125%); transition:transform .5s ease; }
 .send-btn:hover::before { transform:translateX(125%); }
 @media (prefers-reduced-motion:reduce) { .welcome-lanes > div::after,.send-btn::before { transition:none; } }
+/* A softer kinetic field keeps the empty chat stage from feeling static. */
+.main::before { content:''; position:absolute; width:34rem; height:34rem; left:50%; top:15%; transform:translateX(-50%); border-radius:50%; pointer-events:none; background:conic-gradient(from 0deg,transparent,rgba(0,230,118,.07),transparent 28%,rgba(150,255,196,.055),transparent 62%); filter:blur(1px); opacity:.65; animation:chatHalo 20s linear infinite; }
+.messages,.topbar,.inputbar { position:relative; z-index:1; }
+@keyframes chatHalo { to { transform:translateX(-50%) rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .main::before { animation:none; } }
