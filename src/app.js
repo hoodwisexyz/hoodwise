@@ -10,6 +10,7 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const healthRoutes = require('./routes/health');
 const conversationRoutes = require('./routes/conversations');
 const chatRoutes = require('./routes/chat');
+const contractRoutes = require('./routes/contracts');
 
 function createApp() {
   const app = express();
@@ -74,6 +75,7 @@ function createApp() {
   app.use('/api', healthRoutes);
   app.use('/api', conversationRoutes);
   app.use('/api', chatRoutes);
+  app.use('/api', contractRoutes);
 
   app.use('/api', notFoundHandler);
   app.use(errorHandler);

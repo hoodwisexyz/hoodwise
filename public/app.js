@@ -336,10 +336,22 @@
         <h1>Start with the signal,<br><em>not the noise.</em></h1>
         <p>Ask a direct question, or use one of the briefing lanes below. Hoodwise stays focused on Robinhood Chain and always keeps risk in view.</p>
         <div class="welcome-lanes"><div><b>01</b><span>Products<br><small>Stock Tokens · Earn</small></span></div><div><b>02</b><span>Infrastructure<br><small>Orbit · Chainlink · DeFi</small></span></div><div><b>03</b><span>Ecosystem<br><small>Agents · memecoins · risk</small></span></div></div>
-      </section>`;
+      <div class="contract-verifier"><label for="contractAddress">VERIFY A CONTRACT</label><div><input id="contractAddress" placeholder="Paste a 0x address" maxlength="42"><button id="verifyContractBtn" type="button">Verify</button></div><p id="contractResult">Read-only onchain check · Chain ID 4663</p></div></section>`;
     const welcomeBubble = addMessage('bot', "I’m Hoodwise. Ask anything about Robinhood Chain — I’ll separate the structural facts, the current context, and the risks that matter.");
     welcomeBubble.closest('.row').dataset.welcomeMessage = 'true';
     chipsEl.style.display = 'flex';
+    const verifyButton = document.getElementById('verifyContractBtn');
+    const verifyInput = document.getElementById('contractAddress');
+    const verifyResult = document.getElementById('contractResult');
+    verifyButton?.addEventListener('click', async () => {
+      verifyResult.textContent = 'Checking Robinhood Chain...';
+      try {
+        const response = await fetch('/api/contracts/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId, address: verifyInput.value.trim() }) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+        verifyResult.innerHTML = data.canonical ? '<b>Canonical ' + data.canonical.symbol + '</b> · ' + data.canonical.type : (data.isContract ? '<b>Contract found</b> · community or unverified' : '<b>Not a contract</b>');
+      } catch (error) { verifyResult.textContent = error.message || 'Could not verify this address.'; }
+    });
   }
 
   // ---- History sidebar ----
