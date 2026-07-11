@@ -6,7 +6,7 @@
 
 <p align="center">
   Hoodwise is an independent, source-grounded guide to Robinhood Chain.<br />
-  It turns product, protocol, ecosystem, and risk context into clear answers.
+  It turns product, protocol, ecosystem, and risk context into clear, evidence-led answers — with live source and onchain context when it helps.
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@ Hoodwise is built for the question behind the headline: what is confirmed, how d
 | Chain mechanics | Arbitrum L2 architecture, ETH gas, EVM compatibility, account abstraction, RPCs, bridges, and contract deployment. |
 | Robinhood products | Stock Tokens, Robinhood Earn, access constraints, and the distinction between product availability and a permissionless chain. |
 | Ecosystem | Infrastructure partners, DEXs, lending, perps, wallets, and agentic/onchain tools. |
-| Community tokens | What a memecoin is, how to distinguish it from a canonical Stock Token, and what contract/pool checks are meaningful. |
+| Community tokens | Evidence-led memecoin and launchpad research, with onchain/DEX checks when an exact contract is available. |
 | Risk context | Jurisdiction, smart-contract, liquidity, bridge, and product-structure caveats without trade recommendations. |
 
 > Hoodwise is educational, independent, and not affiliated with Robinhood Markets. It does not connect wallets, execute trades, or provide financial advice.
