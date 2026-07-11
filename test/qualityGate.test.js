@@ -20,4 +20,5 @@ test('critical benchmark prompts receive topic-specific instructions and sources
 test('memecoin research policy permits evidence-led research with a DYOR footer', () => {
   assert.match(SYSTEM_PROMPT, /provide a research snapshot/);
   assert.match(SYSTEM_PROMPT, /DYOR: verify the exact contract/);
+  assert.match(SYSTEM_PROMPT, /ONLY when that exact claim is supported by a live source/);
 });
