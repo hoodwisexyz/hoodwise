@@ -62,8 +62,8 @@ const ECOSYSTEM_ENTRIES = [
     status: 'community launchpad surface; not an official Robinhood product or endorsement',
     userIntents: ['discover current listings', 'launch community token', 'trade listed coins', 'compare launchpad signals'],
     use: 'Discover Robinhood Chain community tokens and current listings, then verify each exact contract independently.',
-    candidatePolicy: 'Can use visible hood.fun listings as discovery evidence; do not fabricate candidates if current listing data is unavailable.',
-    answerHints: ['treat as a known community launchpad', 'ask for exact contract for a token-specific verdict', 'separate launchpad listing from endorsement'],
+    candidatePolicy: 'Can use visible hood.fun listings as discovery evidence. If current listing data is unavailable, name hood.fun as the discovery surface, explain the exact refresh path, and still end with DYOR instead of giving a generic refusal.',
+    answerHints: ['treat as a known community launchpad', 'for pick/recommend prompts lead with the current listing refresh path, not a refusal', 'ask for exact contract for a token-specific verdict', 'separate launchpad listing from endorsement', 'always include the compact DYOR footer for candidate prompts'],
     verify: ['current listing page', 'exact token contract', 'DEX pool and liquidity', 'holder distribution', 'owner/privileged controls'],
     examples: []
   },
