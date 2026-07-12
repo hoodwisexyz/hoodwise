@@ -48,7 +48,7 @@ Hoodwise is live at [hoodwise.xyz](https://hoodwise.xyz) on Railway.
 - Streaming chat with a completion fallback if an upstream stream closes early.
 - Landing starter prompts hand off into the composer, and chat briefing lanes launch real questions directly.
 - Pasted addresses receive a live Token Intelligence Card: canonical status, source-code verification, explorer activity, indexed DEX pools when available, and a Hoodwise project callout for the Virtuals launch contract `0x6bdb637a9e988835dc368ef72cb5d143540f037c`.
-- Automated test suite: `npm test` (80 passing tests at the latest stabilization review).
+- Automated test suite: `npm test` (97 passing tests at the latest stabilization review).
 
 For operational detail, limitations, and future work, read [STATUS.md](./STATUS.md) and [ROADMAP.md](./ROADMAP.md). To enable live context, set `TAVILY_API_KEY` plus the optional `SEARCH_MAX_RESULTS=3` and `SEARCH_TIMEOUT_MS=6000`; `/api/health` then reports `liveSearchConfigured: true` without exposing the key.
 

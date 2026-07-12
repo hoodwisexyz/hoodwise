@@ -9,7 +9,7 @@ This roadmap reflects the live product as of July 12, 2026. It is ordered by pro
 - **Interaction polish:** landing starter prompts hand off cleanly into the chat composer, while chat briefing lanes are directly actionable with motion-safe tactile states.
 - **Privacy-safe quality observation:** aggregate answer-quality reviews and flags are available in the protected ops view without storing prompt or reply content.
 - **Lightweight knowledge routing:** developer, Stock Token, memecoin, launchpad, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
-- **Cross-launchpad research baseline:** Hoodwise now recognizes NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, and Virtuals-related Robinhood Chain questions as known ecosystem surfaces instead of generic unknowns.
+- **Granular ecosystem directory:** Hoodwise now tracks launchpad/trading, AI launch terminal, agent-token identity, community-token lore, DEX liquidity, and verification-workflow surfaces with evidence level, user intents, candidate policy, answer hints, and DYOR checks.
 - **Hoodwise token page:** `/token` provides a clean public contract page with copy action, Blockscout link, Ask Hoodwise handoff, and project-context framing for the Virtuals launch address.
 
 ## Now: protect quality in production

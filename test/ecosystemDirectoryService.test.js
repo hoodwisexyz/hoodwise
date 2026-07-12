@@ -1,6 +1,13 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { matchingEntries, buildEcosystemDirectoryContext, ecosystemDirectorySources } = require('../src/services/ecosystemDirectoryService');
+const {
+  ECOSYSTEM_ENTRIES,
+  matchingEntries,
+  buildEcosystemDirectoryContext,
+  ecosystemDirectorySources,
+  ecosystemDirectorySummary,
+  isCandidateQuestion
+} = require('../src/services/ecosystemDirectoryService');
 
 test('ecosystem directory matches named launchpad surfaces', () => {
   assert.equal(matchingEntries('Tell me about noxa.fun')[0].name, 'NOXA Fun');
@@ -8,18 +15,49 @@ test('ecosystem directory matches named launchpad surfaces', () => {
   assert.equal(matchingEntries('Research Bankr Doppler launches')[0].name, 'Bankr / Doppler');
 });
 
+test('ecosystem directory entries carry granular intelligence fields', () => {
+  const noxa = ECOSYSTEM_ENTRIES.find(entry => entry.id === 'noxa');
+  const bankr = ECOSYSTEM_ENTRIES.find(entry => entry.id === 'bankr');
+  const virtuals = ECOSYSTEM_ENTRIES.find(entry => entry.id === 'virtuals');
+  assert.equal(noxa.category, 'launchpad_trading');
+  assert.match(noxa.chainSupport, /launch\/trade\/earn/i);
+  assert.match(noxa.candidatePolicy, /research starting points/i);
+  assert.ok(noxa.userIntents.includes('track trending/new/highest-MCap views'));
+  assert.match(bankr.chainSupport, /on robinhood/i);
+  assert.match(bankr.answerHints.join(' '), /anti-snipe/i);
+  assert.match(virtuals.candidatePolicy, /address\/project/i);
+});
+
 test('ecosystem directory expands broad launchpad research questions', () => {
   const entries = matchingEntries('What launchpads exist for Robinhood Chain memecoins?');
   assert.ok(entries.some(entry => entry.name === 'NOXA Fun'));
   assert.ok(entries.some(entry => entry.name === 'Bankr / Doppler'));
   assert.ok(entries.some(entry => entry.name === 'hood.fun / HoodFun'));
+  assert.ok(entries.some(entry => entry.name === 'Uniswap / DEX liquidity'));
+});
+
+test('ecosystem directory adds verification workflow for risk or candidate questions', () => {
+  const entries = matchingEntries('Pick a good NOXA coin and check liquidity risk');
+  assert.ok(entries.some(entry => entry.id === 'noxa'));
+  assert.ok(entries.some(entry => entry.id === 'verification'));
 });
 
 test('ecosystem directory context prevents unknown-platform answers', () => {
   const context = buildEcosystemDirectoryContext('Pick a good coin from a Robinhood Chain launchpad', []);
   assert.match(context.content, /ROBINHOOD CHAIN ECOSYSTEM DIRECTORY/);
+  assert.match(context.content, /candidatePolicy=/);
+  assert.match(context.content, /answerHints=/);
   assert.match(context.content, /Do not say these known surfaces are unknown or undocumented/);
   assert.match(context.content, /DYOR: verify the exact contract/);
+});
+
+test('ecosystem directory distinguishes candidate mode from platform mode', () => {
+  assert.equal(isCandidateQuestion('coin apa yang bagus di noxa.fun?'), true);
+  assert.equal(isCandidateQuestion('Tell me about NOXA Fun'), false);
+  const candidate = buildEcosystemDirectoryContext('coin apa yang bagus di noxa.fun?', []);
+  const platform = buildEcosystemDirectoryContext('Tell me about NOXA Fun', []);
+  assert.match(candidate.content, /The user is asking for candidates\/recommendations/);
+  assert.match(platform.content, /The user is asking for platform\/ecosystem context/);
 });
 
 test('ecosystem directory sources expose public URLs only', () => {
@@ -27,4 +65,12 @@ test('ecosystem directory sources expose public URLs only', () => {
   assert.ok(sources.some(source => source.url === 'https://www.noxa.fun/'));
   assert.ok(sources.some(source => source.url.includes('virtuals.io')));
   assert.ok(sources.every(source => source.url.startsWith('https://')));
+  assert.ok(sources.length <= 4);
+});
+
+test('ecosystem directory summary exposes stable metadata without prompt content', () => {
+  const summary = ecosystemDirectorySummary();
+  assert.equal(summary.noxa.category, 'launchpad_trading');
+  assert.equal(summary.bankr.name, 'Bankr / Doppler');
+  assert.deepEqual(Object.keys(summary.verification).sort(), ['category', 'evidenceLevel', 'examples', 'name', 'status']);
 });

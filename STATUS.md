@@ -8,7 +8,7 @@
 - **Hosting:** Railway production service, sourced from `hoodwisexyz/hoodwise`.
 - **Health check:** `GET /api/health` configured through `railway.toml`.
 - **Persistence:** Railway volume mounted at `/data`; production database path is `/data/hoodwise.db`.
-- **Automated verification:** `npm test` - 80 passing tests at the last review.
+- **Automated verification:** `npm test` - 97 passing tests at the last review.
 
 ## Shipped
 
@@ -33,7 +33,7 @@
 - Canonical contract references for WETH, USDG, key Stock Tokens, and tokenized ETFs.
 - Direct-answer prompt rules: factual answer first, then only the caveat that changes it.
 - Memecoin/community-token handling that answers the question while distinguishing unofficial deployments from canonical Robinhood assets.
-- Cross-launchpad ecosystem intelligence for NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, and Virtuals-related Robinhood Chain research, with direct candidate handling when live evidence exists and explicit DYOR verification when it does not.
+- Granular cross-launchpad ecosystem intelligence for NOXA Fun, Bankr/Doppler, hood.fun/HoodFun, Virtuals-related Robinhood Chain research, Cash Cat lore, Uniswap/DEX liquidity context, and Blockscout verification, with direct candidate handling when live evidence exists and explicit DYOR verification when it does not.
 - Live candidate extraction from search snippets for visible token names, tickers, contracts, and market-context terms, passed to the model as evidence-bound research context.
 - Tavily live-search layer is configured in production for time-sensitive questions, source merging, and prompt-injection-safe handling of fetched snippets.
 - Live contract intelligence for pasted addresses: RPC bytecode/metadata, official canonical-directory match, Blockscout source-verification status, explorer token activity, indexed DEX-pool lookup when available, and Hoodwise project-context framing for the Virtuals launch contract.

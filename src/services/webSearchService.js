@@ -14,7 +14,7 @@ function isTrustedSearchUrl(value) {
 
 /**
  * Heuristic for "does this question likely need something fresher than the
- * static knowledge base?" Ã¢â‚¬â€ deliberately conservative and fast (a regex,
+ * static knowledge base?" — deliberately conservative and fast (a regex,
  * not a model call) so most questions skip search entirely and stay fast.
  * Robinhood Chain is a fast-moving, days-old ecosystem, so this leans
  * toward triggering on anything that smells time-sensitive.
@@ -42,7 +42,7 @@ function isEcosystemCandidateRequest(message) {
 
 /**
  * Runs a live web search, scoped toward Robinhood Chain context, with a
- * hard timeout. Never throws Ã¢â‚¬â€ on any failure (no key, timeout, network
+ * hard timeout. Never throws — on any failure (no key, timeout, network
  * error, bad response) it logs and returns an empty result so the calling
  * chat flow always proceeds using the static knowledge base alone. This is
  * an enhancement layer, never a dependency.
@@ -73,7 +73,7 @@ async function searchWeb(query, { requestId } = {}) {
           : `Robinhood Chain ${query}`,
         search_depth: ecosystemCandidateResearch ? 'advanced' : 'basic',
         max_results: config.search.maxResults,
-        days: 30, // bias toward recent results Ã¢â‚¬â€ this ecosystem is days/weeks old
+        days: 30, // bias toward recent results — this ecosystem is days/weeks old
         ...(memecoinResearch ? { include_domains: MEMECOIN_RESEARCH_DOMAINS } : {})
       })
     });

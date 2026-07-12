@@ -75,7 +75,7 @@ test('chat briefing preserves Hoodwise project context for contract cards', () =
 });
 test('chat source merging includes ecosystem directory sources for known surfaces', () => {
   const sources = chatRouter._test.mergeSources('Tell me about Bankr and Virtuals on Robinhood Chain', 'Bankr and Virtuals are ecosystem surfaces.', [], null);
-  assert.ok(sources.some(source => source.url === 'https://docs.bankr.bot/'));
+  assert.ok(sources.some(source => source.url === 'https://docs.bankr.bot/faq/token-launching/'));
   assert.ok(sources.some(source => source.url.includes('virtuals.io')));
 });
 
