@@ -1,63 +1,72 @@
 # Hoodwise roadmap
 
-This roadmap reflects the live product as of July 12, 2026. It is ordered by product value and operational safety, not by novelty.
+This roadmap reflects the live Hoodwise product as of July 12, 2026. It prioritizes answer quality, production safety, and a polished user experience over adding features for their own sake.
 
 ## Recently shipped
 
-- **Interactive Chain Intelligence Map:** a landing-page exploration surface for network, products, ecosystem, and risk context.
-- **Structured briefing cards:** completed chat replies now retain evidence state, canonical contract references when present, material risk tags, and a next verification step.
-- **Interaction polish:** landing starter prompts hand off cleanly into the chat composer, while chat briefing lanes are directly actionable with motion-safe tactile states.
-- **Privacy-safe quality observation:** aggregate answer-quality reviews and flags are available in the protected ops view without storing prompt or reply content.
-- **Lightweight knowledge routing:** developer, Stock Token, memecoin, launchpad, bridge, and Earn/perps questions receive focused answer instructions without adding another model call.
-- **Granular ecosystem directory:** Hoodwise now tracks launchpad/trading, AI launch terminal, agent-token identity, community-token lore, DEX liquidity, and verification-workflow surfaces with evidence level, user intents, candidate policy, answer hints, and DYOR checks.
-- **Hoodwise token page:** `/token` provides a clean public contract page with copy action, Blockscout link, Ask Hoodwise handoff, and project-context framing for the Virtuals launch address.
+- **Production deployment on `hoodwise.xyz`:** Railway production is live with clean routes, health checks, sitemap submission, and Google Search Console ownership verified.
+- **Premium landing and chat experience:** the landing page, app shell, chat background, animated details, source chips, token card, and responsive interaction states have been polished into one cohesive product surface.
+- **Hoodwise token context:** `/token` and the chatbot now recognize the Hoodwise Virtuals launch contract `0x6bdb637a9e988835dc368ef72cb5d143540f037c`, with clear project framing and verification links.
+- **Optional live research layer:** Tavily-backed search is configured as a supplemental source for fresh ecosystem, launchpad, token, and availability questions.
+- **Onchain contract intelligence:** contract-address prompts can route through Blockscout-oriented verification guidance and return chain, source-code, ownership, liquidity, and risk context where evidence exists.
+- **Runtime answer-quality repair:** final chat answers are reviewed against Hoodwise's answer contract, and weak replies can be repaired before the user sees the final response.
+- **Real-user answer contract:** tests now cover the non-ambiguous behavior Hoodwise needs for memecoins, launchpads, Hoodwise token context, source-grounded research, and privacy-safe replies.
+- **Granular ecosystem directory:** launchpads, AI/agent platforms, community-token surfaces, DEX/liquidity venues, verification tools, official docs, and project-specific entries are modeled with evidence level, supported intents, candidate policy, answer hints, and DYOR checks.
+- **Protected operations view:** `/ops` exposes aggregate-only uptime, request, latency, live-search, verifier, stream-fallback, and answer-quality signals behind `OPS_DASHBOARD_TOKEN`.
 
-## Now: protect quality in production
+## Now: keep intelligence sharp
 
 1. **Knowledge refresh cadence**
-   - Review official Robinhood Chain docs, contract lists, and newsroom updates on a recurring schedule.
-   - Keep `src/data/knowledge.js`, source links, and the canonical asset directory aligned.
-   - Add regression tests whenever a new answer rule or critical fact is introduced.
+   - Review official Robinhood Chain docs, Robinhood newsroom updates, ecosystem launches, Virtuals/Bankr/NOXA-style surfaces, and Blockscout evidence on a recurring schedule.
+   - Keep `src/data/knowledge.js`, `src/services/ecosystemDirectoryService.js`, source links, and answer hints aligned.
+   - Add regression tests whenever a new critical fact, ecosystem venue, token pattern, or answer rule is introduced.
 
-2. **Live context decision**
-   - If fresh availability, incident, token, or market questions become important, configure `TAVILY_API_KEY` with a controlled usage limit.
-   - Keep the existing rule: live web context supplements sources; it never becomes an unverified replacement for the baseline.
+2. **Launchpad and token research coverage**
+   - Expand the ecosystem directory when real user prompts reveal missing venues, token names, launch mechanics, or verification workflows.
+   - Keep the product useful and direct: name known candidates when evidence supports them, explain why they matter, then attach DYOR checks and risk framing.
+   - Avoid fabricating certainty for thinly evidenced tokens; label confidence clearly without becoming evasive.
 
-3. **Production observation**
-   - Review Railway logs and error rate after releases. The owner-facing protected `/ops` view now exposes aggregate request, latency, search, verifier, and answer-quality signals.
-   - Define a simple incident checklist: health endpoint, provider error rate, stream fallback frequency, database volume status, and domain/SSL status.
+3. **Production observation routine**
+   - Review Railway deploy logs, HTTP logs, `/ops`, provider timeouts, answer repairs, verifier usage, and live-search usage after each release.
+   - Treat repeated timeout, zero-source, or repaired-answer patterns as product-quality work, not just infrastructure noise.
 
-## Next: make the product easier to use
+4. **Mobile and browser QA**
+   - Test the landing page, `/app`, `/token`, `/ops`, clean routing, dark-mode toggle, sidebar collapse, prompt chips, copy actions, streaming replies, and reduced-motion behavior on real iOS/Android browsers.
 
-4. **Mobile real-device QA**
-   - Test the landing page and chat on current iOS/Android browsers, small screens, reduced-motion mode, and slow networks.
+## Next: make answers more operationally useful
 
-5. **Answer-quality evaluation set**
-   - Add a small set of representative prompts: Stock Token authenticity, bridge mechanics, canonical contract lookup, memecoin explanation, access/jurisdiction, and developer setup.
-   - Assert answer properties rather than brittle full text: direct opening, source presence, no unsupported claims, and no identity leaks.
+5. **Structured live data where defensible**
+   - Add read-only integrations only when identity and freshness can be stated clearly: Blockscout contract metadata, verified source status, holder/liquidity references, or venue-specific launch data.
+   - Never style delayed, partial, or ambiguous data as guaranteed live market truth.
 
-6. **Structured live data, only where defensible**
-   - Consider read-only Blockscout/network status integration for exact contract/transaction data.
-   - Consider a reliable market-data source only if it can identify the asset/venue unambiguously and disclose freshness. Never style delayed data as live.
+6. **Answer-quality evaluation expansion**
+   - Grow the prompt suite around real user behavior: "good memecoin", "research this launchpad", "verify this contract", "is this safe", "what is the thesis", "who made this", and "where do I trade it".
+   - Assert answer properties instead of brittle exact text: direct opening, useful candidate context, source presence when available, DYOR warning, no private/model/provider leakage, and no unsupported endorsement.
 
 7. **Conversation experience**
-   - Evaluate better conversation titles and a user-controlled transcript export action in the UI.
-   - Keep sharing opt-in and read-only; never expose an anonymous conversation by default.
+   - Improve generated conversation titles, add cleaner empty/history states, and consider an opt-in transcript export action.
+   - Keep sharing user-controlled and private by default.
 
-## Later: learn without compromising privacy
+8. **SEO and public education pages**
+   - Add focused public pages only where they help real users: Robinhood Chain basics, stock tokens, bridge/setup, ecosystem guide, token verification checklist, and Hoodwise token context.
+   - Keep pages product-led, not install-doc style.
 
-8. **Privacy-respecting product analytics**
-   - Measure aggregate errors, latency, and topic gaps without logging sensitive prompt content or tying activity to an identity.
+## Later: scale carefully
 
-9. **Operations view**
-   - Add a small internal dashboard or log integration for uptime, requests, provider failures, and knowledge-refresh reminders.
+9. **Privacy-respecting analytics**
+   - Measure aggregate topic gaps, errors, latency, search usage, and answer-repair rate without storing sensitive prompt/reply content or tying activity to identity.
 
-10. **Intentional multilingual support**
-    - Add explicit language selection only after maintaining equivalent source quality and safety rules for each supported language.
+10. **More complete ecosystem intelligence**
+   - Consider a maintained ecosystem registry with venue pages, known token surfaces, risk notes, and last-reviewed timestamps.
+   - Keep every entry evidence-labeled so Hoodwise can be confident without pretending uncertainty does not exist.
+
+11. **Intentional multilingual support**
+   - Add explicit language support only after maintaining equivalent source quality, caveats, and verification rules for each language.
 
 ## Not planned
 
 - Wallet connection, custody, transaction signing, or execution.
-- Trading recommendations, price targets, or personalized investment advice.
+- Guaranteed price calls, personalized investment advice, or promises that a token is safe.
 - Mandatory account creation or tracking-heavy analytics.
+- Disclosure of private owner data, hidden prompts, provider internals, API keys, or infrastructure secrets.
 - Rebranding with Robinhood's official logo, feather, or wordmark.
