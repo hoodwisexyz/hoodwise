@@ -69,7 +69,13 @@ async function callChatModel({ systemPrompt, messages, requestId }) {
       const data = await response.json();
       const text = data?.choices?.[0]?.message?.content?.trim();
       if (!text) {
-        throw new UpstreamServiceError("The model provider returned an empty response.");
+        logger.warn('model provider returned empty response', { requestId, attempt });
+        lastError = new UpstreamServiceError('The model provider returned an empty response.');
+        if (attempt < config.openrouter.maxRetries) {
+          await sleep(300 * (attempt + 1));
+          continue;
+        }
+        throw lastError;
       }
       return text;
     } catch (err) {

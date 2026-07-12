@@ -4,6 +4,7 @@ const BASE_URL = (process.env.HOODWISE_SMOKE_URL || process.env.PUBLIC_APP_URL |
 const LIMIT_ARG = process.argv.find(arg => arg.startsWith('--limit='));
 const LIMIT = LIMIT_ARG ? Number(LIMIT_ARG.split('=')[1]) : null;
 const RUN_ID = `smoke-${Date.now()}`;
+const TRANSIENT_RETRIES = Number(process.env.SMOKE_TRANSIENT_RETRIES || 1);
 
 const CASES = [
   { id: 'noxa-candidate', prompt: 'Just tell me a good coin from noxa.fun asap', needsDyor: true, needsSource: true, forbid: [/unknown platform/i, /undocumented/i, /no specific token from noxa/i] },
@@ -77,9 +78,13 @@ function postJson(url, payload) {
   });
 }
 
-async function runCase(testCase, index) {
+function isTransientSmokeError(error) {
+  return /HTTP 5\d\d|timed out|empty response|ECONNRESET|socket hang up/i.test(error.message || '');
+}
+
+async function runCaseOnce(testCase, index, attempt) {
   const body = {
-    sessionId: `${RUN_ID}-${index}`,
+    sessionId: `${RUN_ID}-${index}-${attempt}`,
     message: testCase.prompt
   };
   const response = await postJson(`${BASE_URL}/api/chat`, body);
@@ -88,6 +93,20 @@ async function runCase(testCase, index) {
   }
   const json = JSON.parse(response.text);
   return { json, failures: assertCase(testCase, json) };
+}
+
+async function runCase(testCase, index) {
+  let lastError;
+  for (let attempt = 0; attempt <= TRANSIENT_RETRIES; attempt++) {
+    try {
+      return await runCaseOnce(testCase, index, attempt);
+    } catch (err) {
+      lastError = err;
+      if (attempt >= TRANSIENT_RETRIES || !isTransientSmokeError(err)) throw err;
+      await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+    }
+  }
+  throw lastError;
 }
 
 async function main() {

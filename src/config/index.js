@@ -25,7 +25,7 @@ const config = Object.freeze({
     // not secrets, safe to have sane defaults.
     referer: process.env.PUBLIC_APP_URL || 'https://hoodwise.xyz',
     timeoutMs: toInt(process.env.OPENROUTER_TIMEOUT_MS, 25000),
-    maxRetries: toInt(process.env.OPENROUTER_MAX_RETRIES, 1)
+    maxRetries: toInt(process.env.OPENROUTER_MAX_RETRIES, 2)
   }),
 
   ops: Object.freeze({ token: process.env.OPS_DASHBOARD_TOKEN || null }),
