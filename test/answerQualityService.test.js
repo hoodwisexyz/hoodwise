@@ -44,3 +44,24 @@ test('repair prompt keeps user-facing constraints explicit', () => {
   assert.match(prompt, /Do not put raw URLs/i);
   assert.match(prompt, /Hoodwise project token launched via Virtuals\.io/i);
 });
+
+test('quality review flags candidate answers that avoid shortlist shape', () => {
+  const review = reviewAnswer({
+    question: 'Which good memecoin should I research on noxa.fun?',
+    answer: 'You should verify contracts and liquidity before doing anything. DYOR.',
+    sources: [{ title: 'NOXA', url: 'https://www.noxa.fun/' }],
+    usedLiveSearch: true
+  });
+  assert.ok(review.reasons.includes('missing_candidate_shape'));
+  assert.equal(shouldRepairAnswer(review), true);
+});
+
+test('quality review accepts direct candidate shortlist with DYOR', () => {
+  const review = reviewAnswer({
+    question: 'Which good memecoin should I research on noxa.fun?',
+    answer: 'Research shortlist: Cash Cat is a NOXA discovery candidate to research first because it is named in the current Hoodwise ecosystem context. What could invalidate it: wrong contract, weak liquidity, concentrated holders, or privileged controls. DYOR: verify the exact contract, pool liquidity, ownership controls, and current market conditions before interacting.',
+    sources: [{ title: 'NOXA', url: 'https://www.noxa.fun/' }],
+    usedLiveSearch: true
+  });
+  assert.deepEqual(review.reasons, []);
+});

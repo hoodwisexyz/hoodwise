@@ -100,3 +100,18 @@ test('answer feedback rejects another session and user messages', () => {
   const assistantMessageId = conversations.appendMessage(convoId, 'assistant', 'answer text');
   assert.throws(() => feedback.saveAnswerFeedback({ sessionId: 'other-session', conversationId: convoId, messageId: assistantMessageId, rating: 'helpful' }), NotFoundError);
 });
+
+test('feedback summary exposes aggregate review signal only', () => {
+  const sessionId = 'session-feedback-summary';
+  const convoId = conversations.createConversation(sessionId, 'feedback summary test');
+  const first = conversations.appendMessage(convoId, 'assistant', 'answer one');
+  const second = conversations.appendMessage(convoId, 'assistant', 'answer two');
+  feedback.saveAnswerFeedback({ sessionId, conversationId: convoId, messageId: first, rating: 'missing', note: 'Needs   cleaner     launchpad detail' });
+  feedback.saveAnswerFeedback({ sessionId, conversationId: convoId, messageId: second, rating: 'incorrect' });
+  const summary = feedback.feedbackSummary();
+  assert.ok(summary.total >= 2);
+  assert.ok(summary.reviewNeeded >= 2);
+  assert.ok(['watch', 'high'].includes(summary.reviewSignal.priority));
+  assert.equal(feedback.normalizeNote('Needs   cleaner     launchpad detail'), 'Needs cleaner launchpad detail');
+  assert.equal(Object.hasOwn(summary, 'messages'), false);
+});
