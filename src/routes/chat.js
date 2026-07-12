@@ -32,6 +32,26 @@ function validateChatBody(body) {
   return { message: message.trim(), conversationId: conversationId || null };
 }
 
+const PRIVATE_OR_INTERNAL_REQUEST_PATTERNS = [
+  /\b(private|personal|sensitive)\s+(user\s+)?data\b/i,
+  /\b(other|another|previous|prior)\s+(users?|chats?|conversations?|sessions?)\b/i,
+  /\b(data\s+(user|pengguna|orang)\s+lain|chat\s+(user|pengguna|orang)\s+lain|riwayat\s+chat|percakapan\s+(user|pengguna|orang)\s+lain)\b/i,
+  /\b(show|reveal|dump|export|list|read|repeat|give|get)\b[\s\S]{0,80}\b(chats?|conversations?|sessions?|database|logs?|user\s+data)\b/i,
+  /\b(api[_\s-]?key|secret|credential|private\s+key|seed\s+phrase|password)\b/i,
+  /\b(system\s+prompt|hidden\s+instructions?|developer\s+message|internal\s+prompt)\b/i,
+  /\b(model|provider)\b[\s\S]{0,50}\b(you|your|kamu|lo|anda|using|pakai|dipakai|underlying)\b/i,
+  /\b(you|your|kamu|lo|anda|using|pakai|dipakai|underlying)\b[\s\S]{0,50}\b(model|provider)\b/i,
+  /\b(openrouter|deepseek|backend|database|railway|session\s*id|sessionId|infrastructure)\b[\s\S]{0,80}\b(show|reveal|disclose|what|which|tell|give|get|dump)\b/i,
+  /\b(show|reveal|disclose|what|which|tell|give|get|dump)\b[\s\S]{0,80}\b(openrouter|deepseek|backend|database|railway|session\s*id|sessionId|infrastructure)\b/i
+];
+
+function isPrivateOrInternalRequest(message) {
+  return PRIVATE_OR_INTERNAL_REQUEST_PATTERNS.some(pattern => pattern.test(message));
+}
+
+function buildPrivateOrInternalReply() {
+  return 'I cannot show, infer, or repeat private user data, other chats, session details, credentials, system prompts, provider details, database contents, logs, or internal infrastructure. Hoodwise is built to explain Robinhood Chain, its ecosystem, token verification, and related risks. If you want to verify a Robinhood Chain token, launchpad, contract, or product claim, ask that directly and I can help.';
+}
 /** Builds an extra system-role message carrying live search results, or
  *  null if search wasn't triggered/found nothing — kept separate from the
  *  main SYSTEM_PROMPT so the static knowledge base is never mutated. */
@@ -98,6 +118,17 @@ async function prepareTurn(req) {
   }
 
   conversations.appendMessage(conversationId, 'user', message);
+
+  if (isPrivateOrInternalRequest(message)) {
+    return {
+      conversationId,
+      message,
+      safeReply: buildPrivateOrInternalReply(),
+      messagesForModel: [],
+      liveResults: [],
+      onchainScan: null
+    };
+  }
 
   const history = conversations
     .getRecentHistory(conversationId, config.chat.maxHistoryMessages)
@@ -172,7 +203,16 @@ function buildBrief(reply, sources, liveResults, onchainScan) {
 }
 // ---------- Non-streaming (used by simple clients / fallback) ----------
 router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
-  const { conversationId, message, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
+  const { conversationId, message, safeReply, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
+
+  if (safeReply) {
+    const sources = [];
+    const brief = buildBrief(safeReply, sources, liveResults, onchainScan);
+    conversations.appendMessage(conversationId, 'assistant', safeReply, sources, brief);
+    conversations.touchConversation(conversationId);
+    logger.info('chat private/internal request short-circuited', { requestId: req.requestId, conversationId });
+    return res.json({ conversationId, reply: safeReply, sources, brief, repaired: false });
+  }
 
   const rawReply = await callChatModel({
     systemPrompt: getSystemPromptForQuestion(message),
@@ -206,7 +246,7 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
 
 // ---------- Streaming (used by the Hoodwise web app for the live-typing feel) ----------
 router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(async (req, res) => {
-  const { conversationId, message, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
+  const { conversationId, message, safeReply, messagesForModel, liveResults, onchainScan } = await prepareTurn(req);
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -227,6 +267,17 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   };
 
   send('start', { conversationId });
+
+  if (safeReply) {
+    const sources = [];
+    const brief = buildBrief(safeReply, sources, liveResults, onchainScan);
+    conversations.appendMessage(conversationId, 'assistant', safeReply, sources, brief);
+    conversations.touchConversation(conversationId);
+    logger.info('chat stream private/internal request short-circuited', { requestId: req.requestId, conversationId });
+    send('token', { text: safeReply });
+    send('done', { conversationId, sources, brief, repaired: false });
+    return res.end();
+  }
 
   try {
     await streamChatModel({
@@ -339,5 +390,5 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   }
 }));
 
-router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildCandidateContextFromResults, buildEcosystemDirectoryContext, ecosystemDirectorySources, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
+router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildCandidateContextFromResults, buildEcosystemDirectoryContext, ecosystemDirectorySources, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback, isPrivateOrInternalRequest, buildPrivateOrInternalReply };
 module.exports = router;
