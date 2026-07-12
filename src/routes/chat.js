@@ -16,7 +16,7 @@ const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
 const logger = require('../lib/logger');
 const metrics = require('../services/metricsService');
-const { reviewAnswer } = require('../services/answerQualityService');
+const { reviewAnswer, shouldRepairAnswer, buildRepairPrompt } = require('../services/answerQualityService');
 
 function validateChatBody(body) {
   const { message, conversationId } = body || {};
@@ -135,12 +135,35 @@ function mergeSources(message, reply, liveResults, onchainScan) {
     .slice(0, 4);
 }
 
-function recordQuality(question, reply, sources, usedLiveSearch, requestId) {
+function recordQuality(question, reply, sources, usedLiveSearch, requestId, phase = 'final') {
   const review = reviewAnswer({ question, answer: reply, sources, usedLiveSearch });
   metrics.record('qualityReviews');
-  if (review.score < 80) metrics.record('lowQualityReviews');
-  logger.info('chat quality review', { requestId, score: review.score, reasons: review.reasons, needsResearch: review.needsResearch });
+  if (review.score < 80 || shouldRepairAnswer(review)) metrics.record('lowQualityReviews');
+  logger.info('chat quality review', {
+    requestId, phase, score: review.score, reasons: review.reasons,
+    needsResearch: review.needsResearch, repairRecommended: shouldRepairAnswer(review)
+  });
   return review;
+}
+
+async function repairAnswerIfNeeded({ message, reply, sources, liveResults, onchainScan, messagesForModel, requestId }) {
+  const review = recordQuality(message, reply, sources, liveResults.length > 0, requestId, 'initial');
+  if (!shouldRepairAnswer(review)) return { reply, sources, repaired: false, review };
+
+  logger.warn('chat answer failed quality gate; attempting repair', { requestId, reasons: review.reasons });
+  const repairMessages = [
+    ...messagesForModel,
+    { role: 'assistant', content: reply },
+    { role: 'user', content: buildRepairPrompt({ question: message, answer: reply, sources }) }
+  ];
+  const repairedReply = sanitizeReply(await callChatModel({
+    systemPrompt: getSystemPromptForQuestion(message),
+    messages: repairMessages,
+    requestId
+  }));
+  const repairedSources = mergeSources(message, repairedReply, liveResults, onchainScan);
+  recordQuality(message, repairedReply, repairedSources, liveResults.length > 0, requestId, 'repair');
+  return { reply: repairedReply, sources: repairedSources, repaired: true, review };
 }
 function buildBrief(reply, sources, liveResults, onchainScan) {
   const brief = buildBriefingMeta(reply, sources, liveResults.length > 0 || Boolean(onchainScan));
@@ -156,19 +179,29 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
     messages: messagesForModel,
     requestId: req.requestId
   });
-  const reply = sanitizeReply(rawReply);
-  const sources = mergeSources(message, reply, liveResults, onchainScan);
+  const initialReply = sanitizeReply(rawReply);
+  const initialSources = mergeSources(message, initialReply, liveResults, onchainScan);
+  const finalAnswer = await repairAnswerIfNeeded({
+    message,
+    reply: initialReply,
+    sources: initialSources,
+    liveResults,
+    onchainScan,
+    messagesForModel,
+    requestId: req.requestId
+  });
+  const reply = finalAnswer.reply;
+  const sources = finalAnswer.sources;
   const brief = buildBrief(reply, sources, liveResults, onchainScan);
 
-  recordQuality(message, reply, sources, liveResults.length > 0, req.requestId);
   conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
   conversations.touchConversation(conversationId);
 
   logger.info('chat reply sent', {
-    requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0
+    requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0, repaired: finalAnswer.repaired
   });
 
-  res.json({ conversationId, reply, sources, brief });
+  res.json({ conversationId, reply, sources, brief, repaired: finalAnswer.repaired });
 }));
 
 // ---------- Streaming (used by the Hoodwise web app for the live-typing feel) ----------
@@ -216,17 +249,28 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       send('token', { text: remainder });
     }
 
-    const sources = mergeSources(message, fullReply, liveResults, onchainScan);
+    const initialSources = mergeSources(message, fullReply, liveResults, onchainScan);
+    const finalAnswer = await repairAnswerIfNeeded({
+      message,
+      reply: fullReply,
+      sources: initialSources,
+      liveResults,
+      onchainScan,
+      messagesForModel,
+      requestId: req.requestId
+    });
+    fullReply = finalAnswer.reply;
+    const sources = finalAnswer.sources;
     const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
-    recordQuality(message, fullReply, sources, liveResults.length > 0, req.requestId);
+    if (finalAnswer.repaired) send('replace', { text: fullReply });
     conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
     logger.info('chat stream completed', {
-      requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0
+      requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0, repaired: finalAnswer.repaired
     });
 
-    send('done', { conversationId, sources, brief });
+    send('done', { conversationId, sources, brief, repaired: finalAnswer.repaired });
   } catch (err) {
     // A provider can occasionally close an SSE response after emitting a few
     // tokens (node-fetch reports this as "Premature close"). Preserve the
@@ -252,15 +296,26 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       fullReply += separator + fallbackText;
       send('token', { text: separator + fallbackText });
 
-      const sources = mergeSources(message, fullReply, liveResults, onchainScan);
+      const initialSources = mergeSources(message, fullReply, liveResults, onchainScan);
+      const finalAnswer = await repairAnswerIfNeeded({
+        message,
+        reply: fullReply,
+        sources: initialSources,
+        liveResults,
+        onchainScan,
+        messagesForModel,
+        requestId: req.requestId
+      });
+      fullReply = finalAnswer.reply;
+      const sources = finalAnswer.sources;
       const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
-      recordQuality(message, fullReply, sources, liveResults.length > 0, req.requestId);
+      if (finalAnswer.repaired) send('replace', { text: fullReply });
       conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {
-        requestId: req.requestId, conversationId, sourceCount: sources.length
+        requestId: req.requestId, conversationId, sourceCount: sources.length, repaired: finalAnswer.repaired
       });
-      send('done', { conversationId, sources, brief });
+      send('done', { conversationId, sources, brief, repaired: finalAnswer.repaired });
     } catch (fallbackErr) {
       logger.error('chat stream fallback failed', {
         requestId: req.requestId, conversationId, error: fallbackErr.message

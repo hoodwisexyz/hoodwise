@@ -552,6 +552,11 @@
         renderMessageContent(messageContent, fullText);
         messagesEl.scrollTop = messagesEl.scrollHeight;
       },
+      replaceText(text) {
+        fullText = text || '';
+        renderMessageContent(messageContent, fullText);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      },
       finalize(sources, brief, partial = false) {
         bubble.classList.remove('streaming-bubble');
         if (sources && sources.length) {
@@ -683,6 +688,13 @@
             streamBot = addStreamingBotRow();
           }
           streamBot.appendText(data.text);
+        } else if (event === 'replace') {
+          if (!streamBot) {
+            removeThinking();
+            streamBot = addStreamingBotRow();
+          }
+          streamBot.replaceText(data.text || '');
+          setInteractionStatus('Briefing refined for quality.');
         } else if (event === 'done') {
           currentConversationId = data.conversationId;
           syncConversationRoute(currentConversationId);

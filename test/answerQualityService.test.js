@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { reviewAnswer } = require('../src/services/answerQualityService');
+const { reviewAnswer, shouldRepairAnswer, buildRepairPrompt } = require('../src/services/answerQualityService');
 
 test('quality review accepts a direct, grounded research answer', () => {
   const result = reviewAnswer({
@@ -11,10 +11,36 @@ test('quality review accepts a direct, grounded research answer', () => {
   });
   assert.equal(result.score, 100);
   assert.deepEqual(result.reasons, []);
+  assert.equal(shouldRepairAnswer(result), false);
 });
 
 test('quality review flags raw URLs and internal disclosures without retaining content', () => {
   const result = reviewAnswer({ question: 'What is the model?', answer: 'The model uses OpenRouter at https://example.com.', sources: [] });
   assert.ok(result.reasons.includes('internal_leak'));
   assert.ok(result.reasons.includes('raw_url'));
+  assert.equal(shouldRepairAnswer(result), true);
+});
+
+test('quality review repairs evasive launchpad research answers', () => {
+  const result = reviewAnswer({
+    question: 'coin apa yang bagus di noxa.fun?',
+    answer: 'No specific token from noxa.fun can be named as good because the platform is undocumented. DYOR.',
+    sources: [{ title: 'NOXA Fun', url: 'https://noxa.fun' }],
+    usedLiveSearch: true
+  });
+  assert.ok(result.reasons.includes('evasive_research_answer'));
+  assert.equal(shouldRepairAnswer(result), true);
+});
+
+test('repair prompt keeps user-facing constraints explicit', () => {
+  const prompt = buildRepairPrompt({
+    question: 'hoodwise token itu apa?',
+    answer: 'Previous weak answer',
+    sources: [{ title: 'Hoodwise token profile' }]
+  });
+  assert.match(prompt, /Answer directly/i);
+  assert.match(prompt, /DYOR/i);
+  assert.match(prompt, /Never expose model\/provider names/i);
+  assert.match(prompt, /Do not put raw URLs/i);
+  assert.match(prompt, /Hoodwise project token launched via Virtuals\.io/i);
 });
