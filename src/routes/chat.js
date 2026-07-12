@@ -166,6 +166,16 @@ function mergeSources(message, reply, liveResults, onchainScan) {
     .slice(0, 4);
 }
 
+const COMPACT_DYOR_FOOTER = 'DYOR: verify the exact contract, pool liquidity, ownership controls, and current market conditions before interacting.';
+
+function needsResearchFooter(message) {
+  return /\b(memecoin|meme coin|noxa|hood\.fun|hoodfun|bankr|doppler|launchpad|cashcat|cash cat|community token|good coin|best coin|hot coin|trending token|coin apa|token apa|bagus|pilih|recommend|pick)\b/i.test(message);
+}
+
+function ensureResearchFooter(message, reply) {
+  if (!needsResearchFooter(message) || /\bDYOR\b|do your own research/i.test(reply)) return reply;
+  return reply.trimEnd() + '\n\n' + COMPACT_DYOR_FOOTER;
+}
 function recordQuality(question, reply, sources, usedLiveSearch, requestId, phase = 'final') {
   const review = reviewAnswer({ question, answer: reply, sources, usedLiveSearch });
   metrics.record('qualityReviews');
@@ -230,8 +240,8 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
     messagesForModel,
     requestId: req.requestId
   });
-  const reply = finalAnswer.reply;
-  const sources = finalAnswer.sources;
+  const reply = ensureResearchFooter(message, finalAnswer.reply);
+  const sources = reply === finalAnswer.reply ? finalAnswer.sources : mergeSources(message, reply, liveResults, onchainScan);
   const brief = buildBrief(reply, sources, liveResults, onchainScan);
 
   conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
@@ -310,10 +320,13 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       messagesForModel,
       requestId: req.requestId
     });
-    fullReply = finalAnswer.reply;
-    const sources = finalAnswer.sources;
+    const guardedReply = ensureResearchFooter(message, finalAnswer.reply);
+    const appendedFooter = guardedReply !== finalAnswer.reply;
+    fullReply = guardedReply;
+    const sources = appendedFooter ? mergeSources(message, fullReply, liveResults, onchainScan) : finalAnswer.sources;
     const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
     if (finalAnswer.repaired) send('replace', { text: fullReply });
+    else if (appendedFooter) send('token', { text: fullReply.slice(finalAnswer.reply.length) });
     conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
@@ -357,10 +370,13 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
         messagesForModel,
         requestId: req.requestId
       });
-      fullReply = finalAnswer.reply;
-      const sources = finalAnswer.sources;
+      const guardedReply = ensureResearchFooter(message, finalAnswer.reply);
+      const appendedFooter = guardedReply !== finalAnswer.reply;
+      fullReply = guardedReply;
+      const sources = appendedFooter ? mergeSources(message, fullReply, liveResults, onchainScan) : finalAnswer.sources;
       const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
       if (finalAnswer.repaired) send('replace', { text: fullReply });
+      else if (appendedFooter) send('token', { text: fullReply.slice(finalAnswer.reply.length) });
       conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {
