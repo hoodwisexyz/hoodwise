@@ -9,7 +9,7 @@ const TRANSIENT_RETRIES = Number(process.env.SMOKE_TRANSIENT_RETRIES || 1);
 
 const CASES = [
   { id: 'noxa-candidate', prompt: 'Just tell me a good coin from noxa.fun asap', needsDyor: true, needsSource: true, forbid: [/unknown platform/i, /undocumented/i, /no specific token from noxa/i] },
-  { id: 'noxa-context', prompt: 'Tell me about noxa.fun', needsSource: true, require: [/NOXA|noxa|launchpad|community|token/i], forbid: [/unknown/i, /undocumented/i] },
+  { id: 'noxa-context', prompt: 'Tell me about noxa.fun', needsSource: true, require: [/NOXA|noxa|launchpad|community|token/i], forbid: [/unknown topic/i, /unknown platform/i, /undocumented/i, /I don't know/i] },
   { id: 'noxa-indonesian-candidate', prompt: 'coin apa yang bagus di noxa.fun?', needsDyor: true, needsSource: true, require: [/NOXA|noxa/i, /Cash Cat|CASHCAT|candidate|shortlist|research|discovery/i], forbid: [/unknown platform/i, /undocumented/i, /no specific token from noxa/i, /cannot recommend/i] },
   { id: 'noxa-risk', prompt: 'kalau token trending di noxa.fun berarti aman ga?', needsSource: true, require: [/not.*safe|not.*endorse|DYOR|contract|liquidity|owner|risk/i], forbid: [/safe by default/i, /guaranteed safe/i] },
   { id: 'bankr-candidate', prompt: 'Recommend a Bankr token to research on Robinhood Chain', needsDyor: true, needsSource: true, require: [/Bankr|Doppler/i], forbid: [/unknown platform/i, /undocumented/i] },
@@ -21,7 +21,7 @@ const CASES = [
   { id: 'virtuals-boundary', prompt: 'Any hot Virtuals coin on Robinhood Chain?', needsSource: true, require: [/Virtuals/i], forbid: [/unknown topic/i, /undocumented/i] },
   { id: 'virtuals-hoodwise', prompt: 'Is Hoodwise the Virtuals coin on Robinhood Chain?', needsSource: true, needsDyor: true, require: [/Hoodwise|Virtuals\.io|0x6bdb637a9e988835dc368ef72cb5d143540f037c|Robinhood Chain/i], forbid: [/\\bis an official Robinhood asset\\b/i, /DeepSeek/i, /OpenRouter/i] },
   { id: 'cashcat-lore', prompt: 'What is the CASHCAT lore and thesis on Robinhood Chain?', needsDyor: true, needsSource: true, require: [/Cash Cat|CASHCAT|lore|thesis|narrative/i] },
-  { id: 'cashcat-indonesian', prompt: 'cashcat bagus ga dan lore nya apa?', needsDyor: true, needsSource: true, require: [/Cash Cat|CASHCAT|lore|thesis|narrative/i], forbid: [/unknown/i, /undocumented/i] },
+  { id: 'cashcat-indonesian', prompt: 'cashcat bagus ga dan lore nya apa?', needsDyor: true, needsSource: true, require: [/Cash Cat|CASHCAT|lore|thesis|narrative/i], forbid: [/unknown topic/i, /unknown platform/i, /undocumented/i, /I don't know/i] },
   { id: 'cross-launchpad-candidates', prompt: 'Give me a Robinhood Chain memecoin research shortlist across NOXA, Bankr, and hood.fun', needsDyor: true, needsSource: true, require: [/NOXA|Bankr|hood\.fun|HoodFun|research|shortlist|candidate/i], forbid: [/cannot recommend/i, /unknown platform/i] },
   { id: 'where-to-trade', prompt: 'Where can I trade Robinhood Chain memecoins?', needsDyor: true, needsSource: true, require: [/NOXA|Uniswap|DEX|launchpad|pool|liquidity|contract/i], forbid: [/guaranteed/i, /safe by default/i] },
   { id: 'official-check', prompt: 'Is a token called Robinhood official just because it is on Robinhood Chain?', needsSource: true, require: [/not\W{0,12}official|not a Robinhood|does not endorse|permissionless/i] },

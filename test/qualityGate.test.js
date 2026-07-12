@@ -44,8 +44,10 @@ test('research policy separates live thesis or lore from verified evidence and p
   assert.match(SYSTEM_PROMPT, /Research snapshot/);
   assert.match(SYSTEM_PROMPT, /Never disclose, infer, or repeat private user\/session data/);
 });
-test('bridge and trading prompts receive concrete routing instructions', () => {
+test('bridge, trading, and CashCat prompts receive concrete routing instructions', () => {
   assert.match(getSystemPromptForQuestion('withdraw Robinhood Chain ke Ethereum berapa lama?'), /about 7 days because of the challenge period/);
   assert.match(getSystemPromptForQuestion('Where can I trade Robinhood Chain memecoins?'), /memecoin venue\/trading research request/);
+  assert.match(getSystemPromptForQuestion('cashcat bagus ga dan lore nya apa?'), /Cash Cat \/ CASHCAT lore and research request/);
+  assert.match(getSystemPromptForQuestion('cashcat bagus ga dan lore nya apa?'), /Do not call the topic unknown/);
   assert.ok(findSources('withdraw Robinhood Chain ke Ethereum berapa lama?').some(source => /bridg/i.test(source.title)));
 });
