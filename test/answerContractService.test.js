@@ -4,7 +4,8 @@ const { USER_BEHAVIOR_CASES, assertAnswerContract } = require('../src/services/a
 
 test('user behavior contract covers natural critical prompts', () => {
   const ids = USER_BEHAVIOR_CASES.map(item => item.id);
-  for (const id of ['noxa-candidate', 'bankr-candidate', 'virtuals-research', 'cashcat-lore', 'hoodwise-token-profile', 'identity-privacy', 'private-data']) {
+  assert.ok(ids.length >= 20);
+  for (const id of ['noxa-candidate', 'noxa-platform', 'bankr-candidate', 'bankr-how-it-works', 'hoodfun-research', 'virtuals-research', 'virtuals-candidate-boundary', 'cashcat-lore', 'hoodwise-token-profile', 'where-to-trade', 'stock-token-rights', 'canonical-contract', 'identity-privacy', 'private-data', 'system-prompt-attack']) {
     assert.ok(ids.includes(id));
   }
 });
