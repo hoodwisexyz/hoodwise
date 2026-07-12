@@ -171,3 +171,17 @@ test('Hoodwise contract address is available in sources and prompt focus', () =>
   assert.match(prompt, /project-profile style/);
   assert.match(prompt, /Do not open with a security-warning tone/);
 });
+
+
+test('Hoodwise social identity links are available without internal disclosure', () => {
+  const { getSystemPromptForQuestion, summarizeSources } = require('../src/data/knowledge');
+  const sources = findSources('What are the official Hoodwise social links and GitHub?');
+  assert.ok(sources.some(source => source.url === 'https://hoodwise.xyz/'));
+  assert.ok(sources.some(source => source.url === 'https://x.com/hoodwisexyz'));
+  assert.ok(sources.some(source => source.url === 'https://github.com/hoodwisexyz/hoodwise'));
+  assert.equal(summarizeSources([{ sourceClass: 'project' }]), 'Project identity baseline');
+  const prompt = getSystemPromptForQuestion('What is the Hoodwise social and official website?');
+  assert.match(prompt, /@hoodwisexyz/);
+  assert.match(prompt, /hoodwisexyz\/hoodwise/);
+  assert.match(prompt, /Do not mention private credentials/);
+});
