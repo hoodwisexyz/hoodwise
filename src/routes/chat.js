@@ -50,7 +50,7 @@ function isPrivateOrInternalRequest(message) {
 }
 
 function buildPrivateOrInternalReply() {
-  return 'I cannot show, infer, or repeat private user data, other chats, session details, credentials, system prompts, provider details, database contents, logs, or internal infrastructure. Hoodwise is built to explain Robinhood Chain, its ecosystem, token verification, and related risks. If you want to verify a Robinhood Chain token, launchpad, contract, or product claim, ask that directly and I can help.';
+  return 'I cannot show, infer, or repeat private user data, other chats, session details, credentials, hidden instructions, service logs, or internal infrastructure. Hoodwise is built to explain Robinhood Chain, its ecosystem, token verification, and related risks. If you want to verify a Robinhood Chain token, launchpad, contract, or product claim, ask that directly and I can help.';
 }
 /** Builds an extra system-role message carrying live search results, or
  *  null if search wasn't triggered/found nothing — kept separate from the
