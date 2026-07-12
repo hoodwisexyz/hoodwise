@@ -10,6 +10,7 @@ const conversations = require('../services/conversationService');
 const { callChatModel, streamChatModel } = require('../services/openrouterService');
 const { searchWeb, looksTimeSensitive, isNoxaCandidateRequest, isEcosystemCandidateRequest } = require('../services/webSearchService');
 const { extractCandidatesFromResults, buildCandidateContextMessage } = require('../services/candidateExtractorService');
+const { buildEcosystemDirectoryContext, ecosystemDirectorySources } = require('../services/ecosystemDirectoryService');
 const { scanContractInMessage, buildOnchainContextMessage, scanSource } = require('../services/onchainScanService');
 const { buildBriefingMeta } = require('../services/briefingService');
 const { getSystemPromptForQuestion, findSources, sanitizeReply, createStreamingSanitizer } = require('../data/knowledge');
@@ -112,10 +113,11 @@ async function prepareTurn(req) {
   const liveResults = search.results;
   const liveContextMessage = buildLiveContextMessage(liveResults);
   const candidateContextMessage = buildCandidateContextFromResults(liveResults);
+  const ecosystemDirectoryContextMessage = buildEcosystemDirectoryContext(message, liveResults);
   const noxaDiscoveryFallbackMessage = buildNoxaDiscoveryFallback(message, liveResults);
   const ecosystemDiscoveryFallbackMessage = buildEcosystemDiscoveryFallback(message, liveResults);
   const onchainContextMessage = buildOnchainContextMessage(onchainScan);
-  const messagesForModel = [...history, liveContextMessage, candidateContextMessage, noxaDiscoveryFallbackMessage, ecosystemDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
+  const messagesForModel = [...history, liveContextMessage, candidateContextMessage, ecosystemDirectoryContextMessage, noxaDiscoveryFallbackMessage, ecosystemDiscoveryFallbackMessage, onchainContextMessage].filter(Boolean);
 
   return { conversationId, message, messagesForModel, liveResults, onchainScan };
 }
@@ -125,9 +127,10 @@ function mergeSources(message, reply, liveResults, onchainScan) {
   // both so every completed briefing can surface the relevant primary docs.
   const curatedSources = findSources(`${message}\n${reply}`);
   const liveSources = liveResults.map(r => ({ title: r.title, url: r.url }));
+  const directorySources = ecosystemDirectorySources(message);
   const onchainSource = scanSource(onchainScan);
   const seenUrls = new Set();
-  return [...(onchainSource ? [onchainSource] : []), ...liveSources, ...curatedSources]
+  return [...(onchainSource ? [onchainSource] : []), ...liveSources, ...directorySources, ...curatedSources]
     .filter(s => (seenUrls.has(s.url) ? false : (seenUrls.add(s.url), true)))
     .slice(0, 4);
 }
@@ -281,5 +284,5 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   }
 }));
 
-router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildCandidateContextFromResults, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
+router._test = { mergeSources, buildBrief, buildLiveContextMessage, buildCandidateContextFromResults, buildEcosystemDirectoryContext, ecosystemDirectorySources, buildNoxaDiscoveryFallback, buildEcosystemDiscoveryFallback };
 module.exports = router;

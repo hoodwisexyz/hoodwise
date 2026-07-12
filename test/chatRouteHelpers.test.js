@@ -73,3 +73,15 @@ test('chat briefing preserves Hoodwise project context for contract cards', () =
   assert.equal(brief.onchainScan.projectContext.name, 'Hoodwise');
   assert.equal(brief.onchainScan.projectContext.venue, 'Virtuals.io launchpad');
 });
+test('chat source merging includes ecosystem directory sources for known surfaces', () => {
+  const sources = chatRouter._test.mergeSources('Tell me about Bankr and Virtuals on Robinhood Chain', 'Bankr and Virtuals are ecosystem surfaces.', [], null);
+  assert.ok(sources.some(source => source.url === 'https://docs.bankr.bot/'));
+  assert.ok(sources.some(source => source.url.includes('virtuals.io')));
+});
+
+test('chat helper builds ecosystem directory context for broad launchpad questions', () => {
+  const context = chatRouter._test.buildEcosystemDirectoryContext('What launchpads exist for Robinhood Chain memecoins?', []);
+  assert.match(context.content, /NOXA Fun/);
+  assert.match(context.content, /Bankr \/ Doppler/);
+  assert.match(context.content, /hood\.fun \/ HoodFun/);
+});
