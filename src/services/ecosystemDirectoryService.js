@@ -14,7 +14,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Can name visible/listed NOXA candidates or the recent discovery baseline as research starting points; never treat a listing as safety, endorsement, or a current buy signal by itself.',
     answerHints: ['lead with NOXA as a known launchpad, not unknown', 'separate platform facts from token verdict', 'for good/best coin requests provide a research shortlist when evidence exists', 'say current rank/price/liquidity must be refreshed when live metrics are absent'],
     verify: ['exact token contract on Robinhood Chain Blockscout', 'specific Uniswap/DEX pool and liquidity depth', 'holder distribution', 'owner/privileged controls', 'current listing/rank/market data'],
-    examples: ['Cash Cat (CASHCAT)', 'Dog In Hood', 'GameStop', 'The Juggernaut', 'TENDIES', 'WISHBONE', '4663']
+    examples: ['Cash Cat (CASHCAT)', 'Dog In Hood', 'GameStop', 'The Juggernaut', 'TENDIES', 'WISHBONE', '4663'],
+    snapshot: { thesis: 'Primary Robinhood Chain community-token discovery and trading surface.', watchlist: ['Cash Cat (CASHCAT)', 'Dog In Hood', 'GameStop', 'TENDIES'], confidence: 'high for platform existence, live refresh required for token ranks', refresh: 'refresh listing, rank, pool, and contract before naming a current leader' }
   },
   {
     id: 'bankr',
@@ -31,7 +32,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Can discuss Bankr/Doppler as a real Robinhood Chain launch route; candidate recommendations require a successful launch record, exact contract, and pool evidence.',
     answerHints: ['mention Robinhood support through Doppler', 'explain that failed launches can be spoofed by copycat contracts', 'include anti-snipe/fee/vesting caveats only when relevant', 'do not call Bankr unknown or undocumented'],
     verify: ['successful launch transaction', 'exact deployed token contract', 'Doppler/pool state', 'Blockscout contract activity', 'liquidity and ownership controls', 'creator fee recipient/admin status'],
-    examples: []
+    examples: [],
+    snapshot: { thesis: 'Prompt/agent-assisted launch route through Doppler with documented Robinhood Chain support.', watchlist: ['successful Doppler launch records', 'creator fee/admin state', 'anti-snipe or failed-launch claims'], confidence: 'high for launch-route support, token-specific confidence requires contract evidence', refresh: 'verify successful launch transaction and deployed contract before naming a candidate' }
   },
   {
     id: 'virtuals',
@@ -48,7 +50,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Can explain Virtuals thesis and project identity; name a Robinhood Chain candidate only when the question supplies an address/project or live/onchain evidence ties it to Robinhood Chain.',
     answerHints: ['answer the Virtuals angle directly', 'do not infer official Robinhood integration', 'for Hoodwise, use the supplied project contract as project context first', 'put normal verification checks under What to verify next'],
     verify: ['project launch page', 'exact contract address', 'Robinhood Chain Blockscout match', 'token metadata', 'current holders/liquidity', 'official project social/site cross-check'],
-    examples: ['Hoodwise / Hood Wise by Virtuals (HW)']
+    examples: ['Hoodwise / Hood Wise by Virtuals (HW)'],
+    snapshot: { thesis: 'Agent-token identity layer; Robinhood Chain relation must be proven per project.', watchlist: ['Hoodwise / Hood Wise by Virtuals (HW)', 'project website verification', 'exact chain-4663 contract'], confidence: 'medium unless an exact project contract or launch page ties it to Robinhood Chain', refresh: 'verify website/social/contract triangle before treating a Virtuals claim as chain-native' }
   },
   {
     id: 'hoodfun',
@@ -65,7 +68,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Can use visible hood.fun listings as discovery evidence. If current listing data is unavailable, name hood.fun as the discovery surface, explain the exact refresh path, and still end with DYOR instead of giving a generic refusal.',
     answerHints: ['treat as a known community launchpad', 'for pick/recommend prompts lead with the current listing refresh path, not a refusal', 'ask for exact contract for a token-specific verdict', 'separate launchpad listing from endorsement', 'always include the compact DYOR footer for candidate prompts'],
     verify: ['current listing page', 'exact token contract', 'DEX pool and liquidity', 'holder distribution', 'owner/privileged controls'],
-    examples: []
+    examples: [],
+    snapshot: { thesis: 'Community launch-and-trade surface branded around Hood/Robinhood Chain tokens.', watchlist: ['current listing page', 'new launches', 'DEX pools behind listed tokens'], confidence: 'medium-high for platform surface, live refresh required for candidates', refresh: 'open current listings, copy exact contract, then verify Blockscout and DEX liquidity' }
   },
   {
     id: 'foragepad',
@@ -82,7 +86,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Do not name ForagePad candidates without fresh listing or onchain evidence.',
     answerHints: ['be useful but label confidence lower than NOXA/Bankr/hood.fun', 'refresh current availability first'],
     verify: ['current platform availability', 'chain selector/network', 'exact token contract', 'DEX pool/liquidity', 'Blockscout activity'],
-    examples: []
+    examples: [],
+    snapshot: { thesis: 'Possible discovery surface; treat as lower-confidence until current chain support is visible.', watchlist: ['chain selector', 'listed Robinhood Chain contracts', 'platform availability'], confidence: 'low-medium without fresh platform evidence', refresh: 'confirm current Robinhood Chain support before naming candidates' }
   },
   {
     id: 'cashcat',
@@ -99,7 +104,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Can discuss Cash Cat as a named research/lore candidate; do not claim it is safe, official, or currently leading without live evidence.',
     answerHints: ['explain narrative separately from safety', 'include what would invalidate the thesis', 'finish token answers with DYOR'],
     verify: ['exact contract address', 'launchpad or DEX source', 'pool liquidity', 'holder distribution', 'ownership controls', 'current social/project claims'],
-    examples: ['Cash Cat (CASHCAT)']
+    examples: ['Cash Cat (CASHCAT)'],
+    snapshot: { thesis: 'Community lore token around a cash/cat meme narrative in Robinhood Chain discovery culture.', watchlist: ['exact CASHCAT contract', 'cashcat.fun claims', 'pool liquidity', 'holder concentration'], confidence: 'lore candidate only until contract and pool are refreshed', refresh: 'verify exact contract, pool, holders, owner controls, and current social claims' }
   },
   {
     id: 'uniswap',
@@ -116,7 +122,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'A pool can support research but cannot by itself prove legitimacy or safety.',
     answerHints: ['talk in terms of exact pair/pool', 'avoid generic liquidity thresholds', 'state when no indexed pool is found'],
     verify: ['exact pair address', 'base/quote symbols', 'liquidity depth', '24h volume', 'route/slippage', 'pool age'],
-    examples: []
+    examples: [],
+    snapshot: { thesis: 'DEX pool data is execution evidence, not issuer legitimacy.', watchlist: ['pair address', 'liquidity depth', '24h volume', 'slippage route'], confidence: 'depends entirely on exact pair and current liquidity', refresh: 'inspect the exact pool before discussing tradeability' }
   },
   {
     id: 'verification',
@@ -133,7 +140,8 @@ const ECOSYSTEM_ENTRIES = [
     candidatePolicy: 'Required for token-specific verdicts; absence of one signal is uncertainty, not automatic proof of scam or safety.',
     answerHints: ['start with exact chain ID 4663 contract', 'separate source verification from liquidity verification', 'never use a different-chain address by mistake'],
     verify: ['chain ID 4663', 'contract bytecode/source verification', 'holder distribution', 'transfer activity', 'specific pool liquidity', 'swap route/slippage'],
-    examples: []
+    examples: [],
+    snapshot: { thesis: 'Standard verification path for any Robinhood Chain token claim.', watchlist: ['chain ID 4663', 'source verification', 'holders', 'transfers', 'DEX pool'], confidence: 'tooling baseline, not a safety endorsement', refresh: 'start from exact contract address and never use another-chain address by mistake' }
   }
 ];
 
@@ -170,6 +178,7 @@ function isCandidateQuestion(message) {
 
 function buildEntryLine(entry, index) {
   const examples = entry.examples.length ? ` | knownExamples=${entry.examples.join(', ')}` : '';
+  const snapshot = entry.snapshot ? ` | snapshot=${entry.snapshot.thesis}; watch=${entry.snapshot.watchlist.join(', ')}; confidence=${entry.snapshot.confidence}; refresh=${entry.snapshot.refresh}` : '';
   return [
     `[${index + 1}] ${entry.name}`,
     `category=${entry.category}`,
@@ -182,7 +191,7 @@ function buildEntryLine(entry, index) {
     `candidatePolicy=${entry.candidatePolicy}`,
     `answerHints=${entry.answerHints.join('; ')}`,
     `verify=${entry.verify.join('; ')}`
-  ].join(' | ') + examples;
+  ].join(' | ') + examples + snapshot;
 }
 
 function buildEcosystemDirectoryContext(message, liveResults = []) {
@@ -216,7 +225,8 @@ function ecosystemDirectorySummary() {
       category: entry.category,
       evidenceLevel: entry.evidenceLevel,
       status: entry.status,
-      examples: entry.examples
+      examples: entry.examples,
+      snapshot: entry.snapshot || null
     };
     return summary;
   }, {});

@@ -12,6 +12,7 @@ const healthRoutes = require('./routes/health');
 const conversationRoutes = require('./routes/conversations');
 const chatRoutes = require('./routes/chat');
 const contractRoutes = require('./routes/contracts');
+const feedbackRoutes = require('./routes/feedback');
 const opsRoutes = require('./routes/ops');
 
 function createApp() {
@@ -84,6 +85,7 @@ function createApp() {
   app.use('/api', conversationRoutes);
   app.use('/api', chatRoutes);
   app.use('/api', contractRoutes);
+  app.use('/api', feedbackRoutes);
   app.use('/api', opsRoutes);
 
   app.use('/api', notFoundHandler);

@@ -289,7 +289,7 @@
     panel.appendChild(verify);
     bubble.appendChild(panel);
   }
-  function addMessage(role, text, sources, brief) {
+  function addMessage(role, text, sources, brief, meta = {}) {
     const row = document.createElement('div');
     row.className = 'row ' + (role === 'user' ? 'user' : 'bot');
     if (role !== 'user') {
@@ -336,6 +336,7 @@
       });
       bubble.appendChild(copyBtn);
     }
+    if (role !== 'user') addFeedbackControls(bubble, meta.messageId, meta.feedback);
     messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
     return bubble;
@@ -366,6 +367,48 @@
   function removeThinking() {
     const el = document.getElementById('thinkingRow');
     if (el) el.remove();
+  }
+
+  function addFeedbackControls(bubble, messageId, currentRating) {
+    if (!messageId) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'feedback-row';
+    const label = document.createElement('span');
+    label.textContent = 'Was this useful?';
+    wrap.appendChild(label);
+    [
+      ['helpful', 'Good'],
+      ['missing', 'Missing info'],
+      ['incorrect', 'Incorrect']
+    ].forEach(([rating, labelText]) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'feedback-btn' + (currentRating === rating ? ' is-selected' : '');
+      button.textContent = labelText;
+      button.addEventListener('click', async () => {
+        if (!currentConversationId) return;
+        wrap.querySelectorAll('.feedback-btn').forEach(btn => btn.disabled = true);
+        try {
+          const response = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId, conversationId: currentConversationId, messageId, rating })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'Feedback failed');
+          wrap.querySelectorAll('.feedback-btn').forEach(btn => {
+            btn.classList.toggle('is-selected', btn === button);
+            btn.disabled = false;
+          });
+          setInteractionStatus('Feedback saved.');
+        } catch (error) {
+          wrap.querySelectorAll('.feedback-btn').forEach(btn => btn.disabled = false);
+          setInteractionStatus('Could not save feedback.');
+        }
+      });
+      wrap.appendChild(button);
+    });
+    bubble.appendChild(wrap);
   }
 
   function addRetryMessage(message, retryText) {
@@ -508,7 +551,7 @@
       conversationTitleEl.textContent = data.conversation.title;
       messagesEl.innerHTML = '';
       chipsEl.style.display = 'none';
-      data.messages.forEach(m => addMessage(m.role, m.content, m.sources, m.brief));
+      data.messages.forEach(m => addMessage(m.role, m.content, m.sources, m.brief, { messageId: m.id, feedback: m.feedback }));
       loadHistoryList();
       if (window.innerWidth <= 780) sidebar.classList.add('collapsed');
     } catch (e) {
@@ -557,7 +600,7 @@
         renderMessageContent(messageContent, fullText);
         messagesEl.scrollTop = messagesEl.scrollHeight;
       },
-      finalize(sources, brief, partial = false) {
+      finalize(sources, brief, partial = false, messageId = null) {
         bubble.classList.remove('streaming-bubble');
         if (sources && sources.length) {
           const srcWrap = document.createElement('div');
@@ -594,6 +637,7 @@
           });
           bubble.appendChild(copyBtn);
         }
+        addFeedbackControls(bubble, messageId);
         return fullText;
       },
       row
@@ -698,7 +742,7 @@
         } else if (event === 'done') {
           currentConversationId = data.conversationId;
           syncConversationRoute(currentConversationId);
-          if (streamBot) streamBot.finalize(data.sources, data.brief, Boolean(data.partial));
+          if (streamBot) streamBot.finalize(data.sources, data.brief, Boolean(data.partial), data.messageId);
           if (conversationTitleEl.textContent === 'New chat') {
             conversationTitleEl.textContent = text.length > 48 ? text.slice(0, 48) + '…' : text;
           }
@@ -708,7 +752,7 @@
         } else if (event === 'error') {
           sawError = true;
           removeThinking();
-          if (streamBot) streamBot.finalize([]);
+          if (streamBot) streamBot.finalize([], null, false, data.messageId);
           addRetryMessage(data.error || 'Something went wrong. Please try again.', text);
         }
       });

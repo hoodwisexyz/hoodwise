@@ -37,6 +37,21 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_conversations_session ON conversations(session_id);
   CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
+
+  CREATE TABLE IF NOT EXISTS answer_feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id TEXT NOT NULL,
+    message_id INTEGER,
+    session_id TEXT NOT NULL,
+    rating TEXT NOT NULL CHECK (rating IN ('helpful', 'missing', 'incorrect')),
+    note TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE SET NULL,
+    UNIQUE(session_id, conversation_id, message_id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_feedback_conversation ON answer_feedback(conversation_id);
 `);
 
 const messageColumns = db.prepare('PRAGMA table_info(messages)').all();

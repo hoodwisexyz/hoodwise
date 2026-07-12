@@ -218,10 +218,10 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
   if (safeReply) {
     const sources = [];
     const brief = buildBrief(safeReply, sources, liveResults, onchainScan);
-    conversations.appendMessage(conversationId, 'assistant', safeReply, sources, brief);
+    const messageId = conversations.appendMessage(conversationId, 'assistant', safeReply, sources, brief);
     conversations.touchConversation(conversationId);
-    logger.info('chat private/internal request short-circuited', { requestId: req.requestId, conversationId });
-    return res.json({ conversationId, reply: safeReply, sources, brief, repaired: false });
+    logger.info('chat private/internal request short-circuited', { requestId: req.requestId, conversationId, messageId });
+    return res.json({ conversationId, messageId, reply: safeReply, sources, brief, repaired: false });
   }
 
   const rawReply = await callChatModel({
@@ -244,14 +244,14 @@ router.post('/chat', chatRateLimiter, requireSessionId, asyncHandler(async (req,
   const sources = reply === finalAnswer.reply ? finalAnswer.sources : mergeSources(message, reply, liveResults, onchainScan);
   const brief = buildBrief(reply, sources, liveResults, onchainScan);
 
-  conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
+  const messageId = conversations.appendMessage(conversationId, 'assistant', reply, sources, brief);
   conversations.touchConversation(conversationId);
 
   logger.info('chat reply sent', {
-    requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0, repaired: finalAnswer.repaired
+    requestId: req.requestId, conversationId, messageId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0, repaired: finalAnswer.repaired
   });
 
-  res.json({ conversationId, reply, sources, brief, repaired: finalAnswer.repaired });
+  res.json({ conversationId, messageId, reply, sources, brief, repaired: finalAnswer.repaired });
 }));
 
 // ---------- Streaming (used by the Hoodwise web app for the live-typing feel) ----------
@@ -281,11 +281,11 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
   if (safeReply) {
     const sources = [];
     const brief = buildBrief(safeReply, sources, liveResults, onchainScan);
-    conversations.appendMessage(conversationId, 'assistant', safeReply, sources, brief);
+    const messageId = conversations.appendMessage(conversationId, 'assistant', safeReply, sources, brief);
     conversations.touchConversation(conversationId);
-    logger.info('chat stream private/internal request short-circuited', { requestId: req.requestId, conversationId });
+    logger.info('chat stream private/internal request short-circuited', { requestId: req.requestId, conversationId, messageId });
     send('token', { text: safeReply });
-    send('done', { conversationId, sources, brief, repaired: false });
+    send('done', { conversationId, messageId, sources, brief, repaired: false });
     return res.end();
   }
 
@@ -327,14 +327,14 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
     const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
     if (finalAnswer.repaired) send('replace', { text: fullReply });
     else if (appendedFooter) send('token', { text: fullReply.slice(finalAnswer.reply.length) });
-    conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
+    const messageId = conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
     conversations.touchConversation(conversationId);
 
     logger.info('chat stream completed', {
-      requestId: req.requestId, conversationId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0, repaired: finalAnswer.repaired
+      requestId: req.requestId, conversationId, messageId, sourceCount: sources.length, usedLiveSearch: liveResults.length > 0, repaired: finalAnswer.repaired
     });
 
-    send('done', { conversationId, sources, brief, repaired: finalAnswer.repaired });
+    send('done', { conversationId, messageId, sources, brief, repaired: finalAnswer.repaired });
   } catch (err) {
     // A provider can occasionally close an SSE response after emitting a few
     // tokens (node-fetch reports this as "Premature close"). Preserve the
@@ -377,12 +377,12 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
       const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
       if (finalAnswer.repaired) send('replace', { text: fullReply });
       else if (appendedFooter) send('token', { text: fullReply.slice(finalAnswer.reply.length) });
-      conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
+      const messageId = conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
       conversations.touchConversation(conversationId);
       logger.info('chat stream recovered through completion fallback', {
-        requestId: req.requestId, conversationId, sourceCount: sources.length, repaired: finalAnswer.repaired
+        requestId: req.requestId, conversationId, messageId, sourceCount: sources.length, repaired: finalAnswer.repaired
       });
-      send('done', { conversationId, sources, brief, repaired: finalAnswer.repaired });
+      send('done', { conversationId, messageId, sources, brief, repaired: finalAnswer.repaired });
     } catch (fallbackErr) {
       logger.error('chat stream fallback failed', {
         requestId: req.requestId, conversationId, error: fallbackErr.message
@@ -394,9 +394,9 @@ router.post('/chat/stream', chatRateLimiter, requireSessionId, asyncHandler(asyn
         const sources = mergeSources(message, fullReply, liveResults, onchainScan);
         const brief = buildBrief(fullReply, sources, liveResults, onchainScan);
         recordQuality(message, fullReply, sources, liveResults.length > 0, req.requestId);
-        conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
+        const messageId = conversations.appendMessage(conversationId, 'assistant', fullReply, sources, brief);
         conversations.touchConversation(conversationId);
-        send('done', { conversationId, sources, brief, partial: true });
+        send('done', { conversationId, messageId, sources, brief, partial: true });
       } else {
         send('error', { error: fallbackErr.expose ? fallbackErr.message : 'Something went wrong on the server. Please try again.' });
       }

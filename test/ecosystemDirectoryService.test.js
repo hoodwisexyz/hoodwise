@@ -72,5 +72,15 @@ test('ecosystem directory summary exposes stable metadata without prompt content
   const summary = ecosystemDirectorySummary();
   assert.equal(summary.noxa.category, 'launchpad_trading');
   assert.equal(summary.bankr.name, 'Bankr / Doppler');
-  assert.deepEqual(Object.keys(summary.verification).sort(), ['category', 'evidenceLevel', 'examples', 'name', 'status']);
+  assert.deepEqual(Object.keys(summary.verification).sort(), ['category', 'evidenceLevel', 'examples', 'name', 'snapshot', 'status']);
+});
+
+test('ecosystem snapshots are included in model context', () => {
+  const context = buildEcosystemDirectoryContext('Give me a Robinhood Chain launchpad research shortlist', []);
+  assert.match(context.content, /snapshot=/);
+  assert.match(context.content, /watch=/);
+  assert.match(context.content, /confidence=/);
+  const summary = ecosystemDirectorySummary();
+  assert.match(summary.noxa.snapshot.thesis, /community-token discovery/i);
+  assert.ok(summary.cashcat.snapshot.watchlist.includes('exact CASHCAT contract'));
 });
